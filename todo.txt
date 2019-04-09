@@ -1,26 +1,42 @@
 CHECKPOINT
+----------------------------
 [ ] knight
-  [ ] model
-  [ ] texture
-  [ ] appears in game
+	[ ] model
+	[ ] texture
+	[ ] appears in game
 [ ] terrain
 [ ] at least one other model started
   -torch? -trap of some kind?
 
 PLANNED FEATURES
----------------------------
+----------------------------
 [ ] rotation on ghost avatars
-[ ] dragon modeled, rigged, colored
-[ ] turn off lights in rooms
+[ ] lights in each room
+	[ ] dragon can turn off lights in rooms
 [ ] character select
 [ ] TRAPS
+	[ ] collision detection
+[ ] ability for knight to jump
 [ ] NPC knight AI
+[ ] walking (and idle?) animation for knight
+[ ] 3D sound
 
 
 
 BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move
+
+
+STRETCH GOALS
+----------------------------
+[ ] splash screen
+[ ] dragon 
+	[x] model - .obj imported from Thingiverse under creative commons
+	[ ] rigged 
+	[ ] textured 
+	[ ] idle animation
+
 
 
 

@@ -1,0 +1,24 @@
+If you're using an IDE like Eclipse or IntelliJ, there should be an option to Import From Github, at which point you just enter the URL of the root on Github.
+
+Otherwise, I recommend grabbing Git Bash here: https://git-scm.com/downloads but GUI based clients also exist
+You will have to log in using your github credentials on whatever shell client you are using.
+Send me your github account's associated email. so I can add you as a contributor.
+
+To download the github repository just click the link on the github page labeled "Clone or Download", or use the command "git clone https://github.com/ace-english/hoard.git" from the git client in the folder you want it to be.
+
+After you set up, do a "git commit pull" to grab the most local copy from github.
+
+When you add a new file (like a texture or a class or whatever" you have to use "git add <filename>"
+
+Every time you make a significant change (like 15-30 minutes of work or so) make sure to do 'git commit -am "description of changes"'
+
+When you have a working copy with changes going (maybe at the end of your code session or every 1-2 hours):
+	1. do a git pull to grab any recent changes
+	2. do a commit
+	3. push the changes to github with "git push". If this doesn't work then there's probably a conflict like if we're both working at the same time and then things get complicated and we have to fix whatever files get mentioned.
+	
+If the code gets messed up while working on it you can revert to the most recently pushed change with "git checkout --<filename>"
+
+Simple github guide: http://rogerdudler.github.io/git-guide/
+
+Git command line cheat sheet: https://education.github.com/git-cheat-sheet-education.pdf

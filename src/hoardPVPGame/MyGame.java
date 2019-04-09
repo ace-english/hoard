@@ -59,25 +59,17 @@ public class MyGame extends VariableFrameRateGame{
     private Dungeon dungeon;
     
     private boolean playerIsDragon=false;
-    
-    private ScriptEngine jsEngine;
 
     
     private static final String SKYBOX_NAME = "SkyBox";
-    private boolean skyBoxVisible = true;
 	
-	
-	//int sunHeight=30;
 	
 	int elapsTimeSec;
 	private InputManager im;
-	
 	Player player;
-	
 	AbstractController rc;
 	boolean isConnected = false;
 	
-	//boolean[] visited;
 	
 	public Player getPlayer() {
 		return player;
@@ -95,23 +87,6 @@ public class MyGame extends VariableFrameRateGame{
 
     public static void main(String[] args) {
         MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
-        
-        /*
-        ScriptEngineManager factory = new ScriptEngineManager();
-        String scriptFileName = "randomDungeon.js";
-        java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
-        
-        System.out.println("Script Engine Factories found:");
-        for (ScriptEngineFactory f : list)
-        { System.out.println(" Name = " + f.getEngineName()
-        + " language = " + f.getLanguageName()
-        + " extensions = " + f.getExtensions());
-        }
-        // get the JavaScript engine
-        ScriptEngine jsEngine1 = factory.getEngineByName("js");
-        // run the script
-        game.executeScript(jsEngine1, scriptFileName);
-        */
         try {
             game.startup();
             game.run();
@@ -184,7 +159,7 @@ public class MyGame extends VariableFrameRateGame{
         
     	
     	/*
-    	 * player 1
+    	 * player
     	 */
         Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
         dolphinE.setPrimitive(Primitive.TRIANGLES);
@@ -195,7 +170,7 @@ public class MyGame extends VariableFrameRateGame{
         dolphinN.attachObject(dolphinE);
         dolphinN.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
         if(playerIsDragon)
-            player=new FreeMovePlayer(dolphinN, sm.getCamera("MainCamera"), protClient, dungeon);
+            player = new FreeMovePlayer(dolphinN, sm.getCamera("MainCamera"), protClient, dungeon);
         else
         	player = new OrbitalPlayer(dolphinN, sm.getCamera("MainCamera"), protClient);
         
@@ -412,13 +387,6 @@ public class MyGame extends VariableFrameRateGame{
 
       
     }
-    
-    
-
-    private void runScript(File scriptFile1) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private void setupOrbitCamera(Engine eng, SceneManager sm) {
     	SceneNode riderN = (SceneNode) player.getNode().getChild(0);

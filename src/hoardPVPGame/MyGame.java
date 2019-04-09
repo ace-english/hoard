@@ -217,7 +217,7 @@ public class MyGame extends VariableFrameRateGame{
         	ScriptEngine jsEngine = factory.getEngineByName("js");
         	
         	jsEngine.put("dungeon", dungeon);
-        	this.executeScript(jsEngine, "randomDungeon.js");
+        	this.executeScript(jsEngine, "src/randomDungeon.js");
         	
         	
         }

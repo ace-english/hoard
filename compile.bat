@@ -1,0 +1,1 @@
+javac .\hoardPVPGame\*.java .\MyGameEngine\*.java

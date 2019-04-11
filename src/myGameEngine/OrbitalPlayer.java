@@ -16,7 +16,7 @@ import ray.rml.Vector3f;
 public class OrbitalPlayer extends Player {
 	
 	private Camera3PController cameraController;
-	SceneNode riderNode;
+	SceneNode riderNode, cameraNode;
 
 	public OrbitalPlayer(SceneManager sm, ProtocolClient pc) {
 		super(sm, pc);
@@ -37,6 +37,8 @@ public class OrbitalPlayer extends Player {
     	
         riderNode = node.createChildSceneNode("RiderNode");
         riderNode.moveUp(0.8f);
+        
+        cameraNode = sm.getSceneNode("MainCameraNode");
 		
 	}
 	
@@ -58,6 +60,8 @@ public class OrbitalPlayer extends Player {
 	
 
 	public void setupInputs(InputManager im, Controller controller) {
+		if(cameraController==null)
+			setCameraController(new Camera3PController(getCamera(), cameraNode, riderNode, im));
 		Action moveAction = new MoveAction(this);
 		Action yawAction = new YawAction(this);
     	cameraController.addController(im, controller);

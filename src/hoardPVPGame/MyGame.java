@@ -166,10 +166,6 @@ public class MyGame extends VariableFrameRateGame{
         else
         	player = new OrbitalPlayer(sm, protClient);
         
-        /*
-         * riders
-         */
-        
         
         /*
          * dungeon
@@ -182,7 +178,6 @@ public class MyGame extends VariableFrameRateGame{
         	
         	jsEngine.put("dungeon", dungeon);
         	this.executeScript(jsEngine, "src/randomDungeon.js");
-        	
         	
         }
 		
@@ -370,23 +365,10 @@ public class MyGame extends VariableFrameRateGame{
 		SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
         plightNode.attachObject(plight);
         plightNode.moveUp(1f);
-
-        if(!playerIsDragon)
-    		setupOrbitCamera(eng, sm);
     	setupInputs();
 
       
     }
-
-	private void setupOrbitCamera(Engine eng, SceneManager sm) {
-    	SceneNode riderN = (SceneNode) player.getNode().getChild(0);
-    	SceneNode cameraN = sm.getSceneNode("MainCameraNode");
-    	Camera camera = player.getCamera();
-    	
-    	//Controller controller = im.getKeyboardController();
-    	((OrbitalPlayer) player).setCameraController(new Camera3PController(camera, cameraN, riderN, im));
-		
-	}
     
 	@Override
     protected void update(Engine engine) {

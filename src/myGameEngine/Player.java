@@ -39,19 +39,6 @@ public abstract class Player{
 	public boolean isBoostActive() {
 		return boostActive;
 	}
-	
-	public void activateBoost(float elapsTime) {
-		boostActive=true;
-		speed=speed*2.5f;
-		timeBoosted=elapsTime;
-		System.out.println("Boost activated! Start time: " + timeBoosted);	
-	}
-	
-	public void deactivateBoost() {
-		speed=speed/2.5f;
-		boostActive=false;
-		System.out.println("Boost timed off");
-	}
 
 	public SceneNode getNode() {
 		return node;

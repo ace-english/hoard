@@ -1,5 +1,6 @@
 package myGameEngine;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import net.java.games.input.Controller;
@@ -20,18 +21,23 @@ public abstract class Player{
 
 	int score;
 	
-	public Player(SceneManager sm, Camera camera, ProtocolClient pc) {
+	public Player(SceneManager sm, ProtocolClient pc) {
 		speed=0.08f;
 		boostActive=false;
 		score=0;
 		this.protClient=pc;
-		this.setCamera(camera);
+		this.setCamera(sm.getCamera("MainCamera"));
 		id=pc.getID();
-		setupNodes(sm);
+		try {
+			setupNodes(sm);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
-	protected abstract void setupNodes(SceneManager sm);
+	protected abstract void setupNodes(SceneManager sm) throws IOException;
 	
 	public void update(float elapsTime) {
 		//TODO: stub

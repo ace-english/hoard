@@ -58,7 +58,7 @@ public class MyGame extends VariableFrameRateGame{
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
     
-    private boolean playerIsDragon=true;
+    private boolean playerIsDragon=false;
 
     
     private static final String SKYBOX_NAME = "SkyBox";
@@ -161,25 +161,14 @@ public class MyGame extends VariableFrameRateGame{
     	/*
     	 * player
     	 */
-        Entity dolphinE = sm.createEntity("player", "dolphinHighPoly.obj");
-        dolphinE.setPrimitive(Primitive.TRIANGLES);
-
-        SceneNode dolphinN = sm.getRootSceneNode().createChildSceneNode(dolphinE.getName() + "Node");
-        dolphinN.moveForward(2.0f);
-        dolphinN.moveUp(1.0f);
-        dolphinN.attachObject(dolphinE);
-        dolphinN.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
         if(playerIsDragon)
-            player = new FreeMovePlayer(sm, sm.getCamera("MainCamera"), protClient, dungeon);
+            player = new FreeMovePlayer(sm, protClient, dungeon);
         else
-        	player = new OrbitalPlayer(sm, sm.getCamera("MainCamera"), protClient);
+        	player = new OrbitalPlayer(sm, protClient);
         
         /*
          * riders
          */
-    	
-        SceneNode riderN = dolphinN.createChildSceneNode("RiderNode");
-        riderN.moveUp(0.8f);
         
         
         /*

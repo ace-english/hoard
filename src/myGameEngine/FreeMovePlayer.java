@@ -12,14 +12,15 @@ import ray.rage.scene.SceneNode;
 public class FreeMovePlayer extends Player {
 	
 	Dungeon dungeon;
+	SceneNode cameraNode;
 
-	public FreeMovePlayer(SceneManager sm, Camera camera, ProtocolClient pc, Dungeon dungeon) {
-		super(sm, camera, pc);
+	public FreeMovePlayer(SceneManager sm, ProtocolClient pc, Dungeon dungeon) {
+		super(sm, pc);
 		speed=0.12f;
-		SceneNode cameraNode=getNode().createChildSceneNode("riderNode");
-        cameraNode.attachObject(camera);
+		cameraNode=getNode().createChildSceneNode("riderNode");
+        cameraNode.attachObject(getCamera());
         cameraNode.moveUp(0.5f);
-		camera.setMode('n');
+		getCamera().setMode('n');
 		this.dungeon=dungeon;
 	}
 

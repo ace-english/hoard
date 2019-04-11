@@ -47,7 +47,6 @@ public class Camera3PController {
 				((float)x,(float)y,(float)z).add(target.getWorldPosition());
 		if(newPosition.y()>0) {
 			cameraN.setLocalPosition(newPosition);
-			
 			cameraN.lookAt(target, worldUpVec);
 		}
 	}

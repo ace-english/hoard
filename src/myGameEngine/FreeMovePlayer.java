@@ -6,20 +6,27 @@ import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.scene.Camera;
+import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 
 public class FreeMovePlayer extends Player {
 	
 	Dungeon dungeon;
 
-	public FreeMovePlayer(SceneNode node, Camera camera, ProtocolClient pc, Dungeon dungeon) {
-		super(node, camera, pc);
+	public FreeMovePlayer(SceneManager sm, Camera camera, ProtocolClient pc, Dungeon dungeon) {
+		super(sm, camera, pc);
 		speed=0.12f;
-		SceneNode cameraNode=node.createChildSceneNode("riderNode");
+		SceneNode cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(camera);
         cameraNode.moveUp(0.5f);
 		camera.setMode('n');
 		this.dungeon=dungeon;
+	}
+
+	@Override
+	protected void setupNodes(SceneManager sm) {
+		setNode(sm.getSceneNode("playerNode"));
+		
 	}
 
 	@Override

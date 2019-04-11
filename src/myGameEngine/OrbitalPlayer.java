@@ -4,14 +4,21 @@ import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.scene.Camera;
+import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 
 public class OrbitalPlayer extends Player {
 	
 	private Camera3PController cameraController;
 
-	public OrbitalPlayer(SceneNode node, Camera camera, ProtocolClient pc) {
-		super(node, camera, pc);
+	public OrbitalPlayer(SceneManager sm, Camera camera, ProtocolClient pc) {
+		super(sm, camera, pc);
+		
+	}
+
+	@Override
+	protected void setupNodes(SceneManager sm) {
+		setNode(sm.getSceneNode("playerNode"));
 		
 	}
 	

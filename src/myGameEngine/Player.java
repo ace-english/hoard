@@ -6,6 +6,7 @@ import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.scene.Camera;
+import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 
 public abstract class Player{
@@ -19,15 +20,21 @@ public abstract class Player{
 
 	int score;
 	
-	public Player(SceneNode node, Camera camera, ProtocolClient pc) {
+	public Player(SceneManager sm, Camera camera, ProtocolClient pc) {
 		speed=0.08f;
 		boostActive=false;
 		score=0;
-		this.node=node;
 		this.protClient=pc;
 		this.setCamera(camera);
 		id=pc.getID();
+		setupNodes(sm);
 		
+	}
+	
+	protected abstract void setupNodes(SceneManager sm);
+	
+	public void update(float elapsTime) {
+		//TODO: stub
 	}
 
 	public float getSpeed() {

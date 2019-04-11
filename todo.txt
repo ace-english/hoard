@@ -26,6 +26,7 @@ PLANNED FEATURES
 BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move
+[ ] gem disappears at some dungeon lengths
 
 
 STRETCH GOALS

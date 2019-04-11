@@ -457,7 +457,7 @@ public class MyGame extends VariableFrameRateGame{
 		try {
 			SceneNode gem=sm.getSceneNode("GemNode");
 			if(CollisionUtil.isColliding(player.getNode(), gem)) {
-				player.activateBoost(elapsTimeSec);
+				
 				sm.destroySceneNode("GemNode");
 			}
 		} catch (java.lang.RuntimeException e) {

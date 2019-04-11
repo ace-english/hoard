@@ -42,14 +42,14 @@ public class OrbitalPlayer extends Player {
     	entity.setRenderState(state);
 
         SceneNode node = sm.getRootSceneNode().createChildSceneNode(entity.getName() + "Node");
-        node.moveForward(2.0f);
-        node.moveUp(1.0f);
         node.attachObject(entity);
-        node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
+        node.scale(.5f, .5f, .5f);
 		setNode(node);
     	
         riderNode = node.createChildSceneNode("RiderNode");
-        riderNode.moveUp(0.8f);
+        riderNode.moveUp(6f);
+        
+        
         
         cameraNode = sm.getSceneNode("MainCameraNode");
 		
@@ -69,6 +69,7 @@ public class OrbitalPlayer extends Player {
 
 	public void setCameraController(Camera3PController cameraController) {
 		this.cameraController = cameraController;
+		cameraController.rotate(180);
 	}
 	
 

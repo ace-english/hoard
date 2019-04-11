@@ -454,16 +454,7 @@ public class MyGame extends VariableFrameRateGame{
 
 	
 	private void checkForCollisions() {
-		try {
-			SceneNode gem=sm.getSceneNode("GemNode");
-			if(CollisionUtil.isColliding(player.getNode(), gem)) {
-				
-				sm.destroySceneNode("GemNode");
-			}
-		} catch (java.lang.RuntimeException e) {
-			//gem has been collected
-			return;
-		}
+		//TODO stub
 			
 	}
 	

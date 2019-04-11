@@ -1,13 +1,19 @@
 package myGameEngine;
 
+import java.io.IOException;
+
 import hoardPVPGame.AddRoomAction;
 import hoardPVPGame.Dungeon;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.rage.rendersystem.Renderable.Primitive;
 import ray.rage.scene.Camera;
+import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rml.Degreef;
+import ray.rml.Vector3f;
 
 public class FreeMovePlayer extends Player {
 	
@@ -25,9 +31,20 @@ public class FreeMovePlayer extends Player {
 	}
 
 	@Override
-	protected void setupNodes(SceneManager sm) {
-		setNode(sm.getSceneNode("playerNode"));
-		
+	protected void setupNodes(SceneManager sm) throws IOException {
+        Entity entity = sm.createEntity("player", "dolphinHighPoly.obj");
+        entity.setPrimitive(Primitive.TRIANGLES);
+
+        SceneNode node = sm.getRootSceneNode().createChildSceneNode(entity.getName() + "Node");
+        node.moveForward(2.0f);
+        node.moveUp(1.0f);
+        node.attachObject(entity);
+        node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
+		setNode(node);
+    	
+        node.createChildSceneNode("RiderNode").moveUp(0.8f);
+        
+        cameraNode = sm.getSceneNode("MainCameraNode");
 	}
 
 	@Override

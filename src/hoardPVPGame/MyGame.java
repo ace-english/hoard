@@ -58,7 +58,7 @@ public class MyGame extends VariableFrameRateGame{
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
     
-    private boolean playerIsDragon=true;
+    private boolean playerIsDragon=false;
 
     
     private static final String SKYBOX_NAME = "SkyBox";

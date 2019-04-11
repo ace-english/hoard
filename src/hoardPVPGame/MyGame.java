@@ -355,16 +355,8 @@ public class MyGame extends VariableFrameRateGame{
          * light
          */
         sm.getAmbientLight().setIntensity(new Color(.3f, .3f, .3f));
-		
-		Light plight = sm.createLight("testLamp1", Light.Type.POINT);
-		plight.setAmbient(new Color(0.3f, 0.3f, 0.3f));
-        plight.setDiffuse(new Color(.7f, .7f, .7f));
-		plight.setSpecular(new Color(1.0f, 1.0f, 1.0f));
-        plight.setRange(100f);
-		
-		SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
-        plightNode.attachObject(plight);
-        plightNode.moveUp(1f);
+        
+        
     	setupInputs();
 
       

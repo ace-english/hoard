@@ -11,7 +11,7 @@ CHECKPOINT
 PLANNED FEATURES
 ----------------------------
 [ ] rotation on ghost avatars
-[ ] lights in each room
+[x] lights in each room
 	[ ] dragon can turn off lights in rooms
 [ ] character select
 [ ] TRAPS

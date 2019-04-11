@@ -1,5 +1,6 @@
 package hoardPVPGame;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -14,6 +15,7 @@ import ray.rage.rendersystem.states.RenderState;
 import ray.rage.rendersystem.states.TextureState;
 import ray.rage.scene.*;
 import ray.rage.util.BufferUtil;
+import ray.rml.Angle;
 import ray.rml.Degreef;
 import ray.rml.Vector3f;
 
@@ -25,6 +27,7 @@ public class Room{
 	private Engine eng;
 	private static int roomNum=0;
 	private int planeNum;
+	
 	
 	public Room(SceneManager sm, Engine eng, Dungeon dungeon) {
 		this.sm = sm;
@@ -143,11 +146,38 @@ public class Room{
 		plane.setPrimitive(Primitive.TRIANGLES);
 		
         SceneNode planeNode = roomNode.createChildSceneNode("plane"+roomNum+'-' + planeNum);
+        
+        if((roomNum%4)==0) {
+    	
+			Light light = returnLight(plane.getName()+"torch");
+			SceneNode lightNode = planeNode.createChildSceneNode(light.getName()+"Node");
+			Entity torch = sm.createEntity(plane.getName()+"torchE", "sphere.obj");
+	        torch.setPrimitive(Primitive.TRIANGLES);
+	        lightNode.attachObject(light);
+	        lightNode.attachObject(torch);
+	        lightNode.moveUp(.1f);
+	        lightNode.moveForward(0.5f);
+	        lightNode.scale(0.1f,0.1f, 0.1f);
+	        //lightNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0,1,0));
+        }
+        
         planeNum++;
         planeNode.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
         planeNode.attachObject(plane);
-        
+
+    	//add lights on some walls
         return planeNode;
+        
+    }
+    
+    private Light returnLight(String name) {
+    	Light light=sm.createLight(name, Light.Type.POINT);
+    	light.setAmbient(new Color(.01f, .01f, .0f));
+    	light.setDiffuse(new Color(.65f, .45f, .3f));
+    	light.setSpecular(new Color(0.5f, 0.4f, 0.3f));
+    	light.setRange(40f);
+	    
+	    return light;
     }
     
     private void setupRoom() throws IOException {
@@ -157,6 +187,7 @@ public class Room{
     	
     	floor=returnPlane();
     	right=returnWall();
+    	
     	right.translate(Vector3f.createFrom(GameUtil.getRoomSize(), 0f, 0f));
     	right.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 0f, 1f));
     	right.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
@@ -167,6 +198,9 @@ public class Room{
     	ceiling=returnPlane();
     	ceiling.rotate(Degreef.createFrom(180f), Vector3f.createFrom(0f,0f,1f));
     	ceiling.translate(Vector3f.createFrom(0f,GameUtil.getRoomSize(), 0f));
+    	
+    	
+        
     	
     	//if first room, give back wall for hoard
     	if(roomNum==0) {

@@ -382,7 +382,8 @@ public class MyGame extends VariableFrameRateGame{
         plightNode.attachObject(plight);
         plightNode.moveUp(1f);
 
-    	setupOrbitCamera(eng, sm);
+        if(!playerIsDragon)
+    		setupOrbitCamera(eng, sm);
     	setupInputs();
 
       
@@ -394,8 +395,7 @@ public class MyGame extends VariableFrameRateGame{
     	Camera camera = player.getCamera();
     	
     	//Controller controller = im.getKeyboardController();
-    	if(!playerIsDragon)
-    		((OrbitalPlayer) player).setCameraController(new Camera3PController(camera, cameraN, riderN, im));
+    	((OrbitalPlayer) player).setCameraController(new Camera3PController(camera, cameraN, riderN, im));
 		
 	}
     

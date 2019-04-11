@@ -1,9 +1,9 @@
 CHECKPOINT
 ----------------------------
-[ ] knight
-	[ ] model
-	[ ] texture
-	[ ] appears in game
+[x] knight
+	[x] model
+	[x] texture
+	[x] appears in game
 [ ] terrain
 [ ] at least one other model started
   -torch? -trap of some kind?
@@ -28,6 +28,7 @@ BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move
 [ ] gem disappears at some dungeon lengths
+[ ] make ghost avatar use same model
 
 
 STRETCH GOALS

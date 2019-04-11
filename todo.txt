@@ -20,7 +20,6 @@ PLANNED FEATURES
 [ ] NPC knight AI
 [ ] walking (and idle?) animation for knight
 [ ] 3D sound
-[ ] separate knight head so it changes with look
 
 
 
@@ -39,7 +38,7 @@ STRETCH GOALS
 	[ ] rigged 
 	[ ] textured 
 	[ ] idle animation
-
+[ ] separate knight head so it changes with look
 
 
 

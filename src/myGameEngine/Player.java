@@ -12,7 +12,6 @@ public abstract class Player{
 
 	float speed;
 	boolean boostActive;
-	float timeBoosted;
 	private SceneNode node;
 	private Camera camera;
 	private ProtocolClient protClient;
@@ -23,7 +22,6 @@ public abstract class Player{
 	public Player(SceneNode node, Camera camera, ProtocolClient pc) {
 		speed=0.08f;
 		boostActive=false;
-		timeBoosted=-1;
 		score=0;
 		this.node=node;
 		this.protClient=pc;
@@ -50,13 +48,6 @@ public abstract class Player{
 	
 	ProtocolClient getProtocolClient() {
 		return protClient;
-	}
-
-	public void update(float elapsTime) {
-		if(timeBoosted>0&&boostActive) {
-			if(elapsTime-15>timeBoosted)
-				deactivateBoost();
-		}
 	}
 
 	public void scoreUp() {

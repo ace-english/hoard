@@ -75,18 +75,22 @@ public class MyGame extends VariableFrameRateGame{
 		return player;
 	}
 
-    public MyGame(String serverAddr, int sPort) {
+    /*public MyGame(String serverAddr, int sPort) {
         super();
         sm=this.getEngine().getSceneManager();
-        this.serverAddress = serverAddr;
-        this.serverPort = sPort;
-        this.serverProtocol = ProtocolType.UDP;
+        //this.serverAddress = serverAddr;
+        //this.serverPort = sPort;
+        //this.serverProtocol = ProtocolType.UDP;
         
         gameObjectsToRemove = new Vector<UUID>();
-    }
+    }*/
+	public MyGame() {
+		super();
+	}
 
     public static void main(String[] args) {
-        MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
+       //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
+    	MyGame game = new MyGame();
         try {
             game.startup();
             game.run();
@@ -154,7 +158,7 @@ public class MyGame extends VariableFrameRateGame{
 	
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
-    	setupNetworking();
+    	//setupNetworking();
         dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         
     	

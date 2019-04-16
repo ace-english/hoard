@@ -3,12 +3,17 @@ package myGameEngine;
 import java.io.IOException;
 import java.util.UUID;
 
+
+
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.scene.Camera;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rage.scene.Tessellation;
+import ray.rml.Vector3;
+import ray.rml.Vector3f;
 
 public abstract class Player{
 
@@ -18,6 +23,7 @@ public abstract class Player{
 	private Camera camera;
 	private ProtocolClient protClient;
 	private UUID id;
+	SceneManager sm2;
 
 	int score;
 	
@@ -45,6 +51,32 @@ public abstract class Player{
 
 	public float getSpeed() {
 		return speed;
+	}
+	
+	protected void updateVerticalPosition()
+	{ SceneNode dolphinN =
+	sm2.
+	getSceneNode("playerNode");
+	SceneNode tessN =
+	sm2.
+	getSceneNode("tessN");
+	Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+	// Figure out Avatar's position relative to plane
+	Vector3 worldAvatarPosition = dolphinN.getWorldPosition();
+	Vector3 localAvatarPosition = dolphinN.getLocalPosition();
+	// use avatar World coordinates to get coordinates for height
+	Vector3 newAvatarPosition = Vector3f.createFrom(
+	 // Keep the X coordinate
+	 localAvatarPosition.x(),
+	 // The Y coordinate is the varying height
+	 tessE.getWorldHeight(
+	worldAvatarPosition.x(),
+	worldAvatarPosition.z()),
+	 //Keep the Z coordinate
+	 localAvatarPosition.z()
+	);
+	// use avatar Local coordinates to set position, including height
+	dolphinN.setLocalPosition(newAvatarPosition);
 	}
 
 	public boolean isBoostActive() {

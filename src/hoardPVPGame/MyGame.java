@@ -75,22 +75,23 @@ public class MyGame extends VariableFrameRateGame{
 		return player;
 	}
 
-    /*public MyGame(String serverAddr, int sPort) {
+    public MyGame(String serverAddr, int sPort) {
         super();
         sm=this.getEngine().getSceneManager();
-        //this.serverAddress = serverAddr;
-        //this.serverPort = sPort;
-        //this.serverProtocol = ProtocolType.UDP;
+        this.serverAddress = serverAddr;
+        this.serverPort = sPort;
+        this.serverProtocol = ProtocolType.UDP;
         
         gameObjectsToRemove = new Vector<UUID>();
-    }*/
-	public MyGame() {
+    }
+	public MyGame()
+	{
 		super();
 	}
 
     public static void main(String[] args) {
-       //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
-    	MyGame game = new MyGame();
+        //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
+    	MyGame game = new MyGame("", 10);
         try {
             game.startup();
             game.run();
@@ -155,10 +156,29 @@ public class MyGame extends VariableFrameRateGame{
         camera.getFrustum().setFarClipDistance(1000f);
     }
     
-	
+	private void setupTerrain()
+	{
+		SceneManager sm = this.getEngine().getSceneManager();
+		Tessellation tessE = sm.createTessellation("tessE", 6);
+		// subdivisions per patch: min=0, try up to 32
+		tessE.setSubdivisions(8f);
+		SceneNode tessN =
+		sm.getRootSceneNode().
+		createChildSceneNode("tessN");
+		tessN.attachObject(tessE);
+		// to move it, note that X and Z must BOTH be positive OR negative
+		// tessN.translate(Vector3f.createFrom(-6.2f, -2.2f, 2.7f));
+		// tessN.yaw(Degreef.createFrom(37.2f));
+		tessN.scale(100, 500, 100);
+		tessN.translate(-40,0,0);
+		tessE.setHeightMap(this.getEngine(), "heightmap.jpg");
+		tessE.setTexture(this.getEngine(), "terrain.jpg");
+		// tessE.setNormalMap(. . .)
+	}
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
-    	//setupNetworking();
+    	setupNetworking();
+    	setupTerrain();
         dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         
     	

@@ -26,6 +26,7 @@ public class OrbitalPlayer extends Player {
 
 	public OrbitalPlayer(SceneManager sm, ProtocolClient pc) {
 		super(sm, pc);
+		sm2 = sm;
 		
 	}
 

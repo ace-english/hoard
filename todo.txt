@@ -23,6 +23,7 @@ PLANNED FEATURES
 
 
 
+
 BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move

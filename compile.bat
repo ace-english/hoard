@@ -1,1 +1,1 @@
-javac .\hoardPVPGame\*.java .\MyGameEngine\*.java
+javac src\hoardPVPGame\*.java src\MyGameEngine\*.java

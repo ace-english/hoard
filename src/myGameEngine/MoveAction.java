@@ -55,7 +55,8 @@ public class MoveAction extends AbstractInputAction {
 				break;
 			}
 			
-			player.updateVerticalPosition();
+			if(player instanceof OrbitalPlayer)
+				player.updateVerticalPosition();
 			pc.sendMoveMessage(player.getID(), avatar.getWorldPosition());
 			
 			

@@ -1,16 +1,13 @@
 CHECKPOINT
 ----------------------------
-[x] knight
-	[x] model
-	[x] texture
-	[x] appears in game
-[ ] terrain
-[ ] at least one other model started
-  -torch? -trap of some kind?
+[ ] animation
+	[ ] flappy idle dragon
+[ ] NPC knight if dragon and single player
+[ ] jump action
 
 PLANNED FEATURES
 ----------------------------
-[ ] rotation on ghost avatars
+[x] rotation on ghost avatars
 [x] lights in each room
 	[ ] dragon can turn off lights in rooms
 [ ] character select
@@ -18,9 +15,13 @@ PLANNED FEATURES
 	[ ] collision detection
 [ ] ability for knight to jump
 [ ] NPC knight AI
-[ ] walking (and idle?) animation for knight
+[ ] animation for knight
+	[ ] idle
+	[ ] walk
+	[ ] death
+[ ] idle animation for dragon
 [ ] 3D sound
-
+[ ] separate knight head so it changes with look
 
 
 
@@ -39,7 +40,7 @@ STRETCH GOALS
 	[ ] rigged 
 	[ ] textured 
 	[ ] idle animation
-[ ] separate knight head so it changes with look
+
 
 
 

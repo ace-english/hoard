@@ -137,6 +137,7 @@ public class OrbitalPlayer extends Player {
 	
 	protected void updateVerticalPosition(){ 
 		SceneNode dolphinN = sm2.getSceneNode("playerNode");
+		try {
 		SceneNode tessN = sm2.getSceneNode("tessN");
 		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 		// Figure out Avatar's position relative to plane
@@ -155,6 +156,10 @@ public class OrbitalPlayer extends Player {
 		);
 		// use avatar Local coordinates to set position, including height
 		dolphinN.setLocalPosition(newAvatarPosition);
+		}
+		catch(Exception E) {
+			//no terrain found
+		}
 	}
 
 }

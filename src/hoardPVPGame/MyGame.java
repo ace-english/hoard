@@ -178,7 +178,7 @@ public class MyGame extends VariableFrameRateGame{
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
     	setupNetworking();
-    	setupTerrain();
+    	//setupTerrain();
         dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         
     	

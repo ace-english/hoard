@@ -363,6 +363,12 @@ public class MyGame extends VariableFrameRateGame{
         
 		gemNode.setLocalPosition(-3f, 1.0f, 0f);
 		
+		RenderSystem rs = sm.getRenderSystem();
+	     ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
+	     zstate.setTestEnabled(true);
+	     gem.setRenderState(zstate);
+	  
+		
 		
 
 

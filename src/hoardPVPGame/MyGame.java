@@ -39,6 +39,11 @@ import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.*;
 import ray.networking.IGameConnection.ProtocolType;
 
+enum GAME_MODE 
+{ 
+    SPLASH, CHAR_SELECT, BUILD, SEIGE; 
+} 
+
 public class MyGame extends VariableFrameRateGame{
 
 	// to minimize variable allocation in update()
@@ -57,6 +62,7 @@ public class MyGame extends VariableFrameRateGame{
 	private boolean isClientConnected;
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
+    private GAME_MODE gameMode=GAME_MODE.SPLASH;
     
     private boolean playerIsDragon=false;
 

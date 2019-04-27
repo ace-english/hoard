@@ -1,6 +1,7 @@
 package hoardPVPGame;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.net.InetAddress;
@@ -42,9 +43,15 @@ import ray.networking.IGameConnection.ProtocolType;
 enum GAME_MODE 
 { 
     SPLASH, CHAR_SELECT, BUILD, SEIGE; 
-} 
+}
+enum PLAYER_TYPE{
+	DRAGON, PLAYER;
+}
+enum ONLINE_TYPE{
+	ONLINE, OFFLINE;
+}
 
-public class MyGame extends VariableFrameRateGame{
+public class MyGame extends VariableFrameRateGame implements MouseListener{
 
 	// to minimize variable allocation in update()
 	GL4RenderSystem rs;
@@ -63,8 +70,7 @@ public class MyGame extends VariableFrameRateGame{
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
     private GAME_MODE gameMode=GAME_MODE.SPLASH;
-    
-    private boolean playerIsDragon=false;
+    private HUD hud;
 
     
     private static final String SKYBOX_NAME = "SkyBox";
@@ -152,6 +158,7 @@ public class MyGame extends VariableFrameRateGame{
 
     @Override
     protected void setupCameras(SceneManager sm, RenderWindow rw) {
+    	System.out.println("Setting up cameras");
         SceneNode rootNode = sm.getRootSceneNode();
         Camera camera = sm.createCamera("MainCamera", Projection.PERSPECTIVE);
         rw.getViewport(0).setCamera(camera);
@@ -184,13 +191,16 @@ public class MyGame extends VariableFrameRateGame{
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
     	setupNetworking();
+    	im=new GenericInputManager();
     	//setupTerrain();
         dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
+        
+        hud=new HUD(sm, eng);
         
     	
     	/*
     	 * player
-    	 */
+    	 
         if(playerIsDragon)
             player = new FreeMovePlayer(sm, protClient, dungeon);
         else
@@ -390,10 +400,10 @@ public class MyGame extends VariableFrameRateGame{
         /*
          * light
          */
-        sm.getAmbientLight().setIntensity(new Color(.3f, .3f, .3f));
+        sm.getAmbientLight().setIntensity(new Color(1f, 1f, 1f));
         
         
-    	setupInputs();
+    	//setupInputs();
 
       
     }
@@ -401,6 +411,7 @@ public class MyGame extends VariableFrameRateGame{
 	@Override
     protected void update(Engine engine) {
 		// build and set HUD
+		/*
 		rs = (GL4RenderSystem) engine.getRenderSystem();
 		
 		elapsTime += engine.getElapsedTimeMillis();
@@ -411,11 +422,12 @@ public class MyGame extends VariableFrameRateGame{
 		dispStr="Time = " + elapsTimeStr + " Score: "+player.getScore();
 		rs.setHUD(dispStr, 15, 15);
 		if(player.isBoostActive()) dispStr+=" Boost Active!";
+		*/
 		im.update(elapsTime);
 		processNetworking(elapsTime);
 		
-		checkForCollisions();
-		player.update(elapsTimeSec);
+		if(player!=null)
+			player.update(elapsTimeSec);
 		
 	}
 
@@ -441,7 +453,6 @@ public class MyGame extends VariableFrameRateGame{
 	 * calls functions in Player to handle action setup
 	 */
 	protected void setupInputs() {
-    	im=new GenericInputManager();
     	ArrayList<Controller> controllers=im.getControllers();
     	
     	for(Controller controller:controllers) {
@@ -450,12 +461,6 @@ public class MyGame extends VariableFrameRateGame{
     			
     	
     }
-
-	
-	private void checkForCollisions() {
-		//TODO stub
-			
-	}
 	
 
 	public void setIsConnected(boolean b) {
@@ -502,6 +507,53 @@ public class MyGame extends VariableFrameRateGame{
 			
 		} 
 	}
+	
+
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int x=e.getX();
+		int y=e.getY();
+		//player=new FreeMovePlayer(this.getEngine().getSceneManager(), protClient, dungeon);
+		//setupInputs();
+		if(gameMode==GAME_MODE.SPLASH) {
+			if(x>269&&x<731) {
+				if(y>382&&y<449) {
+					System.out.println("Clicked sp");
+					setGameMode(GAME_MODE.CHAR_SELECT);
+				}
+				else if(y>517&&y<584) {
+					System.out.println("Clicked online");
+					
+					setGameMode(GAME_MODE.CHAR_SELECT);
+				}
+			}
+		}
+		else if(gameMode==GAME_MODE.BUILD) {
+			
+		}
+		else if(gameMode==GAME_MODE.SEIGE) {
+			
+		}
+	}
+	
+	private void setGameMode(GAME_MODE gm) {
+		switch(gm) {
+		case SPLASH:
+			break;
+		case SEIGE:
+			break;
+		case BUILD:
+	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+			break;
+		case CHAR_SELECT:
+			break;
+		default:
+			break;
+		}
+	}
+	
+	
 	
 	
 }

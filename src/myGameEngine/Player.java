@@ -32,6 +32,8 @@ public abstract class Player{
 		boostActive=false;
 		score=0;
 		this.protClient=pc;
+		if(sm==null)
+			System.out.println("get fucked i guess");
 		this.setCamera(sm.getCamera("MainCamera"));
 		id=pc.getID();
 		try {

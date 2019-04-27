@@ -34,7 +34,7 @@ public class OrbitalPlayer extends Player {
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
-        Entity entity = sm.createEntity("player", "knight.obj");
+        Entity entity = sm.createEntity("player", "sphere.obj");
         entity.setPrimitive(Primitive.TRIANGLES);
         
         TextureManager tm=sm.getTextureManager();

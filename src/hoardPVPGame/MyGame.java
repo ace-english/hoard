@@ -504,9 +504,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		int x=e.getX();
 		int y=e.getY();
-		System.out.println(x+", "+y+" ");
-		//player=new FreeMovePlayer(this.getEngine().getSceneManager(), protClient, dungeon);
-		//setupInputs();
+		//System.out.println(x+", "+y+" ");
 		if(gameMode==GAME_MODE.SPLASH) {
 			if(x>245&&x<738) {
 				if(y>366&&y<431) {
@@ -546,6 +544,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			}
 		}
 		else if(gameMode==GAME_MODE.BUILD) {
+			if(playerType==PLAYER_TYPE.DRAGON) {
+				
+			}
 			
 		}
 		else if(gameMode==GAME_MODE.SEIGE) {
@@ -573,6 +574,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			}
 			break;
 		case BUILD:
+			hud.hide();
 			setupInputs();
 	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
 	        

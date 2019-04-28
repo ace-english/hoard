@@ -34,17 +34,36 @@ public class OrbitalPlayer extends Player {
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
-        Entity entity = sm.createEntity("player", "sphere.obj");
+        Entity entity = sm.createEntity("player", "hero.obj");
         entity.setPrimitive(Primitive.TRIANGLES);
         
         TextureManager tm=sm.getTextureManager();
-        Texture texture=tm.getAssetByPath("knight.png");
+        String skinName;
+        switch(skin) {
+		case KNIGHT:
+			skinName="knight.png";
+			break;
+		case BLACK_KNIGHT:
+			skinName="black_knight.png";
+			break;
+		case GOLD_KNIGHT:
+			skinName="gold_knight.png";
+			break;
+		case WHITE_KNIGHT:
+			skinName="white_knight.png";
+			break;
+		default:
+			skinName="default.png";
+			break;
+        
+        }
+        Texture texture=tm.getAssetByPath(skinName);
     	RenderSystem rs = sm.getRenderSystem();
     	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
     	state.setTexture(texture);
     	entity.setRenderState(state);
 
-        SceneNode node = sm.getRootSceneNode().createChildSceneNode(entity.getName() + "Node");
+        SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode");
         node.attachObject(entity);
         node.scale(.5f, .5f, .5f);
 		setNode(node);

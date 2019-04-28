@@ -9,7 +9,12 @@ import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.rage.asset.texture.Texture;
+import ray.rage.asset.texture.TextureManager;
+import ray.rage.rendersystem.RenderSystem;
 import ray.rage.rendersystem.Renderable.Primitive;
+import ray.rage.rendersystem.states.RenderState;
+import ray.rage.rendersystem.states.TextureState;
 import ray.rage.scene.Camera;
 import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
@@ -34,13 +39,39 @@ public class FreeMovePlayer extends Player {
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
-        Entity entity = sm.createEntity("player", "dolphinHighPoly.obj");
+        Entity entity = sm.createEntity("player", "dragon.obj");
         entity.setPrimitive(Primitive.TRIANGLES);
+        
+        TextureManager tm=sm.getTextureManager();
+        String skinName;
+        switch(skin) {
+		case GREEN_DRAGON:
+			skinName="green_dragon.png";
+			break;
+		case RED_DRAGON:
+			skinName="red_dragon.png";
+			break;
+		case BLACK_DRAGON:
+			skinName="black_dragon.png";
+			break;
+		case PURPLE_DRAGON:
+			skinName="purple_dragon.png";
+			break;
+		default:
+			skinName="default.png";
+			break;
+        
+        }
+        Texture texture=tm.getAssetByPath(skinName);
+    	RenderSystem rs = sm.getRenderSystem();
+    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+    	state.setTexture(texture);
+    	entity.setRenderState(state);
 
-        SceneNode node = sm.getRootSceneNode().createChildSceneNode(entity.getName() + "Node");
-        node.moveForward(2.0f);
-        node.moveUp(1.0f);
+        SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode");
         node.attachObject(entity);
+        //node.moveForward(2.0f);
+        //node.moveUp(1.0f);
         node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
 		setNode(node);
     	

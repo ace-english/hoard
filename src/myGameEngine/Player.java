@@ -41,6 +41,7 @@ public abstract class Player{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.sm=sm;
 		
 	}
 	

@@ -171,11 +171,11 @@ public class Room{
     
     private SceneNode createLightNode(SceneNode rootNode) throws IOException {
 		Light light = createLight(rootNode.getName()+"torch");
-		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "sphere.obj");
+		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "light.obj");
 	    torch.setPrimitive(Primitive.TRIANGLES);
 	       
 	    TextureManager tm=sm.getTextureManager();
-	    Texture texture=tm.getAssetByPath("torch.png");
+	    Texture texture=tm.getAssetByPath("light.png");
 	    RenderSystem rs = sm.getRenderSystem();
 	    TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
 	    state.setTexture(texture);

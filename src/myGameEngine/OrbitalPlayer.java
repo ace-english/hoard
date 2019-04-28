@@ -2,6 +2,7 @@ package myGameEngine;
 
 import java.io.IOException;
 
+import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
@@ -23,14 +24,13 @@ import ray.rml.Vector3f;
 
 public class OrbitalPlayer extends Player {
 	
+	public OrbitalPlayer(SceneManager sm, ProtocolClient pc, SKIN skin) {
+		super(sm, pc, skin);
+	}
+
+
 	private Camera3PController cameraController;
 	SceneNode riderNode, cameraNode;
-
-	public OrbitalPlayer(SceneManager sm, ProtocolClient pc) {
-		super(sm, pc);
-		sm2 = sm;
-		
-	}
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
@@ -136,9 +136,9 @@ public class OrbitalPlayer extends Player {
 
 	
 	protected void updateVerticalPosition(){ 
-		SceneNode dolphinN = sm2.getSceneNode("playerNode");
+		SceneNode dolphinN = sm.getSceneNode("playerNode");
 		try {
-		SceneNode tessN = sm2.getSceneNode("tessN");
+		SceneNode tessN = sm.getSceneNode("tessN");
 		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 		// Figure out Avatar's position relative to plane
 		Vector3 worldAvatarPosition = dolphinN.getWorldPosition();

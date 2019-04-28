@@ -3,8 +3,7 @@ package myGameEngine;
 import java.io.IOException;
 import java.util.UUID;
 
-
-
+import hoardPVPGame.GameUtil;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
@@ -23,19 +22,19 @@ public abstract class Player{
 	private Camera camera;
 	private ProtocolClient protClient;
 	private UUID id;
-	SceneManager sm2;
+	SceneManager sm;
+	GameUtil.SKIN skin;
 
 	int score;
 	
-	public Player(SceneManager sm, ProtocolClient pc) {
+	public Player(SceneManager sm, ProtocolClient pc, GameUtil.SKIN skin) {
 		speed=0.08f;
 		boostActive=false;
 		score=0;
 		this.protClient=pc;
-		if(sm==null)
-			System.out.println("get fucked i guess");
 		this.setCamera(sm.getCamera("MainCamera"));
 		id=pc.getID();
+		this.skin=skin;
 		try {
 			setupNodes(sm);
 		} catch (IOException e) {
@@ -55,8 +54,8 @@ public abstract class Player{
 		return speed;
 	}
 
-	public boolean isBoostActive() {
-		return boostActive;
+	public GameUtil.SKIN getSkin() {
+		return skin;
 	}
 
 	public SceneNode getNode() {

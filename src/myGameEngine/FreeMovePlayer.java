@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import hoardPVPGame.AddRoomAction;
 import hoardPVPGame.Dungeon;
+import hoardPVPGame.GameUtil;
+import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
@@ -20,8 +22,8 @@ public class FreeMovePlayer extends Player {
 	Dungeon dungeon;
 	SceneNode cameraNode;
 
-	public FreeMovePlayer(SceneManager sm, ProtocolClient pc, Dungeon dungeon) {
-		super(sm, pc);
+	public FreeMovePlayer(SceneManager sm, ProtocolClient pc, Dungeon dungeon, GameUtil.SKIN skin) {
+		super(sm, pc, skin);
 		speed=0.12f;
 		cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(getCamera());

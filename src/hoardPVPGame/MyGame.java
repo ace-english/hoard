@@ -45,7 +45,7 @@ enum GAME_MODE
     SPLASH, CHAR_SELECT, BUILD, SEIGE; 
 }
 enum PLAYER_TYPE{
-	DRAGON, PLAYER;
+	DRAGON, KNIGHT;
 }
 enum ONLINE_TYPE{
 	ONLINE, OFFLINE;
@@ -70,6 +70,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
     private GAME_MODE gameMode=GAME_MODE.SPLASH;
+    private PLAYER_TYPE playerType;
+    private ONLINE_TYPE onlineType;
+    
     private HUD hud;
 
     
@@ -89,7 +92,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 
     public MyGame(String serverAddr, int sPort) {
         super();
-        sm=this.getEngine().getSceneManager();
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
@@ -190,6 +192,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
+        this.sm=sm;
     	setupNetworking();
     	im=new GenericInputManager();
     	//setupTerrain();
@@ -212,7 +215,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
          */
         dungeon.addRoom();
         
-        if(!isClientConnected&&!playerIsDragon) {
+        if(onlineType==ONLINE_TYPE.OFFLINE&&playerType==PLAYER_TYPE.KNIGHT) {
         	ScriptEngineManager factory = new ScriptEngineManager();
         	ScriptEngine jsEngine = factory.getEngineByName("js");
         	
@@ -410,19 +413,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     
 	@Override
     protected void update(Engine engine) {
-		// build and set HUD
-		/*
-		rs = (GL4RenderSystem) engine.getRenderSystem();
-		
-		elapsTime += engine.getElapsedTimeMillis();
-		elapsTimeSec = Math.round(elapsTime/1000.0f);
-		elapsTimeStr = Integer.toString(elapsTimeSec);
-		
-
-		dispStr="Time = " + elapsTimeStr + " Score: "+player.getScore();
-		rs.setHUD(dispStr, 15, 15);
-		if(player.isBoostActive()) dispStr+=" Boost Active!";
-		*/
 		im.update(elapsTime);
 		processNetworking(elapsTime);
 		
@@ -514,18 +504,44 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		int x=e.getX();
 		int y=e.getY();
+		System.out.println(x+", "+y+" ");
 		//player=new FreeMovePlayer(this.getEngine().getSceneManager(), protClient, dungeon);
 		//setupInputs();
 		if(gameMode==GAME_MODE.SPLASH) {
-			if(x>269&&x<731) {
-				if(y>382&&y<449) {
+			if(x>245&&x<738) {
+				if(y>366&&y<431) {
 					System.out.println("Clicked sp");
+					onlineType=ONLINE_TYPE.OFFLINE;
 					setGameMode(GAME_MODE.CHAR_SELECT);
 				}
-				else if(y>517&&y<584) {
+				else if(y>513&&y<578) {
 					System.out.println("Clicked online");
-					
+					onlineType=ONLINE_TYPE.ONLINE;
 					setGameMode(GAME_MODE.CHAR_SELECT);
+				}
+			}
+		}
+		else if (gameMode==GAME_MODE.CHAR_SELECT){
+			if(y>515&&y<580) {
+				if(x<106&&x>37) {
+					hud.incrementDragon();
+				}
+				else if(x<344&&x>136) {
+					player=new FreeMovePlayer(getEngine().getSceneManager(), protClient, dungeon, hud.getDragonSkin());
+					setGameMode(GAME_MODE.BUILD);
+				}
+				else if(x>372&&x<439) {
+					hud.decrementDragon();
+				}
+				else if(x<612&&x>541) {
+					hud.incrementKnight();
+				}
+				else if(x>642&&x<847) {
+					player=new OrbitalPlayer(this.getEngine().getSceneManager(), protClient, hud.getKnightSkin());
+					setGameMode(GAME_MODE.BUILD);
+				}
+				else if(x>875&&x<944) {
+					hud.decrementKnight();
 				}
 			}
 		}
@@ -538,15 +554,30 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
 	
 	private void setGameMode(GAME_MODE gm) {
+		this.gameMode=gm;
 		switch(gm) {
 		case SPLASH:
-			break;
-		case SEIGE:
-			break;
-		case BUILD:
-	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+			try {
+				hud.setToSplash();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			break;
 		case CHAR_SELECT:
+			try {
+				hud.setToCharSelect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case BUILD:
+			setupInputs();
+	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+	        
+			break;
+		case SEIGE:
 			break;
 		default:
 			break;

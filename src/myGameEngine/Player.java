@@ -92,5 +92,10 @@ public abstract class Player{
 	public UUID getID() {
 		return id;
 	}
+
+	public void teleport(Vector3 worldPosition) {
+		node.setLocalPosition(worldPosition);
+		
+	}
 	
 }

@@ -70,8 +70,8 @@ public class FreeMovePlayer extends Player {
 
         SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode");
         node.attachObject(entity);
-        //node.moveForward(2.0f);
-        //node.moveUp(1.0f);
+        node.moveForward(2.0f);
+        node.moveUp(20.0f);
         node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
 		setNode(node);
     	

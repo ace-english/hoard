@@ -216,11 +216,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
         dungeon.addRoom();
         
         if(onlineType==ONLINE_TYPE.OFFLINE&&playerType==PLAYER_TYPE.KNIGHT) {
-        	ScriptEngineManager factory = new ScriptEngineManager();
-        	ScriptEngine jsEngine = factory.getEngineByName("js");
-        	
-        	jsEngine.put("dungeon", dungeon);
-        	this.executeScript(jsEngine, "src/randomDungeon.js");
         	
         }
 		
@@ -577,9 +572,26 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			hud.hide();
 			setupInputs();
 	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+	        if(playerType==PLAYER_TYPE.KNIGHT) {
+	        	if(onlineType==ONLINE_TYPE.ONLINE) {
+	        		setupTerrain();
+	        	}
+	        	else {
+	            	ScriptEngineManager factory = new ScriptEngineManager();
+	            	ScriptEngine jsEngine = factory.getEngineByName("js");
+	            	
+	            	jsEngine.put("dungeon", dungeon);
+	            	this.executeScript(jsEngine, "src/randomDungeon.js");
+	        		setGameMode(GAME_MODE.SEIGE);
+	        	}
+	        }
 	        
 			break;
 		case SEIGE:
+			//teleport knight to dungeon
+			if(playerType==PLAYER_TYPE.KNIGHT) {
+				player.teleport(dungeon.getLastRoom().getWorldPosition());
+			}
 			break;
 		default:
 			break;

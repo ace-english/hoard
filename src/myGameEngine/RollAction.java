@@ -8,12 +8,10 @@ import ray.rml.*;
 public class RollAction extends AbstractInputAction {
 
 	private Player player;
-	private ProtocolClient pc;
 
 	public RollAction(FreeMovePlayer freeMovePlayer) {
 		super();
 		player=freeMovePlayer;
-		this.pc=player.getProtocolClient();
 	}
 
 	@Override
@@ -38,9 +36,7 @@ public class RollAction extends AbstractInputAction {
 			else 
 				angle=Degreef.createFrom(1f*value);
 			avatar.roll(angle);
-			
-			if(pc!=null)
-				pc.sendRotateMessage(player.getID(), 'z', angle);
+		
 	}
 
 }

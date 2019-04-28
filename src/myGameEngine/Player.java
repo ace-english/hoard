@@ -46,6 +46,7 @@ public abstract class Player{
 		
 	}
 	
+	
 	protected abstract void setupNodes(SceneManager sm) throws IOException;
 	
 	public void update(float elapsTime) {

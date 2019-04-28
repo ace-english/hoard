@@ -444,19 +444,39 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		return player.getNode().getWorldPosition();
 	}
 	
+
+	
+	public Matrix3 getRotation()
+	{
+		return player.getNode().getLocalRotation();
+	}
+	
 	public void addGhostAvatarToGameWorld(GhostAvatar avatar) throws Exception{
 		if(avatar!=null) {
 			try {
 				System.out.println("Drawing ghost");
 				if(sm==null)
 					sm=this.getEngine().getSceneManager();
-				Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dolphinHighPoly.obj");
+				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dolphinHighPoly.obj");
+				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dragon1.obj");
+				Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "boxMan9.obj");
 				ghostE.setPrimitive(Primitive.TRIANGLES);
+				
+				TextureManager tm=sm.getTextureManager();
+		        //Texture texture=tm.getAssetByPath("dragon1.png");
+		        Texture texture=tm.getAssetByPath("boxMan4.png");
+		    	RenderSystem rs = sm.getRenderSystem();
+		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+		    	state.setTexture(texture);
+		    	ghostE.setRenderState(state);
+				
 				SceneNode ghostN = sm.getRootSceneNode().createChildSceneNode("playerNode"+avatar.getID());
 				ghostN.attachObject(ghostE);
 				avatar.setNode(ghostN);
 				avatar.setEntity(ghostE);
+				avatar.setPos(avatar.getPos().add(0,1,0));
 				ghostN.setLocalPosition(avatar.getPos());
+				ghostN.setLocalRotation(avatar.getRot());
 				
 			}
 			catch(Exception e) {

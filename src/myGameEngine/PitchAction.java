@@ -8,12 +8,10 @@ import ray.rml.*;
 public class PitchAction extends AbstractInputAction {
 
 	private Player player;
-	private ProtocolClient pc;
 
 	public PitchAction(FreeMovePlayer freeMovePlayer) {
 		super();
 		player=freeMovePlayer;
-		this.pc=player.getProtocolClient();
 	}
 
 	@Override
@@ -39,7 +37,6 @@ public class PitchAction extends AbstractInputAction {
 				angle=Degreef.createFrom(1f*value);
 			avatar.pitch(angle);
 			
-		pc.sendRotateMessage(player.getID(), 'x', angle);
 	}
 
 }

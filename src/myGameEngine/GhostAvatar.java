@@ -5,6 +5,7 @@ import java.util.UUID;
 import ray.rage.scene.*;
 import ray.rml.Angle;
 import ray.rml.Matrix3;
+import ray.rml.Matrix3f;
 import ray.rml.Vector3;
 
 public class GhostAvatar{ 
@@ -12,14 +13,24 @@ public class GhostAvatar{
 	private SceneNode node;
 	private Entity entity;
 	private Vector3 pos;
+	private Matrix3f rot;
 	
-	public GhostAvatar(UUID id, Vector3 position){ 
+	public GhostAvatar(UUID id, Vector3 position, Matrix3f rotMat){ 
 		System.out.println("avatar created");
 		this.id = id;
 		this.pos=position;
+		this.rot = rotMat;
 		
 	}
 	
+	public Matrix3f getRot() {
+		return rot;
+	}
+
+	public void setRot(Matrix3f rot) {
+		this.rot = rot;
+	}
+
 	public Vector3 getPos() {
 		return pos;
 	}

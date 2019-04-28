@@ -6,6 +6,8 @@ import java.util.Vector;
 
 import ray.rml.Angle;
 import ray.rml.Degreef;
+import ray.rml.Matrix3;
+import ray.rml.Matrix3f;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
@@ -18,6 +20,7 @@ public class ProtocolClient extends GameConnectionClient {
 	private MyGame game;
 	private UUID id;
 	private Vector<GhostAvatar> ghostAvatars;
+	private boolean connectedToServerButWaitingForPlayer = true;
 	
 	public ProtocolClient(InetAddress remAddr, int remPort,
 			ProtocolType pType, MyGame game) throws IOException{
@@ -39,7 +42,7 @@ public class ProtocolClient extends GameConnectionClient {
 			// format: join, success or join, failure
 				if(msgTokens[1].compareTo("success") == 0)	{ 
 					game.setIsConnected(true);
-					sendCreateMessage(game.getPlayerPosition());
+					sendCreateMessage(game.getPlayerPosition(), game.getRotation());
 					sendWantsMessage();
 				}
 				if(msgTokens[1].compareTo("failure") == 0) { 
@@ -65,7 +68,15 @@ public class ProtocolClient extends GameConnectionClient {
 				}
 				else {
 					try {
-						createGhostAvatar(ghostID, ghostPosition);
+						float v1 = Float.parseFloat(msgTokens[5]);
+						float v2 = Float.parseFloat(msgTokens[6]);
+						float v3 = Float.parseFloat(msgTokens[7]);
+						float v4 = Float.parseFloat(msgTokens[8]);
+						
+						float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
+						Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
+						createGhostAvatar(ghostID, ghostPosition,mtx);
+					
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -77,8 +88,18 @@ public class ProtocolClient extends GameConnectionClient {
 						Float.parseFloat(msgTokens[2]),
 						Float.parseFloat(msgTokens[3]),
 						Float.parseFloat(msgTokens[4]));
+				
+						float v1 = Float.parseFloat(msgTokens[5]);
+						float v2 = Float.parseFloat(msgTokens[6]);
+						float v3 = Float.parseFloat(msgTokens[7]);
+						float v4 = Float.parseFloat(msgTokens[8]);
+						
+						float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
+						Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
+						System.out.println("Reconstructed matrix: " + mtx);
+
 				try	{ 
-					createGhostAvatar(ghostID, ghostPosition);
+					createGhostAvatar(ghostID, ghostPosition, mtx);
 				} catch (IOException e){ 
 					System.out.println("error creating ghost avatar");
 				} 
@@ -102,12 +123,29 @@ public class ProtocolClient extends GameConnectionClient {
 				
 			} 
 			if(msgTokens[0].compareTo("rotate") == 0){ // format: rotate,ghostID,axis,angle
+				System.out.println("recieving a rotate message");
+				System.out.println("here is the message: ");
+				System.out.println(strMessage);
 				UUID ghostID=UUID.fromString(msgTokens[1]);
-				Angle angle = Degreef.createFrom(Float.parseFloat(msgTokens[3]));
+				
+				float v1 = Float.parseFloat(msgTokens[3]);
+				float v2 = Float.parseFloat(msgTokens[4]);
+				float v3 = Float.parseFloat(msgTokens[5]);
+				float v4 = Float.parseFloat(msgTokens[6]);
+				
+				float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
+				Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
+				//UUID, char,1,2,3,4//0,1,2,3,4,5
+				//Angle angle = Degreef.createFrom(Float.parseFloat(msgTokens[3]));
+				//Matrix3 = (Matrix3)msgTokens[3]); Matrix3f.
+				Angle angle = Degreef.createFrom(1);
+				System.out.println("Reconstructed matrix2: " + mtx);
+				//Angle angle = (Angle) msgTokens[2]);
 				for(GhostAvatar ga :ghostAvatars) {
 					if(ga.getID().equals(ghostID)){
 						System.out.println("Rotating "+ghostID);
-						ga.rotate(msgTokens[2].charAt(0), angle);
+						//ga.rotate(msgTokens[2].charAt(0), angle);
+						ga.getNode().setLocalRotation(mtx);
 					}
 				}
 				
@@ -115,12 +153,21 @@ public class ProtocolClient extends GameConnectionClient {
 		}
 	}
 	
-	private void createGhostAvatar(UUID ghostID, Vector3 pos) throws IOException {// format: create, ghostID, x,y,z
+	private void createGhostAvatar(UUID ghostID, Vector3 pos, Matrix3f rotMat) throws IOException {// format: create, ghostID, x,y,z
 		try	{ 
-			GhostAvatar ga=new GhostAvatar(ghostID, pos);
+			System.out.println("from inside create ghost avatar" + rotMat);
+			GhostAvatar ga=new GhostAvatar(ghostID, pos, rotMat);
+			//ga.getNode().setLocalRotation(rotMat);
+			//ga.getNode().
 			if(!containsGhostAvatar(ghostID)) {
 				game.addGhostAvatarToGameWorld(ga);
 				ghostAvatars.add(ga);
+			}
+			if(connectedToServerButWaitingForPlayer)
+			{
+				
+				sendCreateMessage(game.getPlayerPosition(), game.getRotation());
+				connectedToServerButWaitingForPlayer = false;
 			}
 		}
 		catch (Exception e) { 
@@ -168,10 +215,20 @@ public class ProtocolClient extends GameConnectionClient {
 		}
 	}
 	
-	public void sendCreateMessage(Vector3 pos){ // format: (create, localId, x,y,z)
+	public void sendCreateMessage(Vector3 pos, Matrix3 matRot){ // format: (create, localId, x,y,z)
+		float ft = 2;
+		float flo[] = {0,1,ft,3,4,5,6,7,8};
+		Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
+		//mtx.
+		Matrix3f.createFrom(flo);
+		//create matrix string
+		String matStr = Float.toString(game.getRotation().row(0).x()) + "," +
+				Float.toString(game.getRotation().row(2).x()) + "," +
+				Float.toString(game.getRotation().row(0).z()) + "," +
+				Float.toString(game.getRotation().row(2).z());
 		try	{ 
 			String message = new String("create," + id.toString());
-			message += "," + pos.x()+"," + pos.y() + "," + pos.z();
+			message += "," + pos.x()+"," + pos.y() + "," + pos.z() +  "," + matStr;
 			sendPacket(message);
 		}
 		catch (IOException e) { 
@@ -219,10 +276,14 @@ public class ProtocolClient extends GameConnectionClient {
 		
 	}
 
-	public void sendRotateMessage(UUID id2, char axis, Angle angle) {
-		try	{ 
-			String message = new String("rotate,"+id);
-			message += "," + axis+"," + angle;
+	public void sendRotateMessage(UUID id2, char axis, String matStr) {//UUID, char,1,2,3,4//0,1,2,3,4,5,
+		try	{ System.out.println("Sending a rotate message");
+			//String message = new String("rotate,"+id);
+			String message = new String("rotate,"+ id2.toString());
+			message += "," + axis+"," + matStr;
+			System.out.println("Sending a rotate message");
+			System.out.println("Here is the message");
+			System.out.println(message);//0,1,2,3,4,5,6
 			sendPacket(message);
 		}
 		catch (IOException e) { 

@@ -33,7 +33,8 @@ public abstract class Player{
 		score=0;
 		this.protClient=pc;
 		this.setCamera(sm.getCamera("MainCamera"));
-		id=pc.getID();
+		if(pc!=null)
+			id=pc.getID();
 		this.skin=skin;
 		try {
 			setupNodes(sm);

@@ -193,31 +193,18 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
         this.sm=sm;
-    	setupNetworking();
+    	//setupNetworking();
     	im=new GenericInputManager();
     	//setupTerrain();
-        dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         
         hud=new HUD(sm, eng);
-        
-    	
-    	/*
-    	 * player
-    	 
-        if(playerIsDragon)
-            player = new FreeMovePlayer(sm, protClient, dungeon);
-        else
-        	player = new OrbitalPlayer(sm, protClient);
         
         
         /*
          * dungeon
          */
+        dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         dungeon.addRoom();
-        
-        if(onlineType==ONLINE_TYPE.OFFLINE&&playerType==PLAYER_TYPE.KNIGHT) {
-        	
-        }
 		
         /*
          * skybox
@@ -510,6 +497,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				else if(y>513&&y<578) {
 					System.out.println("Clicked online");
 					onlineType=ONLINE_TYPE.ONLINE;
+					setupNetworking();
 					setGameMode(GAME_MODE.CHAR_SELECT);
 				}
 			}

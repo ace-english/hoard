@@ -40,7 +40,8 @@ public class YawAction extends AbstractInputAction {
 			if(player instanceof OrbitalPlayer)
 				((OrbitalPlayer) player).getCameraController().rotate(value);
 			
-		pc.sendRotateMessage(player.getID(), 'y', angle);
+		if(pc!=null)
+			pc.sendRotateMessage(player.getID(), 'y', angle);
 	}
 
 }

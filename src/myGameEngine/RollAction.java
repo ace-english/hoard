@@ -39,7 +39,8 @@ public class RollAction extends AbstractInputAction {
 				angle=Degreef.createFrom(1f*value);
 			avatar.roll(angle);
 			
-		pc.sendRotateMessage(player.getID(), 'z', angle);
+			if(pc!=null)
+				pc.sendRotateMessage(player.getID(), 'z', angle);
 	}
 
 }

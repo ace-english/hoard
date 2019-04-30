@@ -13,6 +13,7 @@ import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 import ray.rage.scene.SkeletalEntity;
 import ray.rage.scene.Tessellation;
+import ray.rage.scene.SkeletalEntity.EndType;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
 

@@ -3,6 +3,7 @@ package myGameEngine;
 import net.java.games.input.Event;
 import ray.input.action.AbstractInputAction;
 import ray.rage.scene.SceneNode;
+import ray.rage.scene.SkeletalEntity.EndType;
 
 public class MoveAction extends AbstractInputAction {
 
@@ -55,8 +56,11 @@ public class MoveAction extends AbstractInputAction {
 				break;
 			}
 			
-			if(player instanceof OrbitalPlayer)
+			if(player instanceof OrbitalPlayer) {
 				((OrbitalPlayer) player).updateVerticalPosition();
+				((OrbitalPlayer) player).playWalkAnimation();
+				
+			}
 			
 			if(pc!=null)
 				pc.sendMoveMessage(player.getID(), avatar.getWorldPosition());

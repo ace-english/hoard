@@ -598,7 +598,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		case SEIGE:
 			//teleport knight to dungeon
 			if(playerType==PLAYER_TYPE.KNIGHT) {
-				player.teleport(dungeon.getLastRoom().getWorldPosition());
+				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 			}
 			break;
 		default:

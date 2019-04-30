@@ -18,6 +18,7 @@ import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 import ray.rage.scene.Tessellation;
+import ray.rage.scene.SkeletalEntity.EndType;
 import ray.rml.Degreef;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
@@ -34,8 +35,6 @@ public class OrbitalPlayer extends Player {
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
-        Entity entity = sm.createEntity("player", "hero.obj");
-        entity.setPrimitive(Primitive.TRIANGLES);
         
         TextureManager tm=sm.getTextureManager();
         String skinName;
@@ -57,20 +56,23 @@ public class OrbitalPlayer extends Player {
 			break;
         
         }
+        skeleton = sm.createSkeletalEntity("knightSkeleton", "knight.rkm", "knight.rks");
+        
         Texture texture=tm.getAssetByPath(skinName);
     	RenderSystem rs = sm.getRenderSystem();
     	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
     	state.setTexture(texture);
-    	entity.setRenderState(state);
+    	skeleton.setRenderState(state);
 
         SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode");
-        node.attachObject(entity);
+        node.attachObject(skeleton);
         node.scale(.5f, .5f, .5f);
 		setNode(node);
     	
         riderNode = node.createChildSceneNode("RiderNode");
         riderNode.moveUp(6f);
-        
+
+		skeleton.loadAnimation("walkAnimation", "knight_walk.rka");
         
         
         cameraNode = sm.getSceneNode("MainCameraNode");
@@ -151,6 +153,13 @@ public class OrbitalPlayer extends Player {
     			yawAction,
 	    		InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
     	}
+	}
+
+
+	public void playWalkAnimation() {
+		skeleton.stopAnimation();	
+		skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+		
 	}
 
 	

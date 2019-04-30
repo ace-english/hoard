@@ -246,6 +246,12 @@ public class Room{
     		
     	
     }
+    
+    public void close() throws IOException {
+    	SceneNode back=returnWall();
+    	back.translate(Vector3f.createFrom(0f, GameUtil.getRoomSize(), GameUtil.getRoomSize()));
+    	back.rotate(Degreef.createFrom(90f), Vector3f.createFrom(-1f, 0f, 0f));
+    }
 
 	public SceneNode getRoomNode() {
 		return roomNode;

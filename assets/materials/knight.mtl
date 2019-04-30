@@ -4,10 +4,10 @@
 newmtl Armor
 Ns 98.039216
 Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
+Kd 0.685198 0.685198 0.685198
 Ks 1.000000 1.000000 1.000000
-Ke 0.352000 0.352000 0.352000
+Ke 0.288000 0.288000 0.288000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\knight.png
+map_Kd textures\\knight.png

@@ -7,9 +7,11 @@ import hoardPVPGame.GameUtil;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.rage.Engine;
 import ray.rage.scene.Camera;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rage.scene.SkeletalEntity;
 import ray.rage.scene.Tessellation;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
@@ -19,6 +21,7 @@ public abstract class Player{
 	float speed;
 	boolean boostActive;
 	private SceneNode node;
+	protected SkeletalEntity skeleton;
 	private Camera camera;
 	private ProtocolClient protClient;
 	private UUID id;
@@ -50,7 +53,7 @@ public abstract class Player{
 	protected abstract void setupNodes(SceneManager sm) throws IOException;
 	
 	public void update(float elapsTime) {
-		//TODO: stub
+		skeleton.update();
 	}
 
 	public float getSpeed() {

@@ -399,7 +399,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		processNetworking(elapsTime);
 		
 		if(player!=null)
-			player.update(elapsTimeSec);
+			player.update(elapsTime);
 		
 	}
 

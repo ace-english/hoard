@@ -9,6 +9,7 @@ import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.rage.Engine;
 import ray.rage.asset.texture.Texture;
 import ray.rage.asset.texture.TextureManager;
 import ray.rage.rendersystem.RenderSystem;
@@ -19,7 +20,10 @@ import ray.rage.scene.Camera;
 import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rage.scene.SkeletalEntity;
+import ray.rage.scene.SkeletalEntity.EndType;
 import ray.rml.Degreef;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class FreeMovePlayer extends Player {
@@ -33,15 +37,16 @@ public class FreeMovePlayer extends Player {
 		speed=0.12f;
 		cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(getCamera());
-        cameraNode.moveUp(0.5f);
+        //cameraNode.moveUp(2f);
+        cameraNode.translate(7f, 10f, -20f);
 		getCamera().setMode('n');
 		this.dungeon=dungeon;
 	}
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
-        Entity entity = sm.createEntity("player", "dragon.obj");
-        entity.setPrimitive(Primitive.TRIANGLES);
+        //Entity entity = sm.createEntity("player", "dragon.obj");
+        //entity.setPrimitive(Primitive.TRIANGLES);
         
         TextureManager tm=sm.getTextureManager();
         String skinName;
@@ -63,18 +68,27 @@ public class FreeMovePlayer extends Player {
 			break;
         
         }
+        skeleton = sm.createSkeletalEntity("dragonSkeleton", "dragon.rkm", "dragon.rks");
+        
         Texture texture=tm.getAssetByPath(skinName);
     	RenderSystem rs = sm.getRenderSystem();
     	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
     	state.setTexture(texture);
-    	entity.setRenderState(state);
+    	skeleton.setRenderState(state);
 
         SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode");
-        node.attachObject(entity);
+        node.attachObject(skeleton);
+        
+        
+        //node.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
+		//node.rotate(Degreef.createFrom(90f), (0f, 1f, 0f));
         //node.moveForward(2.0f);
         node.moveUp(20.0f);
         node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
 		setNode(node);
+		
+		skeleton.loadAnimation("idleAnimation", "dragon_idle.rka");
+		skeleton.playAnimation("idleAnimation", 0.0f, EndType.LOOP, 0);
         
         cameraNode = sm.getSceneNode("MainCameraNode");
         cameraNode.moveUp(30f);

@@ -272,6 +272,23 @@ public class Room{
 	public boolean HasTrap() {
 		return hasTrap;
 	}
+
+	public void toggleLights() {
+		if(leftWall.getChildCount()>0) {
+			
+		}
+		else if(rightWall.getChildCount()>0) {
+			
+		}
+		else
+			System.out.println("no lights here");
+	}
+
+	public void clear() {
+		//delete trap
+		hasTrap=false;
+		
+	}
 	
 	
 	

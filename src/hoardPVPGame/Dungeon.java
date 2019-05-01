@@ -7,6 +7,7 @@ import ray.rage.Engine;
 import ray.rage.scene.Node;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rml.Vector3;
 
 public class Dungeon {
 	
@@ -52,6 +53,16 @@ public class Dungeon {
 	
 	public void finish() throws IOException {
 		getLastRoom().close();
+	}
+
+	public static int getCurrentRoom(Vector3 localPosition) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void removeLastRoom() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

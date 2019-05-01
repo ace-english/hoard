@@ -548,13 +548,51 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		}
 		else if(gameMode==GAME_MODE.BUILD) {
 			if(playerType==PLAYER_TYPE.DRAGON) {
-				
+				if(x>0&&x<200) {
+					y=y/80;
+					switch(y) {
+					case 0:
+						dungeon.addRoom();
+						break;
+					case 1: 
+						dungeon.getRoom(getCurrentRoom()).setTrap(new SwingingTrap());
+						break;
+					case 2:
+						dungeon.getRoom(getCurrentRoom()).setTrap(new SpikeTrap());
+						break;
+					case 3:
+						dungeon.getRoom(getCurrentRoom()).setTrap(new PitTrap());
+						break;
+					case 4:
+						dungeon.getRoom(getCurrentRoom()).toggleLights();
+						break;
+					case 5:
+						dungeon.getRoom(getCurrentRoom()).clear();
+						break;
+					case 6:
+						dungeon.removeLastRoom();
+						break;
+					case 7:
+						try {
+							dungeon.finish();
+							this.setGameMode(GAME_MODE.SEIGE);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						break;
+					}
+				}
 			}
 			
 		}
 		else if(gameMode==GAME_MODE.SEIGE) {
 			
 		}
+	}
+	
+	private int getCurrentRoom() {
+		return Dungeon.getCurrentRoom(player.getNode().getLocalPosition());
 	}
 	
 	private void setGameMode(GAME_MODE gm) {

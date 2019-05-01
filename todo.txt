@@ -1,7 +1,7 @@
 CHECKPOINT
 ----------------------------
-[ ] animation
-	[ ] flappy idle dragon
+[x] animation
+	[x] flappy idle dragon
 [ ] NPC knight if dragon and single player
 [ ] jump action
 
@@ -10,36 +10,35 @@ PLANNED FEATURES
 [x] rotation on ghost avatars
 [x] lights in each room
 	[ ] dragon can turn off lights in rooms
-[ ] character select
+[x] character select
 [ ] TRAPS
 	[ ] collision detection
 [ ] ability for knight to jump
 [ ] NPC knight AI
 [ ] animation for knight
 	[ ] idle
-	[ ] walk
+	[x] walk
 	[ ] death
-[ ] idle animation for dragon
+[x] idle animation for dragon
 [ ] 3D sound
-[ ] separate knight head so it changes with look
+[ ] score based on budget
 
 
 
 BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move
-[ ] gem disappears at some dungeon lengths
 [ ] make ghost avatar use same model
 
 
 STRETCH GOALS
 ----------------------------
-[ ] splash screen
-[ ] dragon 
+[x] splash screen
+[x] dragon 
 	[x] model - .obj imported from Thingiverse under creative commons
-	[ ] rigged 
-	[ ] textured 
-	[ ] idle animation
+	[x] rigged 
+	[x] textured 
+	[x] idle animation
 
 
 

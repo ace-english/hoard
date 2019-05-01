@@ -20,7 +20,6 @@ public class ProtocolClient extends GameConnectionClient {
 	private MyGame game;
 	private UUID id;
 	private Vector<GhostAvatar> ghostAvatars;
-	private Vector<GhostNPC> ghostNPCs;
 	private boolean connectedToServerButWaitingForPlayer = true;
 	
 	public ProtocolClient(InetAddress remAddr, int remPort,

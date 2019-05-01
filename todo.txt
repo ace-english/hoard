@@ -8,6 +8,7 @@ CHECKPOINT
 PLANNED FEATURES
 ----------------------------
 [x] rotation on ghost avatars
+[ ] transfer dungeon in multiplayer
 [x] lights in each room
 	[ ] dragon can turn off lights in rooms
 [x] character select

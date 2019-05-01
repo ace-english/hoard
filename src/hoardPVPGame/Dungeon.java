@@ -8,6 +8,7 @@ import ray.rage.scene.Node;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 import ray.rml.Vector3;
+import ray.rml.Vector3f;
 
 public class Dungeon {
 	
@@ -80,6 +81,26 @@ public class Dungeon {
 		lastRoom.delete();
 		rooms.remove(rooms.size()-1);
 		
+	}
+	/*
+	public Vector3f getBounds() {
+		float x, y, z;
+		z=GameUtil.getRoomSize();
+		y=GameUtil.getRoomSize()*2;
+		x=GameUtil.getRoomSize()*2*getRoomCount();
+		
+		
+		return (Vector3f) Vector3f.createFrom(x,y,z);
+	}
+	*/
+	
+	public boolean isInBounds(Vector3f pos) {
+		if(pos.x()>GameUtil.getRoomSize()*2*getRoomCount())
+			return false;
+		if(pos.x()<GameUtil.getRoomSize()*getRoomCount()*-1)
+			return false;
+		
+		return true;
 	}
 	
 	

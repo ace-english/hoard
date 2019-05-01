@@ -398,6 +398,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		if(player!=null)
 			player.update(elapsTime);
 		
+		if(npcController!=null)
+			npcController.update();
 	}
 
 	private void processNetworking(float elapsTime) {
@@ -519,6 +521,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				ghostN.attachObject(skeleton);
 				npc.setPos(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 				ghostN.setLocalPosition(npc.getPos());
+		        ghostN.scale(.5f, .5f, .5f);
 				
 				
 			}

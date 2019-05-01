@@ -12,7 +12,8 @@ PLANNED FEATURES
 	[ ] dragon can turn off lights in rooms
 [x] character select
 [ ] TRAPS
-	[ ] collision detection
+	[ ] physics
+	[ ] models
 [ ] ability for knight to jump
 [ ] NPC knight AI
 [ ] animation for knight
@@ -21,7 +22,6 @@ PLANNED FEATURES
 	[ ] death
 [x] idle animation for dragon
 [ ] 3D sound
-[ ] score based on budget
 
 
 
@@ -29,18 +29,29 @@ BUGS
 ----------------------------
 [ ] issue with other player not appearing until they move
 [ ] make ghost avatar use same model
+[ ] hud not sticking
+	[ ] hud too dark
 
 
 STRETCH GOALS
 ----------------------------
+[ ] budget mechanic
 [x] splash screen
 [x] dragon 
-	[x] model - .obj imported from Thingiverse under creative commons
+	[x] model
 	[x] rigged 
 	[x] textured 
 	[x] idle animation
-
-
+	
+	
+QUESTIONS
+----------------------------
+broken exports
+skeletons crash when closing the game
+skeletal movement perpendicular to mesh
+	rotating does not seem to help
+attaching menu to screen does not work
+reasonable walk cycle
 
 
 

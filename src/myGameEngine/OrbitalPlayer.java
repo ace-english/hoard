@@ -1,6 +1,7 @@
 package myGameEngine;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
 import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
@@ -24,14 +25,16 @@ import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class OrbitalPlayer extends Player {
-	
-	public OrbitalPlayer(SceneManager sm, ProtocolClient pc, SKIN skin) {
-		super(sm, pc, skin);
-	}
-
 
 	private Camera3PController cameraController;
 	SceneNode riderNode, cameraNode;
+	private Semaphore walkingMutex;
+	
+	public OrbitalPlayer(SceneManager sm, ProtocolClient pc, SKIN skin) {
+		super(sm, pc, skin);
+		walkingMutex=new Semaphore(1);
+	}
+
 
 	@Override
 	protected void setupNodes(SceneManager sm) throws IOException {
@@ -157,8 +160,14 @@ public class OrbitalPlayer extends Player {
 
 
 	public void playWalkAnimation() {
-		skeleton.stopAnimation();	
-		skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+		try {
+			walkingMutex.acquire();
+			skeleton.playAnimation("walkAnimation", 0.5f, EndType.STOP, 0);
+			walkingMutex.release();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

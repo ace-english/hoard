@@ -45,7 +45,6 @@ public class Room{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Room.roomNum++;
 	}
 	
 	public static int getRoomCount() {
@@ -54,7 +53,6 @@ public class Room{
 	
 	private SceneNode returnPlane() throws IOException {
     	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
-    	planeNum++;
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -112,7 +110,6 @@ public class Room{
     
     private SceneNode returnWall() throws IOException {
     	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
-    	planeNum++;
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -171,7 +168,8 @@ public class Room{
     
     private SceneNode createLightNode(SceneNode rootNode) throws IOException {
 		Light light = createLight(rootNode.getName()+"torch");
-		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "light.obj");
+		
+		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "sphere.obj");
 	    torch.setPrimitive(Primitive.TRIANGLES);
 	       
 	    TextureManager tm=sm.getTextureManager();
@@ -180,11 +178,11 @@ public class Room{
 	    TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
 	    state.setTexture(texture);
 	    torch.setRenderState(state);
+	        
 	    	
 		SceneNode lightNode = rootNode.createChildSceneNode(light.getName()+"Node");
 	    lightNode.attachObject(light);
 	    lightNode.attachObject(torch);
-	        
 	    lightNode.moveUp(.17f);
 	    lightNode.moveForward(0.75f);
 	    lightNode.scale(0.1f,0.1f, 0.1f);
@@ -232,6 +230,7 @@ public class Room{
         else if((roomNum%4)==0) {
         	createLightNode(leftWall);
         }
+        
        
     	
     	//if first room, give back wall for hoard
@@ -249,7 +248,7 @@ public class Room{
     
     public void close() throws IOException {
     	SceneNode back=returnWall();
-    	back.translate(Vector3f.createFrom(0f, GameUtil.getRoomSize(), GameUtil.getRoomSize()));
+    	back.translate(Vector3f.createFrom(0f, 0, GameUtil.getRoomSize()));
     	back.rotate(Degreef.createFrom(90f), Vector3f.createFrom(-1f, 0f, 0f));
     }
 
@@ -287,6 +286,12 @@ public class Room{
 	public void clear() {
 		//delete trap
 		hasTrap=false;
+		
+	}
+
+	public void delete() {
+		roomNum--;
+		sm.destroySceneNode(getRoomNode());
 		
 	}
 	

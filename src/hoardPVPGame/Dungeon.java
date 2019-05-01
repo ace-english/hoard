@@ -11,8 +11,8 @@ import ray.rml.Vector3;
 
 public class Dungeon {
 	
-	SceneNode roomGroup;
-	ArrayList<Room> rooms;
+	private SceneNode roomGroup;
+	private ArrayList<Room> rooms;
 	private SceneManager sm;
 	private Engine eng;
 	
@@ -48,6 +48,7 @@ public class Dungeon {
 	}
 	
 	public Room getLastRoom() {
+		System.out.println(getRoomCount());
 		return rooms.get(getRoomCount()-1);
 	}
 	
@@ -55,13 +56,29 @@ public class Dungeon {
 		getLastRoom().close();
 	}
 
-	public static int getCurrentRoom(Vector3 localPosition) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getCurrentRoom(Vector3 localPosition){
+		float x = localPosition.x();
+		float center=roomGroup.getWorldPosition().x();
+		if(x<center)
+			return 0;
+		int i=0;
+		for(i=0; i<rooms.size(); i++) {
+			center=rooms.get(i).getRoomNode().getWorldPosition().x();
+			
+			if (x<(center-(GameUtil.getRoomSize()/2))&&
+					x>(center+(GameUtil.getRoomSize()/2))) {
+				return i;
+				
+			}
+		}
+		return i;
 	}
 
 	public void removeLastRoom() {
-		// TODO Auto-generated method stub
+		Room lastRoom=getLastRoom();
+		roomGroup.detachChild(lastRoom.getRoomNode());
+		lastRoom.delete();
+		rooms.remove(rooms.size()-1);
 		
 	}
 	

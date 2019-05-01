@@ -38,7 +38,7 @@ public class FreeMovePlayer extends Player {
 		cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(getCamera());
         //cameraNode.moveUp(2f);
-        cameraNode.translate(7f, 10f, -30f);
+        //cameraNode.translate(7f, 10f, -30f);
 		getCamera().setMode('n');
 		this.dungeon=dungeon;
 	}
@@ -83,8 +83,9 @@ public class FreeMovePlayer extends Player {
         //node.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
 		//node.rotate(Degreef.createFrom(90f), (0f, 1f, 0f));
         //node.moveForward(2.0f);
-        node.moveUp(20.0f);
-        node.rotate(Degreef.createFrom(180), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
+        node.rotate(Degreef.createFrom(90), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
+        //node.moveUp(10.0f);
+        //node.moveBackward(20f);
 		setNode(node);
 		
 		skeleton.loadAnimation("idleAnimation", "dragon_idle.rka");

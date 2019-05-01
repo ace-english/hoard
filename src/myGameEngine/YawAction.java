@@ -46,6 +46,7 @@ public class YawAction extends AbstractInputAction {
 		Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
 		//mtx.
 		Matrix3f.createFrom(flo);
+		/*
 		//create matrix string
 		String matStr = Float.toString(player.getNode().getLocalRotation().row(0).x()) + "," +
 				Float.toString(player.getNode().getLocalRotation().row(2).x()) + "," +
@@ -55,6 +56,7 @@ public class YawAction extends AbstractInputAction {
 		System.out.println(player.getNode().getLocalRotation());
 		System.out.println("My matrix: " + mtx);
 		System.out.println("Here is the angle: " + angle);	
+		*/
 		
 	}
 

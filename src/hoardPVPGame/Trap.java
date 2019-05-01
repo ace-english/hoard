@@ -5,6 +5,7 @@ import ray.rage.scene.SceneNode;
 public abstract class Trap {
 	
 	private SceneNode trapNode;
+	private int cost;
 
 	public void addToSceneNode(Room room) {
 		// TODO Auto-generated method stub

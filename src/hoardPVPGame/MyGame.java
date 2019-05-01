@@ -72,9 +72,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     private GAME_MODE gameMode=GAME_MODE.SPLASH;
     private PLAYER_TYPE playerType;
     private ONLINE_TYPE onlineType;
-    
-    private HUD hud;
 
+    private HUD hud;
+    private NPCController npcController;
     
     private static final String SKYBOX_NAME = "SkyBox";
 	
@@ -386,9 +386,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
          * light
          */
         sm.getAmbientLight().setIntensity(new Color(1f, 1f, 1f));
-        
-        
-    	//setupInputs();
 
       
     }
@@ -457,13 +454,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				System.out.println("Drawing ghost");
 				if(sm==null)
 					sm=this.getEngine().getSceneManager();
-				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dolphinHighPoly.obj");
-				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dragon1.obj");
 				Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "boxMan9.obj");
 				ghostE.setPrimitive(Primitive.TRIANGLES);
 				
 				TextureManager tm=sm.getTextureManager();
-		        //Texture texture=tm.getAssetByPath("dragon1.png");
 		        Texture texture=tm.getAssetByPath("boxMan4.png");
 		    	RenderSystem rs = sm.getRenderSystem();
 		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
@@ -483,6 +477,56 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+
+	public void addGhostNPCToGameWorld(NPC npc) {
+		if(npc!=null) {
+			try {
+				System.out.println("Drawing NPC");
+				if(sm==null)
+					sm=this.getEngine().getSceneManager();
+
+		        SkeletalEntity skeleton = sm.createSkeletalEntity("npcSkeleton"+npcController.getNumNPCs(), "knight.rkm", "knight.rks");
+
+		        String skinName;
+		        switch(npc.getSkin()) {
+				case KNIGHT:
+					skinName="knight.png";
+					break;
+				case BLACK_KNIGHT:
+					skinName="black_knight.png";
+					break;
+				case GOLD_KNIGHT:
+					skinName="gold_knight.png";
+					break;
+				case WHITE_KNIGHT:
+					skinName="white_knight.png";
+					break;
+				default:
+					skinName="default.png";
+					break;
+		        
+		        }
+				TextureManager tm=sm.getTextureManager();
+		        Texture texture=tm.getAssetByPath(skinName);
+		    	RenderSystem rs = sm.getRenderSystem();
+		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+		    	state.setTexture(texture);
+		    	skeleton.setRenderState(state);
+				
+				SceneNode ghostN = sm.getRootSceneNode().createChildSceneNode("npcNode"+npcController.getNumNPCs());
+				ghostN.attachObject(skeleton);
+				npc.setPos(dungeon.getLastRoom().getRoomNode().getWorldPosition());
+				ghostN.setLocalPosition(npc.getPos());
+				
+				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	public void removeGhostAvatarFromGameWorld(GhostAvatar avatar) {
@@ -506,12 +550,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		int x=e.getX();
 		int y=e.getY();
-		//System.out.println(x+", "+y+" ");
+		//
 		if(gameMode==GAME_MODE.SPLASH) {
 			if(x>245&&x<738) {
 				if(y>366&&y<431) {
 					System.out.println("Clicked sp");
 					onlineType=ONLINE_TYPE.OFFLINE;
+					setupNetworking();
 					setGameMode(GAME_MODE.CHAR_SELECT);
 				}
 				else if(y>513&&y<578) {
@@ -529,6 +574,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				}
 				else if(x<344&&x>136) {
 					player=new FreeMovePlayer(getEngine().getSceneManager(), protClient, dungeon, hud.getDragonSkin());
+					playerType=PLAYER_TYPE.DRAGON;
 					setGameMode(GAME_MODE.BUILD);
 				}
 				else if(x>372&&x<439) {
@@ -539,6 +585,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				}
 				else if(x>642&&x<847) {
 					player=new OrbitalPlayer(this.getEngine().getSceneManager(), protClient, hud.getKnightSkin());
+					playerType=PLAYER_TYPE.KNIGHT;
 					setGameMode(GAME_MODE.BUILD);
 				}
 				else if(x>875&&x<944) {
@@ -548,41 +595,43 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		}
 		else if(gameMode==GAME_MODE.BUILD) {
 			if(playerType==PLAYER_TYPE.DRAGON) {
-				if(x>0&&x<200) {
-					y=y/80;
-					switch(y) {
-					case 0:
-						dungeon.addRoom();
-						break;
-					case 1: 
-						dungeon.getRoom(getCurrentRoom()).setTrap(new SwingingTrap());
-						break;
-					case 2:
-						dungeon.getRoom(getCurrentRoom()).setTrap(new SpikeTrap());
-						break;
-					case 3:
-						dungeon.getRoom(getCurrentRoom()).setTrap(new PitTrap());
-						break;
-					case 4:
-						dungeon.getRoom(getCurrentRoom()).toggleLights();
-						break;
-					case 5:
-						dungeon.getRoom(getCurrentRoom()).clear();
-						break;
-					case 6:
-						dungeon.removeLastRoom();
-						break;
-					case 7:
-						try {
-							dungeon.finish();
-							this.setGameMode(GAME_MODE.SEIGE);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+					if(x>0&&x<200) {
+						y=y/80;
+						switch(y) {
+						case 0:
+							dungeon.addRoom();
+							break;
+						case 1: 
+							dungeon.getRoom(getCurrentRoom()).setTrap(new SwingingTrap());
+							break;
+						case 2:
+							dungeon.getRoom(getCurrentRoom()).setTrap(new SpikeTrap());
+							break;
+						case 3:
+							dungeon.getRoom(getCurrentRoom()).setTrap(new PitTrap());
+							break;
+						case 4:
+							dungeon.getRoom(getCurrentRoom()).toggleLights();
+							break;
+						case 5:
+							dungeon.getRoom(getCurrentRoom()).clear();
+							break;
+						case 6:
+							dungeon.removeLastRoom();
+							break;
+						case 7:
+							try {
+								dungeon.finish();
+								this.setGameMode(GAME_MODE.SEIGE);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							break;
 						}
-						break;
 					}
-				}
+				
+				
 			}
 			
 		}
@@ -591,11 +640,12 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		}
 	}
 	
-	private int getCurrentRoom() {
-		return Dungeon.getCurrentRoom(player.getNode().getLocalPosition());
+	private int getCurrentRoom(){
+		return dungeon.getCurrentRoom(player.getNode().getLocalPosition());
 	}
 	
 	private void setGameMode(GAME_MODE gm) {
+		System.out.println("setting game mode to: "+gm);
 		this.gameMode=gm;
 		switch(gm) {
 		case SPLASH:
@@ -615,14 +665,15 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			}
 			break;
 		case BUILD:
-			hud.hide();
 			setupInputs();
 	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
 	        if(playerType==PLAYER_TYPE.KNIGHT) {
+	        	hud.hide();
 	        	if(onlineType==ONLINE_TYPE.ONLINE) {
 	        		setupTerrain();
 	        	}
 	        	else {
+	        		System.out.println("initializing dungeon");
 	            	ScriptEngineManager factory = new ScriptEngineManager();
 	            	ScriptEngine jsEngine = factory.getEngineByName("js");
 	            	
@@ -631,6 +682,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	        		setGameMode(GAME_MODE.SEIGE);
 	        	}
 	        }
+	        else {
+	        	hud.setToButtons();
+	        }
 	        
 			break;
 		case SEIGE:
@@ -638,10 +692,20 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			if(playerType==PLAYER_TYPE.KNIGHT) {
 				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 			}
+			else {
+				if(onlineType==ONLINE_TYPE.OFFLINE) {
+					setupNPC();
+				}
+			}
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void setupNPC() {
+		npcController=new NPCController();
+		this.addGhostNPCToGameWorld(npcController.getNPC());
 	}
 	
 	

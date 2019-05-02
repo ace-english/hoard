@@ -116,6 +116,7 @@ public abstract class Player{
 		this.dungeon=dungeon;
 	}
 	
+	
 	public boolean move(float arg0, Event arg1) {
 		Direction dir; float value=arg1.getValue();
 		if(arg1.getComponent().getName().equals("W")||

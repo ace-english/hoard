@@ -1,6 +1,8 @@
 package myGameEngine;
 
 import hoardPVPGame.GameUtil;
+import myGameEngine.MoveAction.Direction;
+import net.java.games.input.Event;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
@@ -47,9 +49,13 @@ public class NPC {
 		return skin;
 	}
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		if(!isDead) {
+			System.out.println("moving forward");
+			locZ+=1f;	
+		}
 	}
+		
+	
 	public Vector3f getPos() {
 		return (Vector3f) Vector3f.createFrom((float)locX, (float)locY, (float)locZ);
 	}

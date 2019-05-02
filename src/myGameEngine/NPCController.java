@@ -68,7 +68,7 @@ public class NPCController {
 	public void updateNPCs(){
 		for (int i=0; i<numNPCs; i++){ 
 			NPClist[i].update();
-		} 
+		}
 	}
 	
 }

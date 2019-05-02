@@ -169,7 +169,7 @@ public class Room{
     private SceneNode createLightNode(SceneNode rootNode) throws IOException {
 		Light light = createLight(rootNode.getName()+"torch");
 		
-		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "sphere.obj");
+		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "torch.obj");
 	    torch.setPrimitive(Primitive.TRIANGLES);
 	       
 	    TextureManager tm=sm.getTextureManager();

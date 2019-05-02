@@ -102,7 +102,6 @@ public class Dungeon {
 		maxZ=((GameUtil.getRoomSize()*getRoomCount())-1f);
 		double x=vector3.x();
 		double z=vector3.z();
-		//System.out.println("\nmaxz: "+maxZ+"room count: "+getRoomCount()+"minz: "+minZ+"z"+z);
 		
 		if(x<minX||x>maxX||z<minZ||z>maxZ)
 			return false;

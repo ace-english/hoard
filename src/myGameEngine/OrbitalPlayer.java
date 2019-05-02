@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 
 import hoardPVPGame.GameUtil.SKIN;
 import net.java.games.input.Controller;
+import net.java.games.input.Event;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.asset.texture.Texture;
@@ -169,6 +170,16 @@ public class OrbitalPlayer extends Player {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Override
+	public boolean move(float arg0, Event arg1){
+		boolean ret=super.move(arg0, arg1);
+		if(ret) {
+			updateVerticalPosition();
+			playWalkAnimation();
+		}
+		return ret;
 	}
 
 	

@@ -5,7 +5,9 @@ import java.util.UUID;
 
 import hoardPVPGame.Dungeon;
 import hoardPVPGame.GameUtil;
+import myGameEngine.MoveAction.Direction;
 import net.java.games.input.Controller;
+import net.java.games.input.Event;
 import ray.input.InputManager;
 import ray.input.action.Action;
 import ray.rage.Engine;
@@ -114,5 +116,50 @@ public abstract class Player{
 		this.dungeon=dungeon;
 	}
 	
+	public boolean move(float arg0, Event arg1) {
+		Direction dir; float value=arg1.getValue();
+		if(arg1.getComponent().getName().equals("W")||
+				(arg1.getComponent().getName().equals("Y Axis")&&value<-0.1f))
+			dir=Direction.fwd;
+		else if(arg1.getComponent().getName().equals("S")||
+				(arg1.getComponent().getName().equals("Y Axis")&&value>0.1f))
+			dir=Direction.back;
+		else if(arg1.getComponent().getName().equals("A")||
+				(arg1.getComponent().getName().equals("X Axis")&&value<-0.1f))
+			dir=Direction.left;
+		else if(arg1.getComponent().getName().equals("D")||
+				(arg1.getComponent().getName().equals("X Axis")&&value>0.1f))
+			dir=Direction.right;
+		else return false;
+		
+		value=Math.abs(value);
+		
+		
+		System.out.print(node.getWorldPosition());
+		if(getDungeon()!=null) {
+			System.out.println(getDungeon().isInBounds(getNode().getWorldPosition()));
+		}
+		
+			switch(dir) {
+			case fwd:
+				node.moveForward(getSpeed()*value);
+				break;
+			case back:
+				node.moveBackward(getSpeed()*value);
+				break;
+			case right:
+				node.moveLeft(getSpeed()*value);
+				break;
+			case left:
+				node.moveRight(getSpeed()*value);
+				break;
+			}
+				
+			if(protClient!=null)
+				protClient.sendMoveMessage(id, node.getWorldPosition());
+			
+			return true;
+			
+	}
 	
 }

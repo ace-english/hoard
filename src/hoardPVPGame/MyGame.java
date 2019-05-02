@@ -364,7 +364,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
         gemNode.moveUp(3f);
         gemNode.scale(.3f,.3f,.3f);
         
-		gemNode.setLocalPosition(-3f, 1.0f, 0f);
 		
 		RenderSystem rs = sm.getRenderSystem();
 	     ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
@@ -608,13 +607,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 							dungeon.addRoom();
 							break;
 						case 1: 
-							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Swinging);
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Swinging);
 							break;
 						case 2:
-							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Spike);
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Spike);
 							break;
 						case 3:
-							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Pit);
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Pit);
 							break;
 						case 4:
 							dungeon.getRoom(getCurrentRoom()).toggleLights();

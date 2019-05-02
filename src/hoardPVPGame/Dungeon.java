@@ -38,7 +38,7 @@ public class Dungeon {
 		
 	}
 	
-	public boolean AddTrap(int roomNum, TRAP_TYPE type) {
+	public boolean addTrap(int roomNum, TRAP_TYPE type) {
 		Room room=rooms.get(roomNum);
 		if(room.HasTrap()) {
 			removeTrap(roomNum);

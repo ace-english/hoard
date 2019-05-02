@@ -32,7 +32,7 @@ BUGS
 [ ] make ghost avatar use same model
 [ ] hud not sticking
 	[ ] hud too dark
-[ ] remove one room of dungeon on knight mutliplayer build
+[ ] remove the one room of dungeon on knight mutliplayer build
 
 
 STRETCH GOALS

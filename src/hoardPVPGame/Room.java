@@ -264,7 +264,6 @@ public class Room{
 
 	public void setTrap(Trap trap) {
 		this.trap = trap;
-		trap.addToSceneNode(this);
 		hasTrap=true;
 	}
 
@@ -284,7 +283,7 @@ public class Room{
 	}
 
 	public void clear() {
-		//delete trap
+		trap.delete();
 		hasTrap=false;
 		
 	}

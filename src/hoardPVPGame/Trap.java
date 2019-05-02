@@ -5,10 +5,11 @@ import ray.rage.scene.SceneNode;
 public abstract class Trap {
 	
 	private SceneNode trapNode;
+	private Room room;
 	private int cost;
 
-	public void addToSceneNode(Room room) {
-		// TODO Auto-generated method stub
+	public Trap(Room room) {
+		this.room=room;
 		
 	}
 	
@@ -18,6 +19,11 @@ public abstract class Trap {
 
 	public void setTrapNode(SceneNode trapNode) {
 		this.trapNode = trapNode;
+	}
+
+	public void delete() {
+		room.getRoomNode().detachChild(trapNode);
+		
 	}
 
 }

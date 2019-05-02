@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import hoardPVPGame.GameUtil.SKIN;
+import myGameEngine.MoveAction.Direction;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 import ray.input.InputManager;
@@ -174,13 +175,39 @@ public class OrbitalPlayer extends Player {
 	
 	@Override
 	public boolean move(float arg0, Event arg1){
-		boolean ret=super.move(arg0, arg1);
-		if(ret) {
-			updateVerticalPosition();
-			playWalkAnimation();
+		super.move(arg0, arg1);
+		boolean ret=dungeon.isInBounds(getNode().getWorldPosition());
+		if(ret==false) {
+			//if out of bounds, bounce a little closer to the center
+			float x=getNode().getWorldPosition().x();
+			float z=getNode().getWorldPosition().z();
+			float epsilon=0.2f;
+			if(z>0) {
+				getNode().translate(0,0,-epsilon);
+			}
+			else if (z<0) {
+				getNode().translate(0,0,epsilon);
+			}
+			if(x>0) {
+				getNode().translate(-epsilon, 0, 0);
+			}
+			else if(x<0) {
+				getNode().translate(epsilon, 0, 0);
+			}
 		}
-		return ret;
-	}
+			if(ret) {
+				
+				if(getProtocolClient()!=null)
+					getProtocolClient().sendMoveMessage(getID(), getNode().getWorldPosition());
+				
+				updateVerticalPosition();
+				playWalkAnimation();
+			}
+				
+
+			return ret;
+		}
+	
 
 	
 	protected void updateVerticalPosition(){ 

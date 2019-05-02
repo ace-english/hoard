@@ -136,9 +136,6 @@ public abstract class Player{
 		
 		
 		System.out.print(node.getWorldPosition());
-		if(getDungeon()!=null) {
-			System.out.println(getDungeon().isInBounds(getNode().getWorldPosition()));
-		}
 		
 			switch(dir) {
 			case fwd:

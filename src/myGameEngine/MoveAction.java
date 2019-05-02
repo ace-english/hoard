@@ -23,8 +23,7 @@ public class MoveAction extends AbstractInputAction {
 
 	@Override
 	public void performAction(float arg0, Event arg1) {
-		if(player.move(arg0, arg1)) {
-		}
+		player.move(arg0, arg1);
 			
 			
 	}

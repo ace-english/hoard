@@ -16,12 +16,18 @@ public class Dungeon {
 	private ArrayList<Room> rooms;
 	private SceneManager sm;
 	private Engine eng;
+	private int cost;
+	
+	enum TRAP_TYPE{
+		Spike, Pit, Swinging;
+	}
 	
 	public Dungeon(SceneManager sm, Engine eng) {
 		this.sm = sm;
 		this.eng = eng;
 		rooms=new ArrayList<Room>();
 		roomGroup=sm.getRootSceneNode().createChildSceneNode("dungeon");
+		cost=0;
 	}
 	
 	public static Dungeon load(String filename) {
@@ -32,12 +38,50 @@ public class Dungeon {
 		
 	}
 	
+	public boolean AddTrap(int roomNum, TRAP_TYPE type) {
+		Room room=rooms.get(roomNum);
+		if(room.HasTrap()) {
+			removeTrap(roomNum);
+		}
+		if(cost+100>1000) {
+			System.out.println("Over Budget");
+			return false;
+		}
+		Trap trap;
+		switch(type) {
+		case Pit:
+			trap=new PitTrap(room);
+			break;
+		case Spike:
+			trap=new SpikeTrap(room);
+			break;
+		case Swinging:
+			trap=new SwingingTrap(room);
+			break;
+		default:
+			return false;
+		}
+		rooms.get(roomNum).setTrap(trap);
+		cost+=100;
+		return true;
+	
+	}
+	
+	public void removeTrap(int roomNum) {
+		if(rooms.get(roomNum).HasTrap()) {
+			rooms.get(roomNum).clear();
+			cost-=100;
+		}
+	
+	}
+	
 	public SceneNode getNode() {
 		return roomGroup;
 	}
 	
 	public void addRoom() {
 		rooms.add(new Room(sm, eng, this));
+		cost+=10;
 	}
 	
 	public Room getRoom(int id) {
@@ -82,17 +126,6 @@ public class Dungeon {
 		rooms.remove(rooms.size()-1);
 		
 	}
-	/*
-	public Vector3f getBounds() {
-		float x, y, z;
-		z=GameUtil.getRoomSize();
-		y=GameUtil.getRoomSize()*2;
-		x=GameUtil.getRoomSize()*2*getRoomCount();
-		
-		
-		return (Vector3f) Vector3f.createFrom(x,y,z);
-	}
-	*/
 	
 	public boolean isInBounds(Vector3 vector3) {
 		double minX, minZ, maxX, maxZ;

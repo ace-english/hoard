@@ -17,6 +17,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import hoardPVPGame.Dungeon.TRAP_TYPE;
+
 import javax.script.Invocable;
 
 import myGameEngine.*;
@@ -38,7 +41,6 @@ import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
 import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.*;
-import ray.networking.IGameConnection.ProtocolType;
 
 enum GAME_MODE 
 { 
@@ -606,13 +608,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 							dungeon.addRoom();
 							break;
 						case 1: 
-							dungeon.getRoom(getCurrentRoom()).setTrap(new SwingingTrap());
+							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Swinging);
 							break;
 						case 2:
-							dungeon.getRoom(getCurrentRoom()).setTrap(new SpikeTrap());
+							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Spike);
 							break;
 						case 3:
-							dungeon.getRoom(getCurrentRoom()).setTrap(new PitTrap());
+							dungeon.AddTrap(getCurrentRoom(), TRAP_TYPE.Pit);
 							break;
 						case 4:
 							dungeon.getRoom(getCurrentRoom()).toggleLights();

@@ -28,7 +28,6 @@ import ray.rml.Vector3f;
 
 public class FreeMovePlayer extends Player {
 	
-	Dungeon dungeon;
 	SceneNode cameraNode;
 	SceneNode rider;
 

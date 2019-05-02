@@ -94,10 +94,17 @@ public class Dungeon {
 	}
 	*/
 	
-	public boolean isInBounds(Vector3f pos) {
-		if(pos.x()>GameUtil.getRoomSize()*2*getRoomCount())
-			return false;
-		if(pos.x()<GameUtil.getRoomSize()*getRoomCount()*-1)
+	public boolean isInBounds(Vector3 vector3) {
+		double minX, minZ, maxX, maxZ;
+		maxX=(GameUtil.getRoomSize()-0.7f);
+		minX=-maxX;
+		minZ=minX;
+		maxZ=((GameUtil.getRoomSize()*getRoomCount())-1f);
+		double x=vector3.x();
+		double z=vector3.z();
+		//System.out.println("\nmaxz: "+maxZ+"room count: "+getRoomCount()+"minz: "+minZ+"z"+z);
+		
+		if(x<minX||x>maxX||z<minZ||z>maxZ)
 			return false;
 		
 		return true;

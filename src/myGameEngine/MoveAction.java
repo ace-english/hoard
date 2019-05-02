@@ -1,5 +1,6 @@
 package myGameEngine;
 
+import hoardPVPGame.Dungeon;
 import net.java.games.input.Event;
 import ray.input.action.AbstractInputAction;
 import ray.rage.scene.SceneNode;
@@ -40,6 +41,10 @@ public class MoveAction extends AbstractInputAction {
 		value=Math.abs(value);
 		
 		SceneNode avatar=player.getNode();
+		System.out.print(avatar.getWorldPosition());
+		if(player.getDungeon()!=null) {
+			System.out.println(player.getDungeon().isInBounds(player.getNode().getWorldPosition()));
+		}
 		
 			switch(dir) {
 			case fwd:

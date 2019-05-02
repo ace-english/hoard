@@ -395,8 +395,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		im.update(elapsTime);
 		processNetworking(elapsTime);
 		
-		if(player!=null)
+		if(player!=null) {
 			player.update(elapsTime);
+		}
 		
 		if(npcController!=null)
 			npcController.update();
@@ -693,6 +694,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		case SEIGE:
 			//teleport knight to dungeon
 			if(playerType==PLAYER_TYPE.KNIGHT) {
+				player.setDungeon(dungeon);
 				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 			}
 			else {

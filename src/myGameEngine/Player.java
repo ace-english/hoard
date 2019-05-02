@@ -3,6 +3,7 @@ package myGameEngine;
 import java.io.IOException;
 import java.util.UUID;
 
+import hoardPVPGame.Dungeon;
 import hoardPVPGame.GameUtil;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
@@ -28,6 +29,7 @@ public abstract class Player{
 	private UUID id;
 	SceneManager sm;
 	GameUtil.SKIN skin;
+	Dungeon dungeon;
 
 	int score;
 	
@@ -103,5 +105,14 @@ public abstract class Player{
 		node.setLocalPosition(worldPosition);
 		
 	}
+	
+	public Dungeon getDungeon() {
+		return dungeon;
+	}
+	
+	public void setDungeon(Dungeon dungeon) {
+		this.dungeon=dungeon;
+	}
+	
 	
 }

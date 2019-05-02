@@ -9,4 +9,5 @@ with (JavaPackages)
 	for(n;n>0; n--){
 		dungeon.addRoom();
 	}
+	dungeon.close();
 }

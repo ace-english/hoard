@@ -2,7 +2,9 @@ CHECKPOINT
 ----------------------------
 [x] animation
 	[x] flappy idle dragon
-[ ] NPC knight if dragon and single player
+[x] NPC knight if dragon and single player
+[ ] move npc knight
+[ ] start physics
 [ ] jump action
 
 PLANNED FEATURES

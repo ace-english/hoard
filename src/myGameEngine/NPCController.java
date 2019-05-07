@@ -40,9 +40,7 @@ public class NPCController {
 		NPC npc;
 		for(int i=0; i<numNPCs; i++) {
 			npc=NPClist[i];
-			if(!npc.isDead()) {
-				npc.moveForward();
-			}
+			npc.update();
 		}
 	}
 
@@ -66,6 +64,7 @@ public class NPCController {
 	}
 	
 	public void updateNPCs(){
+		System.out.println("Updating npcs");
 		for (int i=0; i<numNPCs; i++){ 
 			NPClist[i].update();
 		}

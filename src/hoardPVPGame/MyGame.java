@@ -400,8 +400,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			player.update(elapsTime);
 		}
 		
-		if(npcController!=null)
+		if(npcController!=null) {
 			npcController.update();
+		}
 	}
 
 	private void processNetworking(float elapsTime) {

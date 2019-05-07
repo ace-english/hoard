@@ -51,7 +51,7 @@ public class NPC {
 	public void update() {
 		if(!isDead) {
 			System.out.println("moving forward");
-			locZ+=1f;	
+			locZ+=0.1f;	
 		}
 	}
 		
@@ -63,10 +63,6 @@ public class NPC {
 		locX=add.x();
 		locY=add.y();
 		locZ=add.z();
-		
-	}
-	public void moveForward() {
-		// TODO Auto-generated method stub
 		
 	}
 }

@@ -217,8 +217,7 @@ public class GameServerUDP extends GameConnectionServer<UUID>
  			//message += "," + position[2];
  			forwardPacketToAll(message, clientID);
  		}
- 		catch (IOException e)
- 		{
+ 		catch (IOException e){
  			e.printStackTrace();
  		}
  	}

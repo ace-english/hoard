@@ -2,7 +2,12 @@ package myGameEngine;
 
 import java.util.UUID;
 
+import ray.rage.asset.texture.Texture;
+import ray.rage.rendersystem.RenderSystem;
+import ray.rage.rendersystem.states.RenderState;
+import ray.rage.rendersystem.states.TextureState;
 import ray.rage.scene.*;
+import ray.rage.scene.SkeletalEntity.EndType;
 import ray.rml.Angle;
 import ray.rml.Matrix3;
 import ray.rml.Matrix3f;
@@ -13,7 +18,10 @@ public class GhostAvatar{
 	private SceneNode node;
 	private Entity entity;
 	private Vector3 pos;
+	private Vector3 lastPos;
 	private Matrix3f rot;
+	protected SkeletalEntity skeleton;
+	protected SkeletalEntity sEntity;
 	
 	public GhostAvatar(UUID id, Vector3 position, Matrix3f rotMat){ 
 		System.out.println("avatar created");
@@ -44,6 +52,22 @@ public class GhostAvatar{
 	public Entity getEntity() {
 		return entity;
 	}
+	
+	public Vector3 getLastPos() {
+		return lastPos;
+	}
+	public void setLastPos(Vector3 pos) {
+		//node.setLocalPosition(pos);
+		this.lastPos=pos;
+	}
+	
+	public SkeletalEntity getSkeletalEntity() {
+		return sEntity;
+	}
+	
+	public void setSkeletalEntity(SkeletalEntity sEntity) {
+		this.sEntity = sEntity;
+	}
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
@@ -67,6 +91,10 @@ public class GhostAvatar{
 		default:
 			System.err.println("Invalid rotation.");
 		}
+		
+
+			
+		
 	}
 
 }

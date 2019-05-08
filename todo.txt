@@ -1,13 +1,13 @@
 CHECKPOINT
 ----------------------------
 JOSH
-[ ] physics world
-[ ] networking
+[x] physics world
+[x] networking
 
 ACE
 [ ] lights toggle
 [ ] sound
-[ ] fix dragon animation
+[x] fix animation
 [ ] fix knight AI
 [ ] traps
 STRETCH GOALS:

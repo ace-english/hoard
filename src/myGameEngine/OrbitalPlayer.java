@@ -9,6 +9,7 @@ import net.java.games.input.Controller;
 import net.java.games.input.Event;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.physics.PhysicsObject;
 import ray.rage.asset.texture.Texture;
 import ray.rage.asset.texture.TextureManager;
 import ray.rage.rendersystem.*;
@@ -30,11 +31,34 @@ public class OrbitalPlayer extends Player {
 
 	private Camera3PController cameraController;
 	SceneNode riderNode, cameraNode;
-	private Semaphore walkingMutex;
+	//PhysicsObject physObj;
+	private ProtocolClient pc;
+	private float acceleration = 0.025f;
+	private float velocity = 0.0f;
+	private boolean jumped = false;
+	private float jumpPosition = 0;
+	private float displacement = 0;
+	private float jumpHeight = 0;
+	private Vector3 previousPosition;
+	private boolean isWalking;
 	
 	public OrbitalPlayer(SceneManager sm, ProtocolClient pc, SKIN skin) {
 		super(sm, pc, skin);
-		walkingMutex=new Semaphore(1);
+		sm2=sm;
+		this.pc = getProtocolClient();
+		isWalking=false;
+		previousPosition=this.getNode().getWorldPosition();
+	}
+
+
+	
+	public PhysicsObject getPhysObj() {
+		return getNode().getPhysicsObject();
+	}
+
+
+	public void setPhysicsObject(PhysicsObject physObj) {
+		getNode().setPhysicsObject(physObj);
 	}
 
 
@@ -89,8 +113,45 @@ public class OrbitalPlayer extends Player {
 		super.update(elapsTime);
 
 		cameraController.updateCameraPosition();
+		updateVerticalPosition();
+		getNode().getWorldPosition();
+		pc.sendDetailsForMessage(this.getID(), this.getNode());
+		Vector3 currentPosition=getNode().getLocalPosition();
+		if(currentPosition.compareTo(previousPosition)!=0){	//changing position
+			if(isWalking==false) {	//going from still to walking
+				System.out.println("Playing walk");
+				playWalkAnimation();
+				isWalking=true;
+			}
+		}
+		else { //not changing position
+			if(isWalking==true) {	//going from walking to still
+				stopWalkAnimation();
+				isWalking=false;
+			}
+		}
+		previousPosition=currentPosition;
+		
+		
 	}
 
+
+
+	public void setVelocity(float v)
+	{
+		velocity = v;
+	}
+	
+	public void setJumped(boolean jump)
+	{
+		this.jumped = jump;
+	}
+	
+	public boolean getJumped()
+	{
+		return jumped;
+	}
+	
 
 	public Camera3PController getCameraController() {
 		return cameraController;
@@ -102,11 +163,91 @@ public class OrbitalPlayer extends Player {
 	}
 	
 
+	public void setJumpHeight(){
+		SceneNode tessN =sm2.getSceneNode("tessN");
+		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+		// Figure out Avatar's position relative to plane
+		Vector3 worldAvatarPosition = getNode().getWorldPosition();
+		Vector3 localAvatarPosition = getNode().getLocalPosition();
+		// use avatar World coordinates to get coordinates for height
+		jumpHeight = tessE.getWorldHeight(
+				worldAvatarPosition.x(),
+				worldAvatarPosition.z());
+	}
+	
+	public void updateVerticalPosition(){ 
+		SceneNode tessN =sm2.getSceneNode("tessN");
+		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+		// Figure out Avatar's position relative to plane
+		Vector3 worldAvatarPosition = getNode().getWorldPosition();
+		Vector3 localAvatarPosition = getNode().getLocalPosition();
+	
+		if(jumped){
+			//System.out.println("Velocity: " + velocity);
+			velocity = velocity - acceleration;
+			displacement = jumpHeight - tessE.getWorldHeight(
+					worldAvatarPosition.x(),
+					worldAvatarPosition.z());
+			jumpPosition = jumpPosition + velocity;
+			/*
+		System.out.println("Jump Position: " + jumpPosition);
+		System.out.println("Jump Displacement: " + displacement);
+		System.out.println("Jump Height: " + jumpHeight);
+		System.out.println("heightmap Height: " + 
+		tessE.getWorldHeight(
+				worldAvatarPosition.x(),
+				worldAvatarPosition.z()) );*/
+		}
+		// use avatar World coordinates to get coordinates for height
+		Vector3 newAvatarPosition = Vector3f.createFrom(
+			 // Keep the X coordinate
+			 localAvatarPosition.x(),
+			 // The Y coordinate is the varying height
+			 tessE.getWorldHeight(
+			worldAvatarPosition.x(),
+			worldAvatarPosition.z()) + jumpPosition + displacement,
+			 //Keep the Z coordinate
+			 localAvatarPosition.z()
+			);
+		// use avatar Local coordinates to set position, including height
+		getNode().setLocalPosition(newAvatarPosition );
+		
+		
+		
+		
+		if ( getNode().getLocalPosition().y() <  tessE.getWorldHeight(
+					worldAvatarPosition.x(),
+					worldAvatarPosition.z()))
+				{
+			
+			jumped = false;
+			 velocity = 0.0f;
+			 jumpPosition = 0;
+			 displacement = 0;
+			 newAvatarPosition = Vector3f.createFrom(
+					 // Keep the X coordinate
+					 localAvatarPosition.x(),
+					 // The Y coordinate is the varying height
+					 tessE.getWorldHeight(
+							 worldAvatarPosition.x(),
+							 worldAvatarPosition.y()),
+					 //Keep the Z coordinate
+					 localAvatarPosition.z()
+					);
+			 getNode().setLocalPosition(newAvatarPosition );
+				}
+		 //jumpTest = jumpTest - 0.01f;
+		 //if ( jumpTest < 0 )
+			// jumpTest = 0;
+	}
+	
+
 	public void setupInputs(InputManager im, Controller controller) {
 		if(cameraController==null)
 			setCameraController(new Camera3PController(getCamera(), cameraNode, riderNode, im));
 		Action moveAction = new MoveAction(this);
 		Action yawAction = new YawAction(this);
+		Action jumpAction = new JumpAction(this);
     	cameraController.addController(im, controller);
 		if(controller.getType()==Controller.Type.GAMEPAD) {
         	
@@ -157,19 +298,22 @@ public class OrbitalPlayer extends Player {
     			net.java.games.input.Component.Identifier.Key.RIGHT, 
     			yawAction,
 	    		InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+    		
+    		im.associateAction(controller, 
+        			net.java.games.input.Component.Identifier.Key.SPACE, 
+        			jumpAction,
+    	    		InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
     	}
 	}
 
 
 	public void playWalkAnimation() {
-		try {
-			walkingMutex.acquire();
-			skeleton.playAnimation("walkAnimation", 0.5f, EndType.STOP, 0);
-			walkingMutex.release();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+	}
+
+
+	private void stopWalkAnimation() {
+		skeleton.stopAnimation();
 		
 	}
 	
@@ -199,14 +343,6 @@ public class OrbitalPlayer extends Player {
 				getNode().translate(epsilon, 0, 0);
 			}
 		}
-			if(ret) {
-				
-				if(getProtocolClient()!=null)
-					getProtocolClient().sendMoveMessage(getID(), getNode().getWorldPosition());
-				
-				updateVerticalPosition();
-				playWalkAnimation();
-			}
 				
 
 			return ret;
@@ -214,7 +350,7 @@ public class OrbitalPlayer extends Player {
 	
 
 	
-	protected void updateVerticalPosition(){ 
+	/*protected void updateVerticalPosition(){  
 		SceneNode dolphinN = sm.getSceneNode("playerNode");
 		try {
 		SceneNode tessN = sm.getSceneNode("tessN");
@@ -239,6 +375,6 @@ public class OrbitalPlayer extends Player {
 		catch(Exception E) {
 			//no terrain found
 		}
-	}
+	}*/
 
 }

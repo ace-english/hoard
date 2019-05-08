@@ -1,4 +1,3 @@
-
 package hoardPVPGame;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 import ray.rage.util.BufferUtil;
 import ray.rml.Degreef;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class HUD {
@@ -35,8 +35,6 @@ public class HUD {
 	private Engine eng;
 	private int dragonIndex;
 	private int knightIndex;
-	private GameUtil.SKIN[] dragonArray;
-	private GameUtil.SKIN[] knightArray;
 	
 
 	public HUD(SceneManager sm, Engine eng) {
@@ -221,7 +219,6 @@ public class HUD {
         buttonNode.scale(Vector3f.createFrom(.2f, .2f, .2f));
         buttonNode.moveRight(1f);
         buttonNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
-        //node.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
         buttonNode.attachObject(buttons);
         buttons.setVisible(false);
         
@@ -264,11 +261,18 @@ public class HUD {
 			System.out.println(it.next());
 		}
 		buttons.setVisible(true);
+		//SceneNode cameraNode=sm.getSceneNode("GemNode");
 		SceneNode cameraNode=sm.getSceneNode("playerNode");
 		SceneNode buttonNode=sm.getSceneNode("ButtonNode");
 		System.out.println(cameraNode.getWorldPosition());
 		System.out.println(buttonNode.getWorldPosition());
-		//cameraNode.attachChild(buttonNode);
+		cameraNode.attachChild(buttonNode);
+		//buttonNode.moveBackward(0.5f);
+		//buttonNode.moveLeft(2.2f);
+		//buttonNode.moveDown(30f);
+		buttonNode.setLocalPosition(10f,0f, 0f);
+		buttonNode.scale(40f, 40f, 40f);
+		//buttonNode.rotate(Degreef.createFrom(180f), Vector3f.createFrom(0,1f,0));
 		System.out.println(cameraNode.getWorldPosition());
 		System.out.println(buttonNode.getWorldPosition());
 		hud.setVisible(false);

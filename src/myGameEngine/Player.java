@@ -10,6 +10,7 @@ import net.java.games.input.Controller;
 import net.java.games.input.Event;
 import ray.input.InputManager;
 import ray.input.action.Action;
+import ray.physics.PhysicsObject;
 import ray.rage.Engine;
 import ray.rage.scene.Camera;
 import ray.rage.scene.SceneManager;
@@ -23,7 +24,6 @@ import ray.rml.Vector3f;
 public abstract class Player{
 
 	float speed;
-	boolean boostActive;
 	private SceneNode node;
 	protected SkeletalEntity skeleton;
 	private Camera camera;
@@ -32,12 +32,13 @@ public abstract class Player{
 	SceneManager sm;
 	GameUtil.SKIN skin;
 	Dungeon dungeon;
+	SceneManager sm2;
 
 	int score;
 	
+	
 	public Player(SceneManager sm, ProtocolClient pc, GameUtil.SKIN skin) {
 		speed=0.08f;
-		boostActive=false;
 		score=0;
 		this.protClient=pc;
 		this.setCamera(sm.getCamera("MainCamera"));
@@ -136,52 +137,34 @@ public abstract class Player{
 		value=Math.abs(value);
 		
 		
-		System.out.print(node.getWorldPosition());
+		//System.out.print(node.getWorldPosition());
 		
 			switch(dir) {
 			case fwd:
 				node.moveForward(getSpeed()*value);
+				//node.moveRight(getSpeed()*value);
 				break;
 			case back:
 				node.moveBackward(getSpeed()*value);
+				//node.moveLeft(getSpeed()*value);
 				break;
 			case right:
 				node.moveLeft(getSpeed()*value);
+				//node.moveForward(getSpeed()*value);
 				break;
 			case left:
 				node.moveRight(getSpeed()*value);
+				//node.moveBackward(getSpeed()*value);
+				
 				break;
 			}
 				
-			if(protClient!=null)
-				protClient.sendMoveMessage(id, node.getWorldPosition());
+			//if(protClient!=null)
+				//protClient.sendMoveMessage(id, node.getWorldPosition());
 			
 			return true;
 			
 	}
 
-
-	public boolean getJumped() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public void setVelocity(float f) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void setJumpHeight() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void setJumped(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

@@ -254,7 +254,7 @@ public abstract class Player{
 		value=Math.abs(value);
 		
 		
-		System.out.print(node.getWorldPosition());
+		//System.out.print(node.getWorldPosition());
 		
 			switch(dir) {
 			case fwd:

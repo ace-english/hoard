@@ -82,7 +82,7 @@ public class FreeMovePlayer extends Player {
         //node.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
 		//node.rotate(Degreef.createFrom(90f), (0f, 1f, 0f));
         //node.moveForward(2.0f);
-        node.rotate(Degreef.createFrom(90), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
+        //node.rotate(Degreef.createFrom(90), Vector3f.createFrom(0.0f, 1.0f, 0.0f));
         //node.moveUp(10.0f);
         //node.moveBackward(20f);
 		setNode(node);
@@ -91,7 +91,7 @@ public class FreeMovePlayer extends Player {
 		skeleton.playAnimation("idleAnimation", 0.5f, EndType.LOOP, 0);
         
         cameraNode = sm.getSceneNode("MainCameraNode");
-        cameraNode.moveUp(30f);
+        //cameraNode.moveUp(30f);
 	}
 
 	@Override
@@ -101,6 +101,7 @@ public class FreeMovePlayer extends Player {
     	Action yawAction=new YawAction(this);
     	Action addRoomAction = new AddRoomAction(dungeon);
     	Action rollAction = new RollAction(this);
+    	Action roarAction = new RoarAction();
     	
 	    	if(controller.getType()==Controller.Type.GAMEPAD) {
 	        	
@@ -180,9 +181,16 @@ public class FreeMovePlayer extends Player {
 	    			net.java.games.input.Component.Identifier.Key.E, 
 	    			rollAction,
 		    		InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+	    		
+	    		im.associateAction(controller, 
+	        			net.java.games.input.Component.Identifier.Key.SPACE, 
+	        			roarAction,
+	    	    		InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+	    	
+	    	}
 	    	
     	}
 		
-	}
+	
 
 }

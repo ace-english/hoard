@@ -19,6 +19,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import hoardPVPGame.Dungeon.TRAP_TYPE;
+import hoardPVPGame.GameUtil.SKIN;
 
 import javax.script.Invocable;
 
@@ -27,6 +28,9 @@ import net.java.games.input.Controller;
 import ray.input.*;
 import ray.input.action.AbstractInputAction;
 import ray.networking.IGameConnection.ProtocolType;
+import ray.physics.PhysicsEngine;
+import ray.physics.PhysicsEngineFactory;
+import ray.physics.PhysicsObject;
 import ray.rage.*;
 import ray.rage.asset.texture.*;
 import ray.rage.game.*;
@@ -34,6 +38,7 @@ import ray.rage.rendersystem.*;
 import ray.rage.rendersystem.Renderable.*;
 import ray.rage.scene.*;
 import ray.rage.scene.Camera.Frustum.*;
+import ray.rage.scene.SkeletalEntity.EndType;
 import ray.rage.scene.controllers.*;
 import ray.rage.util.BufferUtil;
 import ray.rage.util.Configuration;
@@ -74,6 +79,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     private GAME_MODE gameMode=GAME_MODE.SPLASH;
     private PLAYER_TYPE playerType;
     private ONLINE_TYPE onlineType;
+    private boolean avatarWalking = false;
 
     private HUD hud;
     private NPCController npcController;
@@ -84,8 +90,20 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	int elapsTimeSec;
 	private InputManager im;
 	Player player;
-	AbstractController rc;
 	boolean isConnected = false;
+	
+	private SceneNode ball1Node, ball2Node, gndNode;
+	//private SceneNode cameraPositionNode;
+	private final static String GROUND_E = "Ground";
+	private final static String GROUND_N = "GroundNode";
+	private PhysicsEngine physicsEng;
+	private PhysicsObject gndPlaneP, knightPhysObj;
+	private boolean running = false;
+	private UUID ghostID;
+	private GhostAvatar gAvatar;
+	private boolean avatarExists = false;
+	float dir = 0.10f;
+	int dIter = 0;
 	
 	
 	public Player getPlayer() {
@@ -107,13 +125,14 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 
     public static void main(String[] args) {
         //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
-    	MyGame game = new MyGame("", 10);
+    	MyGame game = new MyGame("", 0);
         try {
             game.startup();
             game.run();
         } catch (Exception e) {
             e.printStackTrace(System.err);
         } finally {
+        	System.out.println("Shutting Down");
             game.shutdown();
             game.exit();
         }
@@ -192,6 +211,109 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		tessE.setTexture(this.getEngine(), "terrain.jpg");
 		// tessE.setNormalMap(. . .)
 	}
+	
+	private void initPhysicsSystem()
+    { 
+    	String engine = "ray.physics.JBullet.JBulletPhysicsEngine";
+    	float[] gravity = {0, -3f, 0};
+    	physicsEng = PhysicsEngineFactory.createPhysicsEngine(engine);
+    	physicsEng.initSystem();
+    	physicsEng.setGravity(gravity);
+    }
+	
+	/*
+	public void playWalkAnimation() {
+		System.out.println("playing animation");
+		
+		//walkingMutex.acquire();
+		SkeletalEntity manSE =
+				(SkeletalEntity) this.getEngine().getSceneManager().getEntity("knightSkeleton");
+		//skeleton.playAnimation("walkAnimation", 0.5f, EndType.STOP, 0);
+		
+		//skeleton.stopAnimation();
+		//skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+		
+		//manSE.playAnimation("walkAnimation", 0.5f, EndType.STOP, 0);
+		
+		manSE.stopAnimation();
+		manSE.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+		//walkingMutex.release();
+		
+		//animation started = true
+		avatarWalking = true;
+		
+	}
+	*/
+
+	
+	private void createRagePhysicsWorld()
+    { 
+    	float mass = 1.0f;
+    	float up[] = {0,1,0};
+    	double[] temptf;
+    	temptf = toDoubleArray(ball1Node.getLocalTransform().toFloatArray());
+    	PhysicsObject ball1PhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
+    	mass, temptf, 2.0f);
+    	ball1PhysObj.setBounciness(1.0f);
+    	ball1Node.setPhysicsObject(ball1PhysObj);
+    	temptf = toDoubleArray(ball2Node.getLocalTransform().toFloatArray());
+    	PhysicsObject ball2PhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
+    			mass, temptf, 2.0f);
+    		ball2PhysObj.setBounciness(1.0f);
+    	ball2Node.setPhysicsObject(ball2PhysObj);
+    	temptf = toDoubleArray(gndNode.getLocalTransform().toFloatArray());
+    	gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(),
+    	temptf, up, 0.0f);
+    	gndPlaneP.setBounciness(1.0f);
+    	gndNode.scale(3f, .05f, 3f);
+    	gndNode.setLocalPosition(0, -7, -2);
+    	gndNode.setPhysicsObject(gndPlaneP);
+    	
+    	System.out.println("player.getNode().getLocalTransform(): " + player.getNode().getLocalTransform());
+    	temptf = toDoubleArray(player.getNode().getLocalTransform().toFloatArray());
+    	if(playerType==PLAYER_TYPE.KNIGHT) {
+	    	knightPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
+	    	    	mass, temptf, 2.0f);
+	    	knightPhysObj.setBounciness(1.0f);
+	    	((OrbitalPlayer) player).setPhysicsObject(knightPhysObj);
+    	}
+    }
+	
+	public SceneNode getBall()
+    {
+    	return ball1Node;
+    }
+	
+	
+	
+	
+	private float[] toFloatArray(double[] arr)
+    { 
+    	if (arr == null) 
+    		return null;
+    	int n = arr.length;
+    	
+    	float[] ret = new float[n];
+    	
+    	for (int i = 0; i < n; i++)
+    	{ 
+    		ret[i] = (float)arr[i];
+    	}
+    return ret;
+    }
+    
+    private double[] toDoubleArray(float[] arr)
+    { 
+    	if (arr == null) return null;
+    	int n = arr.length;
+    	double[] ret = new double[n];
+    	for (int i = 0; i < n; i++)
+    	{ 
+    		ret[i] = (double)arr[i];
+    	}
+    	
+    	return ret;
+    }
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
         this.sm=sm;
@@ -202,15 +324,38 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
         hud=new HUD(sm, eng);
         
         
+        
+        SceneNode rootNode = sm.getRootSceneNode();
+    	// Ground plane
+    	Entity groundEntity = sm.createEntity(GROUND_E, "sphere.obj");
+    	gndNode = rootNode.createChildSceneNode(GROUND_N);
+    	gndNode.attachObject(groundEntity);
+    	gndNode.setLocalPosition(0, 0, 2);
+    	
+    	//Ball1
+    	Entity ball1Entity = sm.createEntity("ball1", "sphere.obj");
+    	ball1Node = rootNode.createChildSceneNode("Ball1Node");
+    	ball1Node.attachObject(ball1Entity);
+    	ball1Node.setLocalPosition(0, 2, 10);
+    	// Ball 2
+    	Entity ball2Entity = sm.createEntity("Ball2", "sphere.obj");
+    	ball2Node = rootNode.createChildSceneNode("Ball2Node");
+    	ball2Node.attachObject(ball2Entity);
+    	ball2Node.setLocalPosition(-1,10, 10);
+    	
+        
         /*
          * dungeon
          */
         dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
-        dungeon.addRoom();
 		
         /*
          * skybox
          */
+        
+        
+        
+        
         
         Configuration conf = eng.getConfiguration();
         TextureManager tm = getEngine().getTextureManager();
@@ -245,144 +390,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
         
         
         
-        
-        /*
-         * gem
-         */
-        
-        ManualObject gem = sm.createManualObject("Gem");
-		ManualObjectSection gemSec =
-		gem.createManualSection("GemSection");
-		gem.setGpuShaderProgram(sm.getRenderSystem().
-		getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
-		float[] vertices = new float[]{
-				//top
-				1,1,3, 0,1.3f,0, -1,1,3, 
-				-1,1,3, 0,1.3f,0, -3,1,1, 
-				-3,1,1, 0,1.3f,0, -3,1,-1, 
-				-3,1,-1, 0,1.3f,0, -1,1,-3, 
-				-1,1,-3, 0,1.3f,0, 1,1,-3, 
-				1,1,-3, 0,1.3f,0, 3,1,-1,
-				3,1,-1, 0,1.3f,0, 3,1,1,
-				3,1,1, 0,1.3f,0, 1,1,3,
-				//sides
-				1,1,3, -1,1,3, 0,0,4,
-				0,0,4, -1,1,3, -3,0,3,
-				-3,0,3, -1,1,3, -3,1,1,
-				-3,1,1, -4,0,0, -3,0,3,
-				-4,0,0, -3,1,1, -3,1,-1,
-				-3,1,-1, -3,0,-3, -4,0,0,
-				-3,1,-1, -1,1,-3, -3,0,-3,
-				-3,0,-3, -1,1,-3, 0,0,-4,
-				-1,1,-3, 1,1,-3, 0,0,-4,
-				3,0,-3, 0,0,-4, 1,1,-3,
-				1,1,-3, 3,1,-1, 3,0,-3,
-				3,0,-3, 3,1,-1, 4,0,0,
-				3,1,-1, 3,1,1, 4,0,0,
-				4,0,0, 3,1,1, 3,0,3,
-				3,1,1, 1,1,3, 3,0,3,
-				0,0,4, 3,0,3, 1,1,3,
-				
-				//bottom
-				
-				3,0,-3, 4,0,0, 0,-4,0,
-				0,0,-4, 3,0,-3, 0,-4,0,
-				-3,0,-3, 0,0,-4, 0,-4,0,
-				-3,0,-3, 0,-4,0, -4,0,0,
-				-4,0,0, 0,-4,0, -3,0,3,
-				-3,0,3, 0,-4,0, 0,0,4,
-				3,0,3, 0,0,4, 0,-4,0,
-				3,0,3, 0,-4,0, 4,0,0
-				
-				
-		};
-		float[] normals = new float[] {
-				//top
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				0,1,0, 0,1,0, 0,1,0,
-				//sides
-				0,1,1, 0,1,1, 0,1,1,
-				-1,2,3, -1,2,3, -1,2,3,
-				-1,2,1, -1,2,1, -1,2,1,
-				-3,2,1, -3,2,1, -3,2,1,
-				-1,1,0, -1,1,0, -1,1,0, 
-				-3,2,-1, -3,2,-1, -3,2,-1, 
-				-1,-4,-1, -1,-4,-1, -1,-4,-1, 
-				-7,-4,-3, -7,-4,-3, -7,-4,-3, 
-				0,1,-1, 0,1,-1, 0,1,-1, 
-				1,2,-3, 1,2,-3, 1,2,-3, 
-				1,2,-1, 1,2,-1, 1,2,-1,
-				3,2,-1, 3,2,-1, 3,2,-1, 
-				1,1,0, 1,1,0, 1,1,0, 
-				3,2,1, 3,2,1, 3,2,1, 
-				1,2,1, 1,2,1, 1,2,1, 
-				1,2,3, 1,2,3, 1,2,3, 
-				
-				//bottom
-				3,-3,-1, 3,-3,-1, 3,-3,-1, 
-				1,-3,-3, 1,-3,-3, 1,-3,-3, 
-				-1,-3,-3, -1,-3,-3, -1,-3,-3, 
-				-3,-3,-1, -3,-3,-1, -3,-3,-1, 
-				-3,-3,1, -3,-3,1, -3,-3,1,
-				-1,-3,3, -1,-3,3, -1,-3,3, 
-				1,-3,3, 1,-3,3, 1,-3,3, 
-				3,-3,1, 3,-3,1, 3,-3,1
-
-				
-		};
-		int[] indices = new int[vertices.length/3];
-		for(int i=0; i<indices.length; i++) {
-			indices[i]=i;
-		}
-        
-        FloatBuffer vertBuf = BufferUtil.directFloatBuffer(vertices);
-        //FloatBuffer texBuf = BufferUtil.directFloatBuffer(texcoords);
-        FloatBuffer normBuf = BufferUtil.directFloatBuffer(normals);
-		IntBuffer indexBuf = BufferUtil.directIntBuffer(indices);
-		gemSec.setVertexBuffer(vertBuf);
-		gemSec.setNormalsBuffer(normBuf);
-		gemSec.setIndexBuffer(indexBuf);
-		Texture tex = eng.getTextureManager().getAssetByPath("gem.png");
-		TextureState texState = (TextureState)sm.getRenderSystem().
-		createRenderState(RenderState.Type.TEXTURE);
-		texState.setTexture(tex);
-		FrontFaceState faceState = (FrontFaceState) sm.getRenderSystem().
-		createRenderState(RenderState.Type.FRONT_FACE);
-		gem.setDataSource(DataSource.INDEX_BUFFER);
-		gem.setRenderState(texState);
-		gem.setRenderState(faceState);
-		
-        SceneNode gemNode = sm.getRootSceneNode().createChildSceneNode("GemNode");
-        gemNode.attachObject(gem);
-        
-        gemNode.moveUp(3f);
-        gemNode.scale(.3f,.3f,.3f);
-        
-		
-		RenderSystem rs = sm.getRenderSystem();
-	     ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
-	     zstate.setTestEnabled(true);
-	     gem.setRenderState(zstate);
-	  
-		
-		
-
-
-        
-        /*
-         * controllers
-         */
-    	
-        rc = new RotationController(Vector3f.createUnitVectorY(), .05f);
-        rc.addNode(gemNode); 
-        sm.addController(rc);
-        
         /*
          * light
          */
@@ -393,18 +400,69 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     
 	@Override
     protected void update(Engine engine) {
-		im.update(elapsTime);
-		processNetworking(elapsTime);
-		
 		if(player!=null) {
-			player.update(elapsTime);
+	        float time = engine.getElapsedTimeMillis();
+			float playerFloat[] = player.getNode().getLocalTransform().toFloatArray();
+	
+	
+			double playerMat[] = toDoubleArray(playerFloat);
+			Matrix4 mat3;
+			if(player.getNode().getPhysicsObject()!=null){
+				mat3 = Matrix4f.createFrom(toFloatArray(player.getNode().getPhysicsObject().getTransform()));
+				
+				playerFloat = player.getNode().getLocalTransform().toFloatArray();
+		
+				playerFloat[7] = mat3.value(1,3);//set y coordinate to physics world
+				playerMat = toDoubleArray(playerFloat);
+					
+				player.getNode().getPhysicsObject().setTransform(playerMat);
+			}
+		    player.update(elapsTimeSec);
+			
+		    
+			if (running){ 
+				Matrix4 mat;
+				physicsEng.update(time);
+				for (SceneNode s : engine.getSceneManager().getSceneNodes()){ 
+					if (s.getPhysicsObject() != null && s.getName() != player.getNode().getName()){ 
+						mat = Matrix4f.createFrom(toFloatArray(s.getPhysicsObject().getTransform()));
+						s.setLocalPosition(mat.value(0,3),mat.value(1,3), mat.value(2,3));
+					} 
+				} 
+			}
+		
 		}
+		
+		im.update(elapsTime);
+		
+		if(isConnected)//or change to: if connected to network
+			processNetworking(elapsTime);
+		
+		
+		if(avatarExists) {
+			gAvatar.getSkeletalEntity().update();
+			System.out.println("Last and cur position: " + gAvatar.getPos() 
+			+ ", " + gAvatar.getLastPos());
+			if (gAvatar.getPos() == gAvatar.getLastPos()){
+				avatarWalking = false;
+				gAvatar.getSkeletalEntity().stopAnimation();
+			}
+			else if (!avatarWalking){   
+				avatarWalking = true;
+			    gAvatar.getSkeletalEntity().stopAnimation();
+				gAvatar.getSkeletalEntity().playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+			}
+			gAvatar.setLastPos(gAvatar.getPos());
+		}
+		
 		
 		if(npcController!=null) {
 			npcController.update();
 		}
 	}
-
+	
+	
+	//gAvatar.getPos() == gAvatar.getLastPos()
 	private void processNetworking(float elapsTime) {
 		if(protClient != null) {
 			protClient.processPackets();
@@ -453,13 +511,26 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		return player.getNode().getLocalRotation();
 	}
 	
-	public void addGhostAvatarToGameWorld(GhostAvatar avatar) throws Exception{
+	public void addGhostAvatarToGameWorld(GhostAvatar avatar, String type, String obj) throws Exception{
 		if(avatar!=null) {
 			try {
 				System.out.println("Drawing ghost");
+				
+				System.out.println("Type of ghost: " + type + " and " + obj);
 				if(sm==null)
 					sm=this.getEngine().getSceneManager();
-				Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "boxMan9.obj");
+				
+				TextureManager tm=sm.getTextureManager();
+				
+				    avatarExists = true;
+					ghostID = (UUID) avatar.getID();
+					
+				//else
+				//{ System.out.println("made It to else");
+					//texture=tm.getAssetByPath("white_knight.png");
+				//}
+					
+				/*Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "boxMan9.obj");
 				ghostE.setPrimitive(Primitive.TRIANGLES);
 				
 				TextureManager tm=sm.getTextureManager();
@@ -475,7 +546,93 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				avatar.setEntity(ghostE);
 				avatar.setPos(avatar.getPos().add(0,1,0));
 				ghostN.setLocalPosition(avatar.getPos());
-				ghostN.setLocalRotation(avatar.getRot());
+				ghostN.setLocalRotation(avatar.getRot());*/
+				
+				
+				//TextureManager tm=sm.getTextureManager();String bKnight = new String("bKnight"); 
+				String ObjKnight = new String("knight"); 
+				String objDragon = new String("dragon");
+				
+				if(obj.equals(ObjKnight))
+				{
+					String charType = "knight.png";
+					String bKnight = new String("bKnight"); 
+					String knight = new String("knight"); 
+					String gKnight = new String("gKnight");
+					Texture texture = texture=tm.getAssetByPath("knight.png");
+					if(type.equals(knight))
+						texture=tm.getAssetByPath("knight.png");
+					if(type.equals(bKnight))
+						texture=tm.getAssetByPath("black_knight.png");
+					//if(type.equals("wKnight"))
+						//texture=tm.getAssetByPath("white_knight.png");
+					if(type.equals(gKnight))
+						texture=tm.getAssetByPath("gold_knight.png");
+				SkeletalEntity skeleton = sm.createSkeletalEntity("knightSkeletonAvatar", "knight.rkm", "knight.rks");
+		        
+		        //Texture texture=tm.getAssetByPath("black_knight.png");
+		    	RenderSystem rs = sm.getRenderSystem();
+		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+		    	state.setTexture(texture);
+		    	skeleton.setRenderState(state);
+
+		        SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode"+avatar.getID());
+		        node.attachObject(skeleton);
+		        node.scale(.5f, .5f, .5f);
+		  
+				avatar.setNode(node);
+				avatar.setSkeletalEntity(skeleton);
+				avatar.setPos(avatar.getPos().add(0,1,0));
+				node.setLocalPosition(avatar.getPos());
+				node.setLocalRotation(avatar.getRot());
+		    	
+		
+
+				skeleton.loadAnimation("walkAnimation", "knight_walk.rka");
+				//skeleton.stopAnimation();
+				//skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
+				gAvatar = avatar;
+				
+				//gAvatar = new GhostAvatar(
+						//(UUID) avatar.getID(), avatar.getPos(), avatar.getRot());
+				//gAvatar.setSkeletalEntity(skeleton);
+				//gAvatar.setLastPos(avatar.getPos());
+				System.out.println("Last and cur position: " + gAvatar.getPos() 
+				+ ", " + gAvatar.getLastPos() );
+				}
+				else
+				{
+					String gDragon = new String("gDragon");
+					String rDragon = new String("rDragon");
+					Texture texture = texture=tm.getAssetByPath("knight.png");
+					if(type.equals(gDragon))
+						texture=tm.getAssetByPath("green_dragon.png");
+					if(type.equals(rDragon))
+						texture=tm.getAssetByPath("red_dragon.png");
+					
+					SkeletalEntity skeleton = sm.createSkeletalEntity("dragonSkeleton", "dragon.rkm", "dragon.rks");
+					RenderSystem rs = sm.getRenderSystem();
+			    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+			    	state.setTexture(texture);
+			    	skeleton.setRenderState(state);
+
+			        SceneNode node = sm.getRootSceneNode().createChildSceneNode("playerNode"+avatar.getID());
+			        node.attachObject(skeleton);
+			        node.scale(.5f, .5f, .5f);
+			  
+					avatar.setNode(node);
+					avatar.setSkeletalEntity(skeleton);
+					avatar.setPos(avatar.getPos().add(0,1,0));
+					avatar.setLastPos(avatar.getPos());
+					node.setLocalPosition(avatar.getPos());
+					node.setLocalRotation(avatar.getRot());
+			    	
+			
+
+					skeleton.loadAnimation("idleAnimation", "dragon_idle.rka");
+					skeleton.playAnimation("idleAnimation", 0.5f, EndType.LOOP, 0);
+					
+				}
 				
 			}
 			catch(Exception e) {
@@ -672,11 +829,22 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			break;
 		case BUILD:
 			setupInputs();
-	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+	        sm.getAmbientLight().setIntensity(new Color(.7f, .7f, .7f));
 	        if(playerType==PLAYER_TYPE.KNIGHT) {
-	        	hud.hide();
+	        	//hud.hide();
+	        	hud.setToButtons();
 	        	if(onlineType==ONLINE_TYPE.ONLINE) {
 	        		setupTerrain();
+	        		running = true;//!!!!!!!!!!!!!!!!!!!!!!!!
+	                initPhysicsSystem();//!!!!!!!!!!!!!!!!!!!
+	            	createRagePhysicsWorld();//!!!!!!!!!!!!!!!!
+	            	try {
+						setupBalls();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            	
 	        	}
 	        	else {
 	        		System.out.println("initializing dungeon");
@@ -689,6 +857,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	        	}
 	        }
 	        else {
+	        	dungeon.addRoom();
+	        	try {
+					dungeon.createGem();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	        	hud.setToButtons();
 	        }
 	        
@@ -698,6 +873,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			if(playerType==PLAYER_TYPE.KNIGHT) {
 				player.setDungeon(dungeon);
 				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
+		        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
 			}
 			else {
 				if(onlineType==ONLINE_TYPE.OFFLINE) {
@@ -709,10 +885,41 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			break;
 		}
 	}
-
+	public SceneNode getPlayerNode()
+	{
+		return player.getNode();
+	}
+	
+	public SKIN getPlayerType()
+	{
+		return hud.getKnightSkin();
+	}
+	
+	public SKIN getPlayerDragonType()
+	{
+		return hud.getDragonSkin();
+	}
+	public PLAYER_TYPE getPlayerObjType(){
+		
+		return playerType;
+	}
 	private void setupNPC() {
 		npcController=new NPCController();
 		this.addGhostNPCToGameWorld(npcController.getNPC());
+	}
+	
+	private void setupBalls() throws IOException {
+		SceneNode rootNode=sm.getRootSceneNode();
+    	// Ball 1
+    	Entity ball1Entity = sm.createEntity("ball1", "sphere.obj");
+    	ball1Node = rootNode.createChildSceneNode("Ball1Node");
+    	ball1Node.attachObject(ball1Entity);
+    	ball1Node.setLocalPosition(0, 2, 10);
+    	// Ball 2
+    	Entity ball2Entity = sm.createEntity("Ball2", "sphere.obj");
+    	ball2Node = rootNode.createChildSceneNode("Ball2Node");
+    	ball2Node.attachObject(ball2Entity);
+    	ball2Node.setLocalPosition(-1,10, 10);
 	}
 	
 	

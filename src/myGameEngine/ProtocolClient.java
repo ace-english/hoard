@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import hoardPVPGame.MyGame;
 import ray.networking.client.GameConnectionClient;
-import ray.rage.scene.SceneNode;
 
 public class ProtocolClient extends GameConnectionClient {
 	private MyGame game;
@@ -43,7 +42,7 @@ public class ProtocolClient extends GameConnectionClient {
 			// format: join, success or join, failure
 				if(msgTokens[1].compareTo("success") == 0)	{ 
 					game.setIsConnected(true);
-					sendCreateMessage(game.getPlayerPosition(),game.getRotation());
+					sendCreateMessage(game.getPlayerPosition(), game.getRotation());
 					sendWantsMessage();
 				}
 				if(msgTokens[1].compareTo("failure") == 0) { 
@@ -55,8 +54,8 @@ public class ProtocolClient extends GameConnectionClient {
 				UUID ghostID = UUID.fromString(msgTokens[1]);
 				removeGhostAvatar(ghostID);
 			}
-			if (/*(msgTokens[0].compareTo("dsfr") == 0 ) // receive “dsfr”
-			|| */(msgTokens[0].compareTo("create")==0)){ 
+			if ((msgTokens[0].compareTo("dsfr") == 0 ) // receive “dsfr”
+			|| (msgTokens[0].compareTo("create")==0)){ 
 				// format: create, remoteId, x,y,z or dsfr, remoteId, x,y,z
 				UUID ghostID = UUID.fromString(msgTokens[1]);
 				Vector3 ghostPosition = Vector3f.createFrom(
@@ -76,34 +75,12 @@ public class ProtocolClient extends GameConnectionClient {
 						
 						float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
 						Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
-						createGhostAvatar(ghostID, ghostPosition, mtx);
+						createGhostAvatar(ghostID, ghostPosition,mtx);
+					
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-			}
-			if (msgTokens[0].compareTo("dsfr") == 0 )
-			{
-				 UUID ghostID=UUID.fromString(msgTokens[1]);
-				 Vector3 ghostPosition = Vector3f.createFrom(
-				 Float.parseFloat(msgTokens[2]),
-				 Float.parseFloat(msgTokens[3]),
-				 Float.parseFloat(msgTokens[4]));
-				 float v1 = Float.parseFloat(msgTokens[5]);
-				 float v2 = Float.parseFloat(msgTokens[6]);
-				 float v3 = Float.parseFloat(msgTokens[7]);
-				 float v4 = Float.parseFloat(msgTokens[8]);
-				 float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
-				 Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
-				 
-				 for(GhostAvatar ga :ghostAvatars) {
-						if(ga.getID().equals(ghostID)){
-							System.out.println("Rotating "+ghostID);
-							//ga.rotate(msgTokens[2].charAt(0), angle);
-							ga.getNode().setLocalRotation(mtx);
-							ga.setPos(ghostPosition );
-						}
-					}
 			}
 			if(msgTokens[0].compareTo("create") == 0){ // rec. “create…”
 				UUID ghostID = UUID.fromString(msgTokens[1]);
@@ -112,23 +89,24 @@ public class ProtocolClient extends GameConnectionClient {
 						Float.parseFloat(msgTokens[3]),
 						Float.parseFloat(msgTokens[4]));
 				
-				float v1 = Float.parseFloat(msgTokens[5]);
-				float v2 = Float.parseFloat(msgTokens[6]);
-				float v3 = Float.parseFloat(msgTokens[7]);
-				float v4 = Float.parseFloat(msgTokens[8]);
-				
-				float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
-				Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
-				System.out.println("Reconstructed matrix: " + mtx);
+						float v1 = Float.parseFloat(msgTokens[5]);
+						float v2 = Float.parseFloat(msgTokens[6]);
+						float v3 = Float.parseFloat(msgTokens[7]);
+						float v4 = Float.parseFloat(msgTokens[8]);
+						
+						float flo[] = {v1,0,v2,0,1,0,v3,0,v4};
+						Matrix3f mtx = (Matrix3f) Matrix3f.createFrom(flo);
+						System.out.println("Reconstructed matrix: " + mtx);
+
 				try	{ 
-					createGhostAvatar(ghostID, ghostPosition,mtx);
+					createGhostAvatar(ghostID, ghostPosition, mtx);
 				} catch (IOException e){ 
 					System.out.println("error creating ghost avatar");
 				} 
 			}
 			if(msgTokens[0].compareTo("wants") == 0){ // rec. “wants…”
 				UUID clientID = UUID.fromString(msgTokens[1]);
-				this.sendDetailsForMessage(clientID, game.getPlayerNode());
+				this.sendDetailsForMessage(clientID, game.getPlayerPosition());
 			}
 			if(msgTokens[0].compareTo("move") == 0){ // format: move,ghostID,x,y,z
 				UUID ghostID=UUID.fromString(msgTokens[1]);
@@ -265,19 +243,10 @@ public class ProtocolClient extends GameConnectionClient {
 			e.printStackTrace();
 		}
 	}
-	public void sendDetailsForMessage(UUID remId, SceneNode playerNode){ 
+	public void sendDetailsForMessage(UUID remId, Vector3 pos){ 
 		try	{ 
 			String message=new String("dsfr," + id.toString());
-			message += "," + playerNode.getWorldPosition().x()+"," 
-			+ playerNode.getWorldPosition().y() + "," 
-			+ playerNode.getWorldPosition().z();
-			
-			String matStr = Float.toString(playerNode.getLocalRotation().row(0).x()) + "," +
-					Float.toString(playerNode.getLocalRotation().row(2).x()) + "," +
-					Float.toString(playerNode.getLocalRotation().row(0).z()) + "," +
-					Float.toString(playerNode.getLocalRotation().row(2).z());
-			
-			message += "," + matStr;
+			message += "," + pos.x()+"," + pos.y() + "," + pos.z();
 			sendPacket(message);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -287,7 +256,6 @@ public class ProtocolClient extends GameConnectionClient {
 		try	{ 
 			String message = new String("move," + ghostID.toString());
 			message += "," + pos.x()+"," + pos.y() + "," + pos.z();
-			System.out.println("Sending a move message!");
 			sendPacket(message);
 		}
 		catch (IOException e) { 
@@ -298,7 +266,6 @@ public class ProtocolClient extends GameConnectionClient {
 
 	public void sendMoveMessage(Vector3 pos) {
 		try	{ 
-			
 			String message = new String("move,"+id);
 			message += "," + pos.x()+"," + pos.y() + "," + pos.z();
 			sendPacket(message);

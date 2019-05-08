@@ -8,17 +8,14 @@ import ray.rml.*;
 public class RollAction extends AbstractInputAction {
 
 	private Player player;
-	private ProtocolClient pc;
 
 	public RollAction(FreeMovePlayer freeMovePlayer) {
 		super();
 		player=freeMovePlayer;
-		this.pc=player.getProtocolClient();
 	}
 
 	@Override
 	public void performAction(float arg0, Event arg1) {
-		System.out.println("made it to roll");
 		float value=arg1.getValue();
 		boolean up=(
 				arg1.getComponent().getName().equals("E")
@@ -39,8 +36,7 @@ public class RollAction extends AbstractInputAction {
 			else 
 				angle=Degreef.createFrom(1f*value);
 			avatar.roll(angle);
-			
-		//pc.sendRotateMessage(player.getID(), 'z', angle);
+		
 	}
 
 }

@@ -23,11 +23,16 @@ public class GhostAvatar{
 		
 	}
 	
-	public Vector3 getPos() {
-		return pos;
-	}
 	public Matrix3f getRot() {
 		return rot;
+	}
+
+	public void setRot(Matrix3f rot) {
+		this.rot = rot;
+	}
+
+	public Vector3 getPos() {
+		return pos;
 	}
 	public void setPos(Vector3 pos) {
 		node.setLocalPosition(pos);

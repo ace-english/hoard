@@ -1,11 +1,31 @@
 CHECKPOINT
 ----------------------------
-[x] animation
-	[x] flappy idle dragon
-[x] NPC knight if dragon and single player
-[ ] move npc knight
-[ ] start physics
-[ ] jump action
+JOSH
+[ ] physics world
+[ ] networking
+
+ACE
+[ ] lights toggle
+[ ] sound
+[ ] fix dragon animation
+[ ] fix knight AI
+[ ] traps
+STRETCH GOALS:
+[ ] finish hud
+[ ] scoring
+
+REQUIREMENTS
+[x] scripting
+[x] skybox
+[x] terrain
+[ ] lights
+[ ] 3D sound
+[x] HUD
+[x] heirarchical scenegraph
+[ ] animation
+[ ] NPC
+[ ] physics
+
 
 PLANNED FEATURES
 ----------------------------
@@ -50,7 +70,6 @@ STRETCH GOALS
 	
 QUESTIONS
 ----------------------------
-broken exports
 skeletons crash when closing the game
 skeletal movement perpendicular to mesh
 	rotating does not seem to help

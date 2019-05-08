@@ -7,12 +7,15 @@ import java.nio.IntBuffer;
 
 import ray.rage.Engine;
 import ray.rage.asset.texture.Texture;
+import ray.rage.asset.texture.TextureManager;
+import ray.rage.rendersystem.RenderSystem;
 import ray.rage.rendersystem.Renderable.DataSource;
 import ray.rage.rendersystem.Renderable.Primitive;
 import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.FrontFaceState;
 import ray.rage.rendersystem.states.RenderState;
 import ray.rage.rendersystem.states.TextureState;
+import ray.rage.rendersystem.states.ZBufferState;
 import ray.rage.scene.*;
 import ray.rage.util.BufferUtil;
 import ray.rml.Angle;
@@ -28,6 +31,8 @@ public class Room{
 	private static int roomNum=0;
 	private int planeNum;
 	
+	private SceneNode floor, ceiling, leftWall, rightWall;
+	
 	
 	public Room(SceneManager sm, Engine eng, Dungeon dungeon) {
 		this.sm = sm;
@@ -40,7 +45,6 @@ public class Room{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Room.roomNum++;
 	}
 	
 	public static int getRoomCount() {
@@ -49,7 +53,6 @@ public class Room{
 	
 	private SceneNode returnPlane() throws IOException {
     	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
-    	planeNum++;
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -92,6 +95,11 @@ public class Room{
 		
 		plane.setPrimitive(Primitive.TRIANGLES);
 		
+		RenderSystem rs = sm.getRenderSystem();
+	    ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
+	    zstate.setTestEnabled(true);
+	    plane.setRenderState(zstate);
+		
         SceneNode planeNode = roomNode.createChildSceneNode("plane" + roomNum + "-" + planeNum);
         planeNum++;
         planeNode.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
@@ -102,7 +110,6 @@ public class Room{
     
     private SceneNode returnWall() throws IOException {
     	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
-    	planeNum++;
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -145,37 +152,52 @@ public class Room{
 		
 		plane.setPrimitive(Primitive.TRIANGLES);
 		
+		RenderSystem rs = sm.getRenderSystem();
+	    ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
+	    zstate.setTestEnabled(true);
+	    plane.setRenderState(zstate);
+		
         SceneNode planeNode = roomNode.createChildSceneNode("plane"+roomNum+'-' + planeNum);
-        
-        if((roomNum%4)==0) {
-    	
-			Light light = returnLight(plane.getName()+"torch");
-			SceneNode lightNode = planeNode.createChildSceneNode(light.getName()+"Node");
-			Entity torch = sm.createEntity(plane.getName()+"torchE", "sphere.obj");
-	        torch.setPrimitive(Primitive.TRIANGLES);
-	        lightNode.attachObject(light);
-	        lightNode.attachObject(torch);
-	        lightNode.moveUp(.1f);
-	        lightNode.moveForward(0.5f);
-	        lightNode.scale(0.1f,0.1f, 0.1f);
-	        //lightNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0,1,0));
-        }
         
         planeNum++;
         planeNode.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
         planeNode.attachObject(plane);
-
-    	//add lights on some walls
         return planeNode;
         
     }
     
-    private Light returnLight(String name) {
+    private SceneNode createLightNode(SceneNode rootNode) throws IOException {
+		Light light = createLight(rootNode.getName()+"torch");
+		
+		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "torch.obj");
+	    torch.setPrimitive(Primitive.TRIANGLES);
+	       
+	    TextureManager tm=sm.getTextureManager();
+	    Texture texture=tm.getAssetByPath("light.png");
+	    RenderSystem rs = sm.getRenderSystem();
+	    TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+	    state.setTexture(texture);
+	    torch.setRenderState(state);
+	        
+	    	
+		SceneNode lightNode = rootNode.createChildSceneNode(light.getName()+"Node");
+	    lightNode.attachObject(light);
+	    lightNode.attachObject(torch);
+	    lightNode.moveUp(.17f);
+	    lightNode.moveForward(0.75f);
+	    lightNode.scale(0.1f,0.1f, 0.1f);
+	    lightNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(1f, 0f, 0f));
+	        
+	        
+	    return lightNode;
+    }
+    
+    private Light createLight(String name) {
     	Light light=sm.createLight(name, Light.Type.POINT);
-    	light.setAmbient(new Color(.01f, .01f, .0f));
-    	light.setDiffuse(new Color(.65f, .45f, .3f));
+    	light.setAmbient(new Color(.001f, .001f, .00f));
+    	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.5f, 0.4f, 0.3f));
-    	light.setRange(40f);
+    	light.setRange(60f);
 	    
 	    return light;
     }
@@ -183,24 +205,33 @@ public class Room{
     private void setupRoom() throws IOException {
     	planeNum=0;
     	roomNode = sm.getRootSceneNode().createChildSceneNode("room"+roomNum);
-    	SceneNode floor, ceiling, left, right;
     	
     	floor=returnPlane();
-    	right=returnWall();
+    	rightWall=returnWall();
+    	rightWall.translate(Vector3f.createFrom(GameUtil.getRoomSize(), 0f, 0f));
+    	rightWall.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 0f, 1f));
+    	rightWall.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
     	
-    	right.translate(Vector3f.createFrom(GameUtil.getRoomSize(), 0f, 0f));
-    	right.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 0f, 1f));
-    	right.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
-    	left=returnWall();
-    	left.translate(Vector3f.createFrom(-GameUtil.getRoomSize(), GameUtil.getRoomSize(), 0f));
-    	left.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 0f, -1f));
-    	left.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
+    	leftWall=returnWall();
+    	leftWall.translate(Vector3f.createFrom(-GameUtil.getRoomSize(), 0, 0f));
+    	leftWall.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 0f, 1f));
+    	leftWall.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
+    	leftWall.rotate(Degreef.createFrom(180f), Vector3f.createFrom(0f, 0f, 1f));
+    	
     	ceiling=returnPlane();
     	ceiling.rotate(Degreef.createFrom(180f), Vector3f.createFrom(0f,0f,1f));
     	ceiling.translate(Vector3f.createFrom(0f,GameUtil.getRoomSize(), 0f));
     	
-    	
+    
         
+        if((roomNum%8)==0) {
+        	createLightNode(rightWall);
+        }
+        else if((roomNum%4)==0) {
+        	createLightNode(leftWall);
+        }
+        
+       
     	
     	//if first room, give back wall for hoard
     	if(roomNum==0) {
@@ -213,6 +244,12 @@ public class Room{
     	roomNum++;
     		
     	
+    }
+    
+    public void close() throws IOException {
+    	SceneNode back=returnWall();
+    	back.translate(Vector3f.createFrom(0f, 0, GameUtil.getRoomSize()));
+    	back.rotate(Degreef.createFrom(90f), Vector3f.createFrom(-1f, 0f, 0f));
     }
 
 	public SceneNode getRoomNode() {
@@ -227,12 +264,34 @@ public class Room{
 
 	public void setTrap(Trap trap) {
 		this.trap = trap;
-		trap.addToSceneNode(this);
 		hasTrap=true;
 	}
 
 	public boolean HasTrap() {
 		return hasTrap;
+	}
+
+	public void toggleLights() {
+		if(leftWall.getChildCount()>0) {
+			
+		}
+		else if(rightWall.getChildCount()>0) {
+			
+		}
+		else
+			System.out.println("no lights here");
+	}
+
+	public void clear() {
+		trap.delete();
+		hasTrap=false;
+		
+	}
+
+	public void delete() {
+		roomNum--;
+		sm.destroySceneNode(getRoomNode());
+		
 	}
 	
 	

@@ -8,17 +8,14 @@ import ray.rml.*;
 public class PitchAction extends AbstractInputAction {
 
 	private Player player;
-	private ProtocolClient pc;
 
 	public PitchAction(FreeMovePlayer freeMovePlayer) {
 		super();
 		player=freeMovePlayer;
-		this.pc=player.getProtocolClient();
 	}
 
 	@Override
 	public void performAction(float arg0, Event arg1) {
-		System.out.println("made it to pitch");
 		float value=arg1.getValue();
 		boolean up=(
 				arg1.getComponent().getName().equals("Up")
@@ -40,7 +37,6 @@ public class PitchAction extends AbstractInputAction {
 				angle=Degreef.createFrom(1f*value);
 			avatar.pitch(angle);
 			
-		//pc.sendRotateMessage(player.getID(), 'x', angle);
 	}
 
 }

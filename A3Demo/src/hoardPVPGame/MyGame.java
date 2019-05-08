@@ -657,7 +657,7 @@ public class MyGame extends VariableFrameRateGame{
 			physicsEng.update(time);
 			for (SceneNode s : engine.getSceneManager().getSceneNodes())
 			{ 
-				if (s.getPhysicsObject() != null && s.getName() != player.getNode().getName())
+				//if (s.getPhysicsObject() != null && s.getName() != player.getNode().getName())
 				//if (s.getPhysicsObject() != null /*&& s.getName() != player.getNode().getName()*/)
 				{ 
 					mat = Matrix4f.createFrom(toFloatArray(s.getPhysicsObject().getTransform()));

@@ -42,7 +42,7 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 						ci = getServerSocket().createClientInfo(senderIP, sndPort);
 						addClient(ci, clientID);
 						sendJoinedMessage(clientID, true);
-						//sendWantsDetailsMessages(clientID);
+						sendWantsDetailsMessages(clientID);
 						numberOfPlayers++;
 					}
 					else {
@@ -61,7 +61,8 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 				UUID clientID = UUID.fromString(msgTokens[1]);
 			
 				String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
-				sendCreateMessages(clientID, msgTokens[1], pos);
+ 				String[] rot = {msgTokens[5], msgTokens[6], msgTokens[7], msgTokens[8]};
+				sendCreateMessages(clientID, pos, rot);
 				sendWantsDetailsMessages(clientID);
 			}
 		
@@ -95,6 +96,21 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 				sendMoveMessages(clientID, pos);
 				sendWantsDetailsMessages(clientID);
 			} 
+ 			
+ 			if(msgTokens[0].compareTo("rotate") == 0)
+ 			{ // etc….. }
+ 				System.out.println("Server getting a rotate message");
+ 				/*UUID clientID = UUID.fromString(msgTokens[1]);
+ 				sendMoveMessages(clientID, msgTokens);*/
+ 				
+ 				
+ 				UUID clientID = UUID.fromString(msgTokens[1]);
+ 				//char c = msgTokens[2];
+ 				//char c = 'a';
+ 				//String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
+ 				sendRotateMessages(clientID, msgTokens[2], msgTokens[3], msgTokens[4], msgTokens[5], msgTokens[6]);
+ 				sendWantsDetailsMessages(clientID);
+ 			}	
 		}
 	}
 	
@@ -105,15 +121,26 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 		}
 		catch (IOException e) { e.printStackTrace(); }
 	}
-
-	private void sendCreateMessages(UUID clientID, String ghostID, String[] pos) {
-		try	{ 
-			String message = new String("create,"+ghostID.toString()+","+pos[0]+","+pos[1]+","+pos[2]);
-			forwardPacketToAll(message, clientID);
-		}
-		catch (IOException e) { e.printStackTrace(); }
-		
-	}
+ 	public void sendCreateMessages(UUID clientID, String[] position, String[] rotation){
+ 		System.out.println("Made it to sendCreateMessages from server");
+ 		try
+ 		{ 
+ 			String message = new String("create," + clientID.toString());
+ 			message += "," + position[0];
+ 			message += "," + position[1];
+ 			message += "," + position[2];
+ 			message += "," + rotation[0];
+ 			message += "," + rotation[1];
+ 			message += "," + rotation[2];
+ 			message += "," + rotation[3];
+ 			
+ 			forwardPacketToAll(message, clientID);
+ 		}
+ 		catch (IOException e)
+ 		{
+ 			e.printStackTrace();
+ 		}
+ 	}
 
 	private void sendMoveMessages(UUID clientID, String[] pos) {
 		try	{ 
@@ -144,4 +171,25 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 		}
 		catch (IOException e) { e.printStackTrace(); }
 	}
+ 	
+ 	
+ 	public void sendRotateMessages(UUID clientID, String axis, String v1, String v2, String v3, String v4)
+ 	{ // format: create, remoteId, x, y, z
+ 		System.out.println("Made it to sendRotateMessages from server");
+ 		try
+ 		{ 
+ 			String message = new String("rotate," + clientID.toString());
+ 			message +="," + axis;
+ 			message += "," + v1;
+ 			message += "," + v2;
+ 			message += "," + v3;
+ 			message += "," + v4;
+ 			//message += "," + position[2];
+ 			forwardPacketToAll(message, clientID);
+ 		}
+ 		catch (IOException e)
+ 		{
+ 			e.printStackTrace();
+ 		}
+ 	}
 }

@@ -1,6 +1,7 @@
 package hoardPVPGame;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.net.InetAddress;
@@ -16,6 +17,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import hoardPVPGame.Dungeon.TRAP_TYPE;
+
 import javax.script.Invocable;
 
 import myGameEngine.*;
@@ -37,9 +41,19 @@ import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
 import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.*;
-import ray.networking.IGameConnection.ProtocolType;
 
-public class MyGame extends VariableFrameRateGame{
+enum GAME_MODE 
+{ 
+    SPLASH, CHAR_SELECT, BUILD, SEIGE; 
+}
+enum PLAYER_TYPE{
+	DRAGON, KNIGHT;
+}
+enum ONLINE_TYPE{
+	ONLINE, OFFLINE;
+}
+
+public class MyGame extends VariableFrameRateGame implements MouseListener{
 
 	// to minimize variable allocation in update()
 	GL4RenderSystem rs;
@@ -57,9 +71,12 @@ public class MyGame extends VariableFrameRateGame{
 	private boolean isClientConnected;
 	private Vector<UUID> gameObjectsToRemove;
     private Dungeon dungeon;
-    
-    private boolean playerIsDragon=false;
+    private GAME_MODE gameMode=GAME_MODE.SPLASH;
+    private PLAYER_TYPE playerType;
+    private ONLINE_TYPE onlineType;
 
+    private HUD hud;
+    private NPCController npcController;
     
     private static final String SKYBOX_NAME = "SkyBox";
 	
@@ -77,14 +94,9 @@ public class MyGame extends VariableFrameRateGame{
 
     public MyGame(String serverAddr, int sPort) {
         super();
-        System.out.println("ip: " + serverAddr);
-        System.out.println("port: " + sPort);
-        sm=this.getEngine().getSceneManager();
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
-        System.out.println("ip: " + this.serverAddress);
-        System.out.println("port: " + this.serverPort);
         
         gameObjectsToRemove = new Vector<UUID>();
     }
@@ -94,17 +106,8 @@ public class MyGame extends VariableFrameRateGame{
 	}
 
     public static void main(String[] args) {
-    	System.out.println("helo");
-    	MyGame game;
-    	if(args.length > 0)
-    	{
-    		game = new MyGame(args[0], Integer.parseInt(args[1]));
-    	}
-    	else
-    	{
-    		game = new MyGame("", 0);
-    	}
-    	
+        //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
+    	MyGame game = new MyGame("", 10);
         try {
             game.startup();
             game.run();
@@ -159,6 +162,7 @@ public class MyGame extends VariableFrameRateGame{
 
     @Override
     protected void setupCameras(SceneManager sm, RenderWindow rw) {
+    	System.out.println("Setting up cameras");
         SceneNode rootNode = sm.getRootSceneNode();
         Camera camera = sm.createCamera("MainCamera", Projection.PERSPECTIVE);
         rw.getViewport(0).setCamera(camera);
@@ -169,13 +173,10 @@ public class MyGame extends VariableFrameRateGame{
         camera.getFrustum().setFarClipDistance(1000f);
     }
     
-	
-    private void setupTerrain()
-	{  
+	private void setupTerrain()
+	{
 		SceneManager sm = this.getEngine().getSceneManager();
 		Tessellation tessE = sm.createTessellation("tessE", 6);
-		
-		//Tessellation tessE = this.getEngine().getSceneManager().createTessellation("tessE", 6);
 		// subdivisions per patch: min=0, try up to 32
 		tessE.setSubdivisions(8f);
 		SceneNode tessN =
@@ -186,42 +187,26 @@ public class MyGame extends VariableFrameRateGame{
 		// tessN.translate(Vector3f.createFrom(-6.2f, -2.2f, 2.7f));
 		// tessN.yaw(Degreef.createFrom(37.2f));
 		tessN.scale(100, 500, 100);
-		tessN.translate(-40, 0, 0);
+		tessN.translate(-40,0,0);
 		tessE.setHeightMap(this.getEngine(), "heightmap.jpg");
 		tessE.setTexture(this.getEngine(), "terrain.jpg");
 		// tessE.setNormalMap(. . .)
 	}
-	
-    
     @Override
     protected void setupScene(Engine eng, SceneManager sm) throws IOException {
-    	setupNetworking();
-    	setupTerrain();
-        dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
+        this.sm=sm;
+    	//setupNetworking();
+    	im=new GenericInputManager();
+    	//setupTerrain();
         
-    	
-    	/*
-    	 * player
-    	 */
-        if(playerIsDragon)
-            player = new FreeMovePlayer(sm, protClient, dungeon);
-        else
-        	player = new OrbitalPlayer(sm, protClient);
+        hud=new HUD(sm, eng);
         
         
         /*
          * dungeon
          */
+        dungeon=new Dungeon(this.getEngine().getSceneManager(), getEngine());
         dungeon.addRoom();
-        
-        if(!isClientConnected&&!playerIsDragon) {
-        	ScriptEngineManager factory = new ScriptEngineManager();
-        	ScriptEngine jsEngine = factory.getEngineByName("js");
-        	
-        	jsEngine.put("dungeon", dungeon);
-        	this.executeScript(jsEngine, "src/randomDungeon.js");
-        	
-        }
 		
         /*
          * skybox
@@ -379,7 +364,12 @@ public class MyGame extends VariableFrameRateGame{
         gemNode.moveUp(3f);
         gemNode.scale(.3f,.3f,.3f);
         
-		gemNode.setLocalPosition(-3f, 1.0f, 0f);
+		
+		RenderSystem rs = sm.getRenderSystem();
+	     ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
+	     zstate.setTestEnabled(true);
+	     gem.setRenderState(zstate);
+	  
 		
 		
 
@@ -396,38 +386,23 @@ public class MyGame extends VariableFrameRateGame{
         /*
          * light
          */
-        sm.getAmbientLight().setIntensity(new Color(.3f, .3f, .3f));
-        
-        
-    	setupInputs();
+        sm.getAmbientLight().setIntensity(new Color(1f, 1f, 1f));
 
       
     }
     
 	@Override
     protected void update(Engine engine) {
-		// build and set HUD
-		rs = (GL4RenderSystem) engine.getRenderSystem();
-		
-		elapsTime += engine.getElapsedTimeMillis();
-		elapsTimeSec = Math.round(elapsTime/1000.0f);
-		elapsTimeStr = Integer.toString(elapsTimeSec);
-		
-
-		dispStr="Time = " + elapsTimeStr + " Score: "+player.getScore();
-		rs.setHUD(dispStr, 15, 15);
-		if(player.isBoostActive()) dispStr+=" Boost Active!";
 		im.update(elapsTime);
 		processNetworking(elapsTime);
 		
-		checkForCollisions();
-		player.update(elapsTimeSec);
+		if(player!=null) {
+			player.update(elapsTime);
+		}
 		
-		/* check if player jumped*/
-		/*
 		if(npcController!=null) {
 			npcController.update();
-		}*/
+		}
 	}
 
 	private void processNetworking(float elapsTime) {
@@ -452,7 +427,6 @@ public class MyGame extends VariableFrameRateGame{
 	 * calls functions in Player to handle action setup
 	 */
 	protected void setupInputs() {
-    	im=new GenericInputManager();
     	ArrayList<Controller> controllers=im.getControllers();
     	
     	for(Controller controller:controllers) {
@@ -461,12 +435,6 @@ public class MyGame extends VariableFrameRateGame{
     			
     	
     }
-
-	
-	private void checkForCollisions() {
-		//TODO stub
-			
-	}
 	
 
 	public void setIsConnected(boolean b) {
@@ -477,6 +445,8 @@ public class MyGame extends VariableFrameRateGame{
 	public Vector3 getPlayerPosition() {
 		return player.getNode().getWorldPosition();
 	}
+	
+
 	
 	public Matrix3 getRotation()
 	{
@@ -489,13 +459,10 @@ public class MyGame extends VariableFrameRateGame{
 				System.out.println("Drawing ghost");
 				if(sm==null)
 					sm=this.getEngine().getSceneManager();
-				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dolphinHighPoly.obj");
-				//Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "dragon1.obj");
 				Entity ghostE=sm.createEntity("playerEntity"+avatar.getID(), "boxMan9.obj");
 				ghostE.setPrimitive(Primitive.TRIANGLES);
 				
 				TextureManager tm=sm.getTextureManager();
-		        //Texture texture=tm.getAssetByPath("dragon1.png");
 		        Texture texture=tm.getAssetByPath("boxMan4.png");
 		    	RenderSystem rs = sm.getRenderSystem();
 		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
@@ -517,10 +484,55 @@ public class MyGame extends VariableFrameRateGame{
 		}
 	}
 	
-	public SceneNode getPlayerNode()
-	{
+
+	public void addGhostNPCToGameWorld(NPC npc) {
+		if(npc!=null) {
+			try {
+				System.out.println("Drawing NPC");
+				if(sm==null)
+					sm=this.getEngine().getSceneManager();
+
+		        SkeletalEntity skeleton = sm.createSkeletalEntity("npcSkeleton"+npcController.getNumNPCs(), "knight.rkm", "knight.rks");
+
+		        String skinName;
+		        switch(npc.getSkin()) {
+				case KNIGHT:
+					skinName="knight.png";
+					break;
+				case BLACK_KNIGHT:
+					skinName="black_knight.png";
+					break;
+				case GOLD_KNIGHT:
+					skinName="gold_knight.png";
+					break;
+				case WHITE_KNIGHT:
+					skinName="white_knight.png";
+					break;
+				default:
+					skinName="default.png";
+					break;
+		        
+		        }
+				TextureManager tm=sm.getTextureManager();
+		        Texture texture=tm.getAssetByPath(skinName);
+		    	RenderSystem rs = sm.getRenderSystem();
+		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+		    	state.setTexture(texture);
+		    	skeleton.setRenderState(state);
+				
+				SceneNode ghostN = sm.getRootSceneNode().createChildSceneNode("npcNode"+npcController.getNumNPCs());
+				ghostN.attachObject(skeleton);
+				npc.setPos(dungeon.getLastRoom().getRoomNode().getWorldPosition());
+				ghostN.setLocalPosition(npc.getPos());
+		        ghostN.scale(.5f, .5f, .5f);
+				
+				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
-		return player.getNode();
 	}
 	
 	public void removeGhostAvatarFromGameWorld(GhostAvatar avatar) {
@@ -537,6 +549,173 @@ public class MyGame extends VariableFrameRateGame{
 			
 		} 
 	}
+	
+
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int x=e.getX();
+		int y=e.getY();
+		//
+		if(gameMode==GAME_MODE.SPLASH) {
+			if(x>245&&x<738) {
+				if(y>366&&y<431) {
+					System.out.println("Clicked sp");
+					onlineType=ONLINE_TYPE.OFFLINE;
+					setupNetworking();
+					setGameMode(GAME_MODE.CHAR_SELECT);
+				}
+				else if(y>513&&y<578) {
+					System.out.println("Clicked online");
+					onlineType=ONLINE_TYPE.ONLINE;
+					setupNetworking();
+					setGameMode(GAME_MODE.CHAR_SELECT);
+				}
+			}
+		}
+		else if (gameMode==GAME_MODE.CHAR_SELECT){
+			if(y>515&&y<580) {
+				if(x<106&&x>37) {
+					hud.incrementDragon();
+				}
+				else if(x<344&&x>136) {
+					player=new FreeMovePlayer(getEngine().getSceneManager(), protClient, dungeon, hud.getDragonSkin());
+					playerType=PLAYER_TYPE.DRAGON;
+					setGameMode(GAME_MODE.BUILD);
+				}
+				else if(x>372&&x<439) {
+					hud.decrementDragon();
+				}
+				else if(x<612&&x>541) {
+					hud.incrementKnight();
+				}
+				else if(x>642&&x<847) {
+					player=new OrbitalPlayer(this.getEngine().getSceneManager(), protClient, hud.getKnightSkin());
+					playerType=PLAYER_TYPE.KNIGHT;
+					setGameMode(GAME_MODE.BUILD);
+				}
+				else if(x>875&&x<944) {
+					hud.decrementKnight();
+				}
+			}
+		}
+		else if(gameMode==GAME_MODE.BUILD) {
+			if(playerType==PLAYER_TYPE.DRAGON) {
+					if(x>0&&x<200) {
+						y=y/80;
+						switch(y) {
+						case 0:
+							dungeon.addRoom();
+							break;
+						case 1: 
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Swinging);
+							break;
+						case 2:
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Spike);
+							break;
+						case 3:
+							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Pit);
+							break;
+						case 4:
+							dungeon.getRoom(getCurrentRoom()).toggleLights();
+							break;
+						case 5:
+							dungeon.getRoom(getCurrentRoom()).clear();
+							break;
+						case 6:
+							dungeon.removeLastRoom();
+							break;
+						case 7:
+							try {
+								dungeon.finish();
+								this.setGameMode(GAME_MODE.SEIGE);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							break;
+						}
+					}
+				
+				
+			}
+			
+		}
+		else if(gameMode==GAME_MODE.SEIGE) {
+			
+		}
+	}
+	
+	private int getCurrentRoom(){
+		return dungeon.getCurrentRoom(player.getNode().getLocalPosition());
+	}
+	
+	private void setGameMode(GAME_MODE gm) {
+		System.out.println("setting game mode to: "+gm);
+		this.gameMode=gm;
+		switch(gm) {
+		case SPLASH:
+			try {
+				hud.setToSplash();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		case CHAR_SELECT:
+			try {
+				hud.setToCharSelect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case BUILD:
+			setupInputs();
+	        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+	        if(playerType==PLAYER_TYPE.KNIGHT) {
+	        	hud.hide();
+	        	if(onlineType==ONLINE_TYPE.ONLINE) {
+	        		setupTerrain();
+	        	}
+	        	else {
+	        		System.out.println("initializing dungeon");
+	            	ScriptEngineManager factory = new ScriptEngineManager();
+	            	ScriptEngine jsEngine = factory.getEngineByName("js");
+	            	
+	            	jsEngine.put("dungeon", dungeon);
+	            	this.executeScript(jsEngine, "src/randomDungeon.js");
+	        		setGameMode(GAME_MODE.SEIGE);
+	        	}
+	        }
+	        else {
+	        	hud.setToButtons();
+	        }
+	        
+			break;
+		case SEIGE:
+			//teleport knight to dungeon
+			if(playerType==PLAYER_TYPE.KNIGHT) {
+				player.setDungeon(dungeon);
+				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
+			}
+			else {
+				if(onlineType==ONLINE_TYPE.OFFLINE) {
+					setupNPC();
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void setupNPC() {
+		npcController=new NPCController();
+		this.addGhostNPCToGameWorld(npcController.getNPC());
+	}
+	
+	
 	
 	
 }

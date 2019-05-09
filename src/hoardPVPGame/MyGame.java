@@ -711,57 +711,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		}
 	}
 	
-
-	public void addGhostNPCToGameWorld(NPC npc) {
-		if(npc!=null) {
-			try {
-				System.out.println("Drawing NPC");
-				if(sm==null)
-					sm=this.getEngine().getSceneManager();
-
-		        SkeletalEntity skeleton = sm.createSkeletalEntity("npcSkeleton"+npcController.getNumNPCs(), "knight.rkm", "knight.rks");
-
-		        String skinName;
-		        switch(npc.getSkin()) {
-				case KNIGHT:
-					skinName="knight.png";
-					break;
-				case BLACK_KNIGHT:
-					skinName="black_knight.png";
-					break;
-				case GOLD_KNIGHT:
-					skinName="gold_knight.png";
-					break;
-				case WHITE_KNIGHT:
-					skinName="white_knight.png";
-					break;
-				default:
-					skinName="default.png";
-					break;
-		        
-		        }
-				TextureManager tm=sm.getTextureManager();
-		        Texture texture=tm.getAssetByPath(skinName);
-		    	RenderSystem rs = sm.getRenderSystem();
-		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
-		    	state.setTexture(texture);
-		    	skeleton.setRenderState(state);
-				
-				SceneNode ghostN = sm.getRootSceneNode().createChildSceneNode("npcNode"+npcController.getNumNPCs());
-				ghostN.attachObject(skeleton);
-				npc.setPos(dungeon.getLastRoom().getRoomNode().getWorldPosition());
-				ghostN.setLocalPosition(npc.getPos());
-		        ghostN.scale(.5f, .5f, .5f);
-				
-				
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-	
 	public void removeGhostAvatarFromGameWorld(GhostAvatar avatar) {
 		if(avatar!=null)
 			gameObjectsToRemove.add((UUID) avatar.getID());
@@ -985,8 +934,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		return playerType;
 	}
 	private void setupNPC() {
-		npcController=new NPCController();
-		this.addGhostNPCToGameWorld(npcController.getNPC());
+		npcController=new NPCController(this);
+		//this.addGhostNPCToGameWorld(npcController.getNPC());
 	}
 	
 	private void setupBalls() throws IOException {

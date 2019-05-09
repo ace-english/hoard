@@ -19,7 +19,7 @@ public class JumpAction extends AbstractInputAction  {
 		System.out.println("OrbitalPlayerJumped");
 		if(!player.getJumped())
 		{
-			player.setVelocity(1.0f);
+			player.setVelocity(0.4f);
 			player.setJumped(true);
 			player.setJumpHeight();
 		}

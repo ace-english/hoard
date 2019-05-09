@@ -261,7 +261,6 @@ public class HUD {
 			System.out.println(it.next());
 		}
 		buttons.setVisible(true);
-		//SceneNode cameraNode=sm.getSceneNode("GemNode");
 		SceneNode cameraNode=sm.getSceneNode("playerNode");
 		SceneNode buttonNode=sm.getSceneNode("ButtonNode");
 		System.out.println(cameraNode.getWorldPosition());
@@ -270,9 +269,9 @@ public class HUD {
 		//buttonNode.moveBackward(0.5f);
 		//buttonNode.moveLeft(2.2f);
 		//buttonNode.moveDown(30f);
-		buttonNode.setLocalPosition(10f,0f, 0f);
-		buttonNode.scale(40f, 40f, 40f);
-		//buttonNode.rotate(Degreef.createFrom(180f), Vector3f.createFrom(0,1f,0));
+		buttonNode.setLocalPosition(.48f,0f, .7f);
+		buttonNode.scale(.7f, .7f, .7f);
+		buttonNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0,-1f,0));
 		System.out.println(cameraNode.getWorldPosition());
 		System.out.println(buttonNode.getWorldPosition());
 		hud.setVisible(false);

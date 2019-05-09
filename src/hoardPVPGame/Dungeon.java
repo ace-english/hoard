@@ -106,7 +106,7 @@ public class Dungeon {
 	}
 	
 	public int getRoomCount() {
-		return Room.getRoomCount();
+		return rooms.size();
 	}
 	
 	public Room getLastRoom() {
@@ -139,11 +139,12 @@ public class Dungeon {
 				
 			}
 		}
-		return i;
+		return i-1;
 	}
 
 	public void removeLastRoom() {
 		Room lastRoom=getLastRoom();
+		sm.getRootSceneNode().detachChild(lastRoom.getRoomNode());
 		roomGroup.detachChild(lastRoom.getRoomNode());
 		lastRoom.delete();
 		rooms.remove(rooms.size()-1);

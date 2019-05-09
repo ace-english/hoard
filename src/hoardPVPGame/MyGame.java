@@ -25,6 +25,7 @@ import javax.script.Invocable;
 
 import myGameEngine.*;
 import net.java.games.input.Controller;
+import ray.audio.*;
 import ray.input.*;
 import ray.input.action.AbstractInputAction;
 import ray.networking.IGameConnection.ProtocolType;
@@ -80,6 +81,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     private PLAYER_TYPE playerType;
     private ONLINE_TYPE onlineType;
     private boolean avatarWalking = false;
+    private SceneNode dragonSkeleton;
+    
+    IAudioManager audioMgr;
+    Sound roarSound, buildMusic, seigeMusic;
 
     private HUD hud;
     private NPCController npcController;
@@ -172,6 +177,15 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	}
     	
     }
+	
+	public void setEarParameters(SceneManager sm){ 
+		SceneNode node = player.getNode();
+		Vector3 avDir = node.getWorldForwardAxis();
+		// note - should get the camera's forward direction
+		// - avatar direction plus azimuth
+		audioMgr.getEar().setLocation(node.getWorldPosition());
+		audioMgr.getEar().setOrientation(avDir, Vector3f.createFrom(0,1,0));
+	}
 	
 	@Override
 	protected void setupWindow(RenderSystem rs, GraphicsEnvironment ge) {
@@ -394,8 +408,48 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
          * light
          */
         sm.getAmbientLight().setIntensity(new Color(1f, 1f, 1f));
+        
+        setupAudio(sm);
 
       
+    }
+    
+    public void setupAudio(SceneManager sm){ 
+    	AudioResource resource1, resource2, resource3;
+	    audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
+	    if (!audioMgr.initialize()){ 
+	    	System.out.println("Audio Manager failed to initialize!");
+	    	return;
+	    }
+	    resource1 = audioMgr.createAudioResource("dragon-roar.wav",AudioResourceType.AUDIO_SAMPLE);
+	    roarSound = new Sound(resource1,SoundType.SOUND_EFFECT, 100, false);
+	    roarSound.initialize(audioMgr);
+	    //roarSound.setMaxDistance(100.0f);
+	    //roarSound.setRollOff(5.0f);
+	    
+	    resource2 = audioMgr.createAudioResource("build_music.wav",AudioResourceType.AUDIO_SAMPLE);
+	    buildMusic = new Sound(resource2,SoundType.SOUND_MUSIC, 50, true);
+	    buildMusic.initialize(audioMgr);
+	    
+	    resource3 = audioMgr.createAudioResource("seige_music.wav",AudioResourceType.AUDIO_SAMPLE);
+	    seigeMusic = new Sound(resource3,SoundType.SOUND_MUSIC, 50, true);
+	    seigeMusic.initialize(audioMgr);
+	   
+	    if(playerType==PLAYER_TYPE.DRAGON) {
+			SceneNode dragonN = sm.getSceneNode("playerNode");
+			roarSound.setLocation(dragonN.getWorldPosition());
+			setEarParameters(sm);
+		}
+		else {
+			try {
+			SceneNode dragonN = sm.getSceneNode("dragonSkeleton");
+			roarSound.setLocation(dragonN.getWorldPosition());
+			setEarParameters(sm);
+			}
+			catch (Exception e) {
+				//no dragon exists
+			}
+		}
     }
     
 	@Override
@@ -455,6 +509,22 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			gAvatar.setLastPos(gAvatar.getPos());
 		}
 		
+		if(playerType==PLAYER_TYPE.DRAGON) {
+			SceneNode dragonN = sm.getSceneNode("playerNode");
+			roarSound.setLocation(dragonN.getWorldPosition());
+			setEarParameters(sm);
+		}
+		else {
+			try {
+			SceneNode dragonN = sm.getSceneNode("dragonSkeleton");
+			roarSound.setLocation(dragonN.getWorldPosition());
+			setEarParameters(sm);
+			}
+			catch (Exception e) {
+				//no dragon exists
+			}
+		}
+		
 		
 		if(npcController!=null) {
 			npcController.update();
@@ -506,8 +576,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	
 
 	
-	public Matrix3 getRotation()
-	{
+	public Matrix3 getRotation(){
 		return player.getNode().getLocalRotation();
 	}
 	
@@ -708,6 +777,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
 	
 
+	public void playRoar() {
+		System.out.println("Roar!");
+		roarSound.play();
+	}
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -736,7 +809,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 					hud.incrementDragon();
 				}
 				else if(x<344&&x>136) {
-					player=new FreeMovePlayer(getEngine().getSceneManager(), protClient, dungeon, hud.getDragonSkin());
+					player=new FreeMovePlayer(getEngine().getSceneManager(), protClient, this, hud.getDragonSkin());
 					playerType=PLAYER_TYPE.DRAGON;
 					setGameMode(GAME_MODE.BUILD);
 				}
@@ -804,7 +877,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
 	
 	private int getCurrentRoom(){
-		return dungeon.getCurrentRoom(player.getNode().getLocalPosition());
+		int current=dungeon.getCurrentRoom(player.getNode().getLocalPosition());
+		System.out.println("current room: "+current);
+		return current;
 	}
 	
 	private void setGameMode(GAME_MODE gm) {
@@ -829,10 +904,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			break;
 		case BUILD:
 			setupInputs();
+			buildMusic.play();
 	        sm.getAmbientLight().setIntensity(new Color(.7f, .7f, .7f));
 	        if(playerType==PLAYER_TYPE.KNIGHT) {
-	        	//hud.hide();
-	        	hud.setToButtons();
+	        	hud.hide();
 	        	if(onlineType==ONLINE_TYPE.ONLINE) {
 	        		setupTerrain();
 	        		running = true;//!!!!!!!!!!!!!!!!!!!!!!!!
@@ -858,17 +933,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	        }
 	        else {
 	        	dungeon.addRoom();
-	        	try {
-					dungeon.createGem();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 	        	hud.setToButtons();
 	        }
 	        
 			break;
 		case SEIGE:
+			buildMusic.stop();
+			seigeMusic.play();
 			//teleport knight to dungeon
 			if(playerType==PLAYER_TYPE.KNIGHT) {
 				player.setDungeon(dungeon);
@@ -876,6 +947,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
 			}
 			else {
+				hud.hide();
 				if(onlineType==ONLINE_TYPE.OFFLINE) {
 					setupNPC();
 				}
@@ -888,6 +960,14 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	public SceneNode getPlayerNode()
 	{
 		return player.getNode();
+	}
+	
+	public Dungeon getDungeon() {
+		return dungeon;
+	}
+	
+	public void setDungeon(Dungeon dungeon) {
+		this.dungeon=dungeon;
 	}
 	
 	public SKIN getPlayerType()

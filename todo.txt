@@ -5,13 +5,14 @@ JOSH
 [x] networking
 
 ACE
-[ ] lights toggle
-[ ] sound
+[x] lights toggle
+[x] sound
 [x] fix animation
 [ ] fix knight AI
 [ ] traps
+[ ] FSEM
 STRETCH GOALS:
-[ ] finish hud
+[x] finish hud
 [ ] scoring
 
 REQUIREMENTS
@@ -19,7 +20,7 @@ REQUIREMENTS
 [x] skybox
 [x] terrain
 [ ] lights
-[ ] 3D sound
+[x] 3D sound
 [x] HUD
 [x] heirarchical scenegraph
 [ ] animation
@@ -37,25 +38,20 @@ PLANNED FEATURES
 [ ] TRAPS
 	[ ] physics
 	[ ] models
-[ ] ability for knight to jump
+[x] ability for knight to jump
 [ ] NPC knight AI
 [ ] animation for knight
 	[ ] idle
 	[x] walk
 	[ ] death
 [x] idle animation for dragon
-[ ] 3D sound
+[x] 3D sound
 
 
 
 BUGS
 ----------------------------
-[ ] issue with other player not appearing until they move
-[ ] make ghost avatar use same model
-[ ] hud not sticking
-	[ ] hud too dark
-[ ] remove the one room of dungeon on knight mutliplayer build
-
+[ ] get Hud used for character models - will make all the knights look the same
 
 STRETCH GOALS
 ----------------------------

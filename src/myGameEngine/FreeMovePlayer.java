@@ -6,6 +6,7 @@ import hoardPVPGame.AddRoomAction;
 import hoardPVPGame.Dungeon;
 import hoardPVPGame.GameUtil;
 import hoardPVPGame.GameUtil.SKIN;
+import hoardPVPGame.MyGame;
 import net.java.games.input.Controller;
 import ray.input.InputManager;
 import ray.input.action.Action;
@@ -30,8 +31,9 @@ public class FreeMovePlayer extends Player {
 	
 	SceneNode cameraNode;
 	SceneNode rider;
+	MyGame game;
 
-	public FreeMovePlayer(SceneManager sm, ProtocolClient pc, Dungeon dungeon, GameUtil.SKIN skin) {
+	public FreeMovePlayer(SceneManager sm, ProtocolClient pc, MyGame game, GameUtil.SKIN skin) {
 		super(sm, pc, skin);
 		speed=0.12f;
 		cameraNode=getNode().createChildSceneNode("riderNode");
@@ -39,7 +41,8 @@ public class FreeMovePlayer extends Player {
         //cameraNode.moveUp(2f);
         //cameraNode.translate(7f, 10f, -30f);
 		getCamera().setMode('n');
-		this.dungeon=dungeon;
+		this.dungeon=game.getDungeon();
+		this.game=game;
 	}
 
 	@Override
@@ -101,7 +104,7 @@ public class FreeMovePlayer extends Player {
     	Action yawAction=new YawAction(this);
     	Action addRoomAction = new AddRoomAction(dungeon);
     	Action rollAction = new RollAction(this);
-    	Action roarAction = new RoarAction();
+    	Action roarAction = new RoarAction(game);
     	
 	    	if(controller.getType()==Controller.Type.GAMEPAD) {
 	        	

@@ -30,6 +30,7 @@ public class Room{
 	private Engine eng;
 	private static int roomNum=0;
 	private int planeNum;
+	private Light light;
 	
 	private SceneNode floor, ceiling, leftWall, rightWall;
 	
@@ -46,10 +47,11 @@ public class Room{
 			e.printStackTrace();
 		}
 	}
-	
+	/*
 	public static int getRoomCount() {
 		return roomNum;
 	}
+	*/
 	
 	private SceneNode returnPlane() throws IOException {
     	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
@@ -166,8 +168,8 @@ public class Room{
         
     }
     
-    private SceneNode createLightNode(SceneNode rootNode) throws IOException {
-		Light light = createLight(rootNode.getName()+"torch");
+    private void createLightNode(SceneNode rootNode) throws IOException {
+		light = createLight(rootNode.getName()+"torch");
 		
 		Entity torch = sm.createEntity(rootNode.getName()+"torchE", "torch.obj");
 	    torch.setPrimitive(Primitive.TRIANGLES);
@@ -188,16 +190,21 @@ public class Room{
 	    lightNode.scale(0.1f,0.1f, 0.1f);
 	    lightNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(1f, 0f, 0f));
 	        
-	        
-	    return lightNode;
     }
     
     private Light createLight(String name) {
     	Light light=sm.createLight(name, Light.Type.POINT);
+    	/*
     	light.setAmbient(new Color(.001f, .001f, .00f));
     	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.5f, 0.4f, 0.3f));
     	light.setRange(60f);
+    	*/
+    	light.setAmbient(new Color(.1f, .1f, .03f));
+    	light.setDiffuse(new Color(.85f, .65f, .5f));
+    	light.setSpecular(new Color(0.8f, 0.7f, 0.6f));
+    	light.setRange(1f);
+    	
 	    
 	    return light;
     }
@@ -272,14 +279,13 @@ public class Room{
 	}
 
 	public void toggleLights() {
-		if(leftWall.getChildCount()>0) {
-			
-		}
-		else if(rightWall.getChildCount()>0) {
-			
-		}
-		else
+		if(light==null) {
 			System.out.println("no lights here");
+		}
+		else {
+			light.setVisible(!light.isVisible());
+			System.out.println("light: " +light.isVisible());
+		}
 	}
 
 	public void clear() {
@@ -289,7 +295,12 @@ public class Room{
 	}
 
 	public void delete() {
-		roomNum--;
+		//roomNum--;
+		sm.destroySceneNode(floor);
+		sm.destroySceneNode(ceiling);
+		sm.destroySceneNode(leftWall);
+		sm.destroySceneNode(rightWall);
+		getRoomNode().detachAllChildren();
 		sm.destroySceneNode(getRoomNode());
 		
 	}

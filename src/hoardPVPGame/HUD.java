@@ -283,6 +283,7 @@ public class HUD {
 		hud.setVisible(false);
 		dragonThumb.setVisible(false);
 		knightThumb.setVisible(false);
+		buttons.setVisible(false);
 		
 	}
 

@@ -1,5 +1,7 @@
 package myGameEngine;
 
+import java.io.IOException;
+
 import hoardPVPGame.MyGame;
 import ray.ai.behaviortrees.*;
 import ray.rage.asset.texture.Texture;
@@ -29,7 +31,12 @@ public class NPCController {
 		tickStateTime = System.nanoTime();
 		lastThinkUpdateTime = thinkStartTime;
 		lastTickUpdateTime = tickStartTime;
-		addNPC();
+		try {
+			addNPC();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setupBehaviorTree();
 	}
 	
@@ -38,62 +45,23 @@ public class NPCController {
 	}
 
 	private void setupBehaviorTree() {
-		// TODO Auto-generated method stub
+		bt.insertAtRoot(new BTSequence(10));
+		bt.insertAtRoot(new BTSequence(20));
+		bt.insert(10, new NearTrap(false));
+		bt.insert(10, new Jump());
+		bt.insert(20, new IsInBounds(false));
+		bt.insert(20, new Move());
 		
 	}
-	public void update() {
+	public void update(float elapsedTime) {
 		npc.update();
+		bt.update(elapsedTime);
 	}
 
 	
-	public void addNPC() {
-		npc=new NPC();
-		if(npc!=null) {
-			try {
-				System.out.println("Drawing NPC");
-				SceneManager sm=game.getEngine().getSceneManager();
-
-		        SkeletalEntity skeleton = sm.createSkeletalEntity("npcSkeleton", "knight.rkm", "knight.rks");
-
-		        String skinName;
-		        switch(npc.getSkin()) {
-				case KNIGHT:
-					skinName="knight.png";
-					break;
-				case BLACK_KNIGHT:
-					skinName="black_knight.png";
-					break;
-				case GOLD_KNIGHT:
-					skinName="gold_knight.png";
-					break;
-				case WHITE_KNIGHT:
-					skinName="white_knight.png";
-					break;
-				default:
-					skinName="default.png";
-					break;
-		        
-		        }
-				TextureManager tm=sm.getTextureManager();
-		        Texture texture=tm.getAssetByPath(skinName);
-		    	RenderSystem rs = sm.getRenderSystem();
-		    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
-		    	state.setTexture(texture);
-		    	skeleton.setRenderState(state);
-				
-				SceneNode ghostN = sm.getRootSceneNode().createChildSceneNode("npcNode");
-				ghostN.attachObject(skeleton);
-				npc.setPos(game.getDungeon().getLastRoom().getRoomNode().getWorldPosition());
-				ghostN.setLocalPosition(npc.getPos());
-		        ghostN.scale(.5f, .5f, .5f);
-				
-				
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
+	public void addNPC() throws IOException {
+		npc=new NPC(game.getEngine().getSceneManager());
+		npc.setPos(game.getDungeon().getLastRoom().getRoomNode().getWorldPosition());
 	}
 	
 	private class NearTrap extends BTCondition{
@@ -111,12 +79,26 @@ public class NPCController {
 		
 	}
 	
+	private class IsInBounds extends BTCondition{
+
+		public IsInBounds(boolean toNegate) {
+			super(toNegate);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected boolean check() {
+			return game.getDungeon().isInBounds(npc.getPos());
+		}
+		
+	}
+	
 	private class Move extends BTAction{
 
 		@Override
 		protected BTStatus update(float arg0) {
-			// TODO Auto-generated method stub
-			return null;
+			npc.move();
+			return BTStatus.BH_SUCCESS;
 		}
 		
 		
@@ -126,8 +108,7 @@ public class NPCController {
 
 		@Override
 		protected BTStatus update(float arg0) {
-			// TODO Auto-generated method stub
-			return null;
+			return BTStatus.BH_FAILURE;
 		}
 		
 		

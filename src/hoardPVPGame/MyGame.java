@@ -528,7 +528,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		
 		
 		if(npcController!=null) {
-			npcController.update();
+			npcController.update(elapsTime);
 		}
 	}
 	

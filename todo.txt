@@ -8,7 +8,7 @@ ACE
 [x] lights toggle
 [x] sound
 [x] fix animation
-[ ] fix knight AI
+[x] fix knight AI
 [ ] traps
 [x] FSEM
 STRETCH GOALS:
@@ -17,6 +17,12 @@ STRETCH GOALS:
 [ ] fix ugly lights
 [ ] upgrade dragon's starting position
 [ ] fix currentRoom detection
+[ ] get rid of orbs
+[ ] npc can jump
+[ ] controller support
+[ ] turn textures around
+[ ] fix dragon
+[ ] make dragon visible
 
 
 PLANNED FEATURES
@@ -43,8 +49,7 @@ BUGS
 [ ] get Hud used for character models - will make all the knights look the same
 [ ] probably doesn't network because of myGame constructer - fix?
 [ ] FSEM crashes on launch	
-[ ] hud wont hide?
-
+[ ] fix script crashing
 
 STRETCH GOALS
 ----------------------------

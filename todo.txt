@@ -10,22 +10,13 @@ ACE
 [x] fix animation
 [ ] fix knight AI
 [ ] traps
-[ ] FSEM
+[x] FSEM
 STRETCH GOALS:
 [x] finish hud
 [ ] scoring
-
-REQUIREMENTS
-[x] scripting
-[x] skybox
-[x] terrain
-[ ] lights
-[x] 3D sound
-[x] HUD
-[x] heirarchical scenegraph
-[ ] animation
-[ ] NPC
-[ ] physics
+[ ] fix ugly lights
+[ ] upgrade dragon's starting position
+[ ] fix currentRoom detection
 
 
 PLANNED FEATURES
@@ -52,6 +43,9 @@ PLANNED FEATURES
 BUGS
 ----------------------------
 [ ] get Hud used for character models - will make all the knights look the same
+[ ] probably doesn't network because of myGame constructer - fix?
+[ ] FSEM crashes on launch	
+
 
 STRETCH GOALS
 ----------------------------
@@ -67,10 +61,7 @@ STRETCH GOALS
 QUESTIONS
 ----------------------------
 skeletons crash when closing the game
-skeletal movement perpendicular to mesh
-	rotating does not seem to help
-attaching menu to screen does not work
-reasonable walk cycle
+WARNING: Invalid display mode
 
 
 

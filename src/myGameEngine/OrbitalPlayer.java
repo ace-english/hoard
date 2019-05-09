@@ -164,30 +164,61 @@ public class OrbitalPlayer extends Player {
 	
 
 	public void setJumpHeight(){
-		SceneNode tessN =sm2.getSceneNode("tessN");
-		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 		// Figure out Avatar's position relative to plane
 		Vector3 worldAvatarPosition = getNode().getWorldPosition();
 		Vector3 localAvatarPosition = getNode().getLocalPosition();
-		// use avatar World coordinates to get coordinates for height
-		jumpHeight = tessE.getWorldHeight(
-				worldAvatarPosition.x(),
-				worldAvatarPosition.z());
+		
+		float groundHeight;
+		SceneNode tessN=null;
+		Tessellation tessE=null;
+		try {
+			tessN =sm2.getSceneNode("tessN");
+		}
+		catch(Exception e) {
+			//no terrain
+		}
+		if(tessN!=null) {
+			tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+			groundHeight=tessE.getWorldHeight(
+					worldAvatarPosition.x(),
+					worldAvatarPosition.z());
+		}
+		else {
+			groundHeight=dungeon.getNode().getWorldPosition().z();
+		}
+		jumpHeight = groundHeight;
 	}
 	
 	public void updateVerticalPosition(){ 
-		SceneNode tessN =sm2.getSceneNode("tessN");
-		Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 		// Figure out Avatar's position relative to plane
 		Vector3 worldAvatarPosition = getNode().getWorldPosition();
 		Vector3 localAvatarPosition = getNode().getLocalPosition();
+		
+		float groundHeight;
+		SceneNode tessN=null;
+		Tessellation tessE=null;
+		try {
+			tessN =sm2.getSceneNode("tessN");
+		}
+		catch(Exception e) {
+			//no terrain
+		}
+		if(tessN!=null) {
+			tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+			groundHeight=tessE.getWorldHeight(
+					worldAvatarPosition.x(),
+					worldAvatarPosition.z());
+		}
+		else {
+			groundHeight=dungeon.getNode().getWorldPosition().z();
+		}
 	
 		if(jumped){
 			//System.out.println("Velocity: " + velocity);
 			velocity = velocity - acceleration;
-			displacement = jumpHeight - tessE.getWorldHeight(
-					worldAvatarPosition.x(),
-					worldAvatarPosition.z());
+			if(tessN!=null) {
+			displacement = jumpHeight - groundHeight;
+			}
 			jumpPosition = jumpPosition + velocity;
 			/*
 		System.out.println("Jump Position: " + jumpPosition);
@@ -203,9 +234,7 @@ public class OrbitalPlayer extends Player {
 			 // Keep the X coordinate
 			 localAvatarPosition.x(),
 			 // The Y coordinate is the varying height
-			 tessE.getWorldHeight(
-			worldAvatarPosition.x(),
-			worldAvatarPosition.z()) + jumpPosition + displacement,
+			 groundHeight + jumpPosition + displacement,
 			 //Keep the Z coordinate
 			 localAvatarPosition.z()
 			);
@@ -215,9 +244,7 @@ public class OrbitalPlayer extends Player {
 		
 		
 		
-		if ( getNode().getLocalPosition().y() <  tessE.getWorldHeight(
-					worldAvatarPosition.x(),
-					worldAvatarPosition.z()))
+		if ( getNode().getLocalPosition().y() <  groundHeight)
 				{
 			
 			jumped = false;
@@ -228,9 +255,7 @@ public class OrbitalPlayer extends Player {
 					 // Keep the X coordinate
 					 localAvatarPosition.x(),
 					 // The Y coordinate is the varying height
-					 tessE.getWorldHeight(
-							 worldAvatarPosition.x(),
-							 worldAvatarPosition.y()),
+					 groundHeight,
 					 //Keep the Z coordinate
 					 localAvatarPosition.z()
 					);

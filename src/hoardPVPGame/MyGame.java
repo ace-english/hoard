@@ -81,7 +81,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     private PLAYER_TYPE playerType;
     private ONLINE_TYPE onlineType;
     private boolean avatarWalking = false;
-    private SceneNode dragonSkeleton;
+    private boolean isFullscreen = false;
     
     IAudioManager audioMgr;
     Sound roarSound, buildMusic, seigeMusic;
@@ -115,11 +115,12 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		return player;
 	}
 
-    public MyGame(String serverAddr, int sPort) {
+    public MyGame(String serverAddr, int sPort, boolean fullscreen) {
         super();
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
+        isFullscreen=fullscreen;
         
         gameObjectsToRemove = new Vector<UUID>();
     }
@@ -129,8 +130,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
 
     public static void main(String[] args) {
-        //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]));
-    	MyGame game = new MyGame("", 0);
+        MyGame game = new MyGame(args[0], Integer.parseInt(args[1]), Boolean.parseBoolean(args[2]));
         try {
             game.startup();
             game.run();
@@ -189,7 +189,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	
 	@Override
 	protected void setupWindow(RenderSystem rs, GraphicsEnvironment ge) {
-		rs.createRenderWindow(new DisplayMode(width, height, 24, 60), false);
+		rs.createRenderWindow(new DisplayMode(width, height, 24, 60), isFullscreen);
+		
 	}
 	
 
@@ -1001,7 +1002,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	ball2Node.attachObject(ball2Entity);
     	ball2Node.setLocalPosition(-1,10, 10);
 	}
-	
 	
 	
 	

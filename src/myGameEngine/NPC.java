@@ -20,6 +20,7 @@ public class NPC {
 	public void setDead(boolean isDead) {
 		this.isDead = isDead;
 	}
+	
 	NPC(){
 		int r=(int) Math.floor(Math.random()*4);
 		switch(r) {
@@ -50,7 +51,7 @@ public class NPC {
 	}
 	public void update() {
 		if(!isDead) {
-			System.out.println("moving forward");
+			System.out.println(getPos());
 			locZ+=0.1f;	
 		}
 	}

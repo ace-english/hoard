@@ -10,6 +10,7 @@ with (JavaPackages)
 	for(var i=0; i<n; i++){
 		dungeon.addRoom();
 		trapKey=Math.floor(Math.random() * 5);	//random number 0-4
+		print("Got " + trapKey + " for room num " + i +"\n");
 		switch(trapKey){
 			case 0:
 				dungeon.addTrap(i,Swinging);

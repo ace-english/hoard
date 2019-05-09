@@ -125,16 +125,20 @@ public class Dungeon {
 	}
 
 	public int getCurrentRoom(Vector3 localPosition){
-		float x = localPosition.x();
-		float center=roomGroup.getWorldPosition().x();
-		if(x<center)
+		float z = localPosition.z();
+		System.out.println(z);
+		float center=roomGroup.getWorldPosition().z();
+		if(z<center)
 			return 0;
 		int i=0;
+		float min, max;
 		for(i=0; i<rooms.size(); i++) {
-			center=rooms.get(i).getRoomNode().getWorldPosition().x();
+			center=rooms.get(i).getRoomNode().getWorldPosition().z();
+			min=center-(GameUtil.getRoomSize());
+			max=center+(GameUtil.getRoomSize());
+			System.out.println("Room "+i+": "+ min+" to "+ max);
 			
-			if (x<(center-(GameUtil.getRoomSize()/2))&&
-					x>(center+(GameUtil.getRoomSize()/2))) {
+			if (z>(min)&&z<(max)) {
 				return i;
 				
 			}

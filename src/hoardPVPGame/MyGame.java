@@ -287,6 +287,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	System.out.println("player.getNode().getLocalTransform(): " + player.getNode().getLocalTransform());
     	temptf = toDoubleArray(player.getNode().getLocalTransform().toFloatArray());
     	if(playerType==PLAYER_TYPE.KNIGHT) {
+    		knightPhysObj = physicsEng.addCylinderZObject(physicsEng.nextUID(), mass, temptf, player.getNode().getLocalTransform().toFloatArray());
 	    	knightPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
 	    	    	mass, temptf, 2.0f);
 	    	knightPhysObj.setBounciness(1.0f);
@@ -344,7 +345,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	// Ground plane
     	Entity groundEntity = sm.createEntity(GROUND_E, "sphere.obj");
     	gndNode = rootNode.createChildSceneNode(GROUND_N);
-    	gndNode.attachObject(groundEntity);
+    	//gndNode.attachObject(groundEntity);
     	gndNode.setLocalPosition(0, 0, 2);
     	
     	//Ball1
@@ -877,6 +878,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	            	ScriptEngine jsEngine = factory.getEngineByName("js");
 	            	
 	            	jsEngine.put("dungeon", dungeon);
+	            	jsEngine.put("Swinging", TRAP_TYPE.Swinging);
+	            	jsEngine.put("Pit", TRAP_TYPE.Pit);
+	            	jsEngine.put("Spike", TRAP_TYPE.Spike);
 	            	this.executeScript(jsEngine, "src/randomDungeon.js");
 	        		setGameMode(GAME_MODE.SEIGE);
 	        	}

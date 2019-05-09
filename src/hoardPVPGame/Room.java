@@ -194,16 +194,17 @@ public class Room{
     
     private Light createLight(String name) {
     	Light light=sm.createLight(name, Light.Type.POINT);
-    	/*
-    	light.setAmbient(new Color(.001f, .001f, .00f));
+    	
+    	light.setAmbient(new Color(.11f, .11f, .10f));
     	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.5f, 0.4f, 0.3f));
-    	light.setRange(60f);
-    	*/
+    	light.setRange(1f);
+    	/*
     	light.setAmbient(new Color(.1f, .1f, .03f));
     	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.8f, 0.7f, 0.6f));
     	light.setRange(1f);
+    	*/
     	
 	    
 	    return light;
@@ -247,7 +248,7 @@ public class Room{
         	back.rotate(Degreef.createFrom(90f), Vector3f.createFrom(1f, 0f, 0f));
     	}
     	
-    	roomNode.translate(Vector3f.createFrom(0f,0f,GameUtil.getRoomSize()*roomNum));
+    	roomNode.translate(Vector3f.createFrom(0f,0f,GameUtil.getRoomSize()*roomNum*2));
     	roomNum++;
     		
     	

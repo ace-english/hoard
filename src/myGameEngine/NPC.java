@@ -89,11 +89,10 @@ public class NPC {
 		return skin;
 	}
 	public void update() {
-		//move();
+		//System.out.println("isWalking: "+isWalking);
 		Vector3 currentPosition=getNode().getLocalPosition();
 		if(currentPosition.compareTo(previousPosition)!=0){	//changing position
 			if(isWalking==false) {	//going from still to walking
-				System.out.println("Playing walk");
 				playWalkAnimation();
 				isWalking=true;
 			}
@@ -110,11 +109,13 @@ public class NPC {
 
 
 	public void playWalkAnimation() {
+		System.out.println("Playing walk");
 		skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
 	}
 
 
 	private void stopWalkAnimation() {
+		System.out.println("Stopping walk");
 		skeleton.stopAnimation();
 		
 	}

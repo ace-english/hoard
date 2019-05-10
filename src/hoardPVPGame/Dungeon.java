@@ -6,6 +6,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import net.java.games.input.AbstractController;
+import ray.physics.PhysicsEngine;
 import ray.physics.PhysicsObject;
 import ray.rage.Engine;
 import ray.rage.asset.texture.Texture;
@@ -55,7 +56,11 @@ public class Dungeon {
 		
 	}
 	
-	public boolean addTrap(int roomNum, TRAP_TYPE type) {
+	public boolean addTrap(int roomNum, TRAP_TYPE type, PhysicsEngine pe) {
+		if(roomNum==0) {
+			System.out.println("Can't trap the first room");
+			return false;
+		}
 		Room room=rooms.get(roomNum);
 		if(room.HasTrap()) {
 			removeTrap(roomNum);
@@ -67,13 +72,13 @@ public class Dungeon {
 		Trap trap;
 		switch(type) {
 		case Pit:
-			trap=new PitTrap(room);
+			trap=new PitTrap(room, sm);
 			break;
 		case Spike:
-			trap=new SpikeTrap(room);
+			trap=new SpikeTrap(room, sm, pe);
 			break;
 		case Swinging:
-			trap=new SwingingTrap(room);
+			trap=new SwingingTrap(room, sm, pe);
 			break;
 		default:
 			return false;
@@ -82,6 +87,13 @@ public class Dungeon {
 		cost+=100;
 		return true;
 	
+	}
+	
+	public void update(float elapsTime) {
+		for(Room room:rooms) {
+			if(room.HasTrap())
+				room.getTrap().update(elapsTime);
+		}
 	}
 	
 	public void removeTrap(int roomNum) {
@@ -97,8 +109,13 @@ public class Dungeon {
 	}
 	
 	public void addRoom() {
+		if(cost+10<=1000) {
 		rooms.add(new Room(sm, eng, this));
 		cost+=10;
+		}
+		else {
+			System.out.println("Over Budget");
+		}
 	}
 	
 	public Room getRoom(int id) {
@@ -115,6 +132,7 @@ public class Dungeon {
 	}
 	
 	public void finish() throws IOException {
+		addRoom();
 		getLastRoom().close();
 		try {
 			createGem();
@@ -160,7 +178,7 @@ public class Dungeon {
 		maxX=(GameUtil.getRoomSize()-0.7f);
 		minX=-maxX;
 		minZ=minX;
-		maxZ=((GameUtil.getRoomSize()*getRoomCount())-1f);
+		maxZ=((GameUtil.getRoomSize()*2*getRoomCount())-1f);
 		double x=vector3.x();
 		double z=vector3.z();
 		
@@ -299,11 +317,26 @@ public class Dungeon {
         /*
          * controllers
          */
-    	/*
+    	
         RotationController rc = new RotationController(Vector3f.createUnitVectorY(), .05f);
         rc.addNode(gemNode); 
         sm.addController(rc);
-        */
+        
+	}
+	
+	public String stringify() {
+		String ret="";
+		ret+=rooms.size()+"\n";
+		for(Room room:rooms) {
+			if(room.HasTrap()) {
+				ret+=room.getTrap().getType();
+			}
+			else {
+				ret+="none";
+			}
+			ret+="\n";
+		}
+		return ret;
 	}
 	
 }

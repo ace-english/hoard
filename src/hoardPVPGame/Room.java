@@ -184,6 +184,7 @@ public class Room{
 	    	
 		SceneNode lightNode = rootNode.createChildSceneNode(light.getName()+"Node");
 	    lightNode.attachObject(light);
+	    //lightNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(1f, 0f, 0f));
 	    lightNode.attachObject(torch);
 	    lightNode.moveUp(.17f);
 	    lightNode.moveForward(0.75f);
@@ -290,8 +291,10 @@ public class Room{
 	}
 
 	public void clear() {
-		trap.delete();
-		hasTrap=false;
+		if(hasTrap) {
+			sm.destroySceneNode(trap.getTrapNode());
+			hasTrap=false;
+		}
 		
 	}
 

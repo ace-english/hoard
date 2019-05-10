@@ -10,6 +10,8 @@ ACE
 [x] fix animation
 [x] fix knight AI
 [ ] traps
+	[ ] make traps move
+	[ ] collision detection
 [x] FSEM
 STRETCH GOALS:
 [x] finish hud
@@ -19,10 +21,11 @@ STRETCH GOALS:
 [x] fix currentRoom detection
 [ ] get rid of orbs
 [ ] npc can jump
+[ ] remove traps OR fix hud
 [ ] controller support
 [ ] turn knight textures around
-[ ] fix dragon
 [ ] make dragon visible
+[ ] fix dragon animation
 
 
 PLANNED FEATURES

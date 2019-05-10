@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.002
 Ns 96.078431
@@ -21,7 +21,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.003
 Ns 96.078431
@@ -32,7 +32,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.004
 Ns 96.078431
@@ -43,7 +43,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.005
 Ns 96.078431
@@ -54,7 +54,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.006
 Ns 96.078431
@@ -65,7 +65,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.007
 Ns 96.078431
@@ -76,7 +76,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.008
 Ns 96.078431
@@ -87,7 +87,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.009
 Ns 96.078431
@@ -98,7 +98,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.010
 Ns 96.078431
@@ -109,7 +109,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.011
 Ns 96.078431
@@ -120,7 +120,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.012
 Ns 96.078431
@@ -131,7 +131,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.013
 Ns 96.078431
@@ -142,7 +142,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.014
 Ns 96.078431
@@ -153,7 +153,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.015
 Ns 96.078431
@@ -164,7 +164,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png
 
 newmtl Material.016
 Ns 96.078431
@@ -175,4 +175,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd D:\\Documents\\School\\CSC 165 Game Design\\Hoard\\spikes.png
+map_Kd spikes.png

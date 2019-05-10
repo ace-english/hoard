@@ -13,13 +13,13 @@ with (JavaPackages)
 		print("Got " + trapKey + " for room num " + i +"\n");
 		switch(trapKey){
 			case 0:
-				dungeon.addTrap(i,Swinging);
+				dungeon.addTrap(i,Swinging, pe);
 				break;
 			case 1:
-				dungeon.addTrap(i,Spike);
+				dungeon.addTrap(i,Spike, pe);
 				break;
 			case 2:
-				dungeon.addTrap(i,Pit);
+				dungeon.addTrap(i,Pit, pe);
 				break;
 		}
 	}

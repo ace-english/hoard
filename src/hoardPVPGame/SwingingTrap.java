@@ -11,6 +11,7 @@ import ray.rage.rendersystem.states.RenderState;
 import ray.rage.rendersystem.states.TextureState;
 import ray.rage.scene.*;
 import ray.rml.Degreef;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class SwingingTrap extends Trap {
@@ -46,10 +47,18 @@ public class SwingingTrap extends Trap {
 	}
 
 	@Override
-	public boolean isColliding(Vector3f pos) {
-		if(Math.abs(pos.x()-getTrapNode().getWorldPosition().x())<0.1f){//same x, check for collisions
-			return true;
+	public boolean isColliding(Vector3 knightCenter) {
+		Vector3 trapCenter=getTrapNode().getWorldPosition();
+		trapCenter=trapCenter.add(0,-4.5f,0);
+		
+		if(((knightCenter.x()-.75)<(trapCenter.x()+1.1)&&(knightCenter.x()+.75)>(trapCenter.x()-1.1))) {
+			if(((knightCenter.y())<(trapCenter.y()+.6)&&(knightCenter.y()+3)>(trapCenter.y()-.6))) {
+				if(((knightCenter.z()-.5)<(trapCenter.z()+.25)&&(knightCenter.z()+.5)>(trapCenter.z()-.25))) {
+					return true;
+				}
+			}
 		}
+		
 		return false;
 	}
 

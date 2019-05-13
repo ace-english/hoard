@@ -292,7 +292,7 @@ public class Room{
 
 	public void clear() {
 		if(hasTrap) {
-			//sm.destroySceneNode(trap.getTrapNode());
+			sm.destroySceneNode(trap.getTrapNode());
 			hasTrap=false;
 		}
 		

@@ -326,6 +326,17 @@ public class Dungeon {
 		return false;
 	}
 	
+	public ArrayList<Trap> getTraps(){
+		ArrayList<Trap> traps=new ArrayList<Trap>();
+		
+		for(Room room:rooms) {
+			if(room.HasTrap()) {
+				traps.add(room.getTrap());
+			}
+		}
+		return traps;
+	}
+	
 	public String stringify() {
 		System.out.println("Hello sending dungeon stuff");
 		String ret="";
@@ -342,6 +353,11 @@ public class Dungeon {
 			ret+=",";
 		}
 		return ret;
+	}
+
+	public boolean touchingGem(Vector3 worldPosition) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

@@ -12,6 +12,7 @@ import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
 import ray.rml.Degreef;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class PitTrap extends Trap {
@@ -40,9 +41,9 @@ public class PitTrap extends Trap {
 	}
 
 	@Override
-	public boolean isColliding(Vector3f pos) {
-		if(Math.abs(pos.y()-getTrapNode().getWorldPosition().y())<1f){//same x, check for collisions
-			if(Math.abs(pos.x()-getTrapNode().getWorldPosition().x())<1f){//same x, check for collisions
+	public boolean isColliding(Vector3 pos) {
+		if(Math.abs(pos.y()-getTrapNode().getWorldPosition().y())<0.001f){//same y, check for collisions
+			if(Math.abs(pos.z()-getTrapNode().getWorldPosition().z())<2f){//same x, check for collisions
 				return true;
 			}
 		}

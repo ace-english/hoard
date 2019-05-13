@@ -509,9 +509,22 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		}
 		
 		im.update(elapsTime);
-		
-		//if(isConnected)//or change to: if connected to network
-			//processNetworking(elapsTime);
+
+		if(gameMode==GAME_MODE.SEIGE) {
+			SceneNode knight;
+			if(playerType==PLAYER_TYPE.DRAGON) {
+				if(onlineType==ONLINE_TYPE.ONLINE) {
+					knight=sm.getSceneNode("playerNode"+ghostID);
+				}
+				else{
+					knight=this.npcController.getNPC().getNode();
+				}
+			}
+			else{
+				knight=player.getNode();
+			}
+			collisionDetection(knight);
+		}
 		
 		if(running)//or change to: if connected to network
 		{
@@ -941,6 +954,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 				player.setDungeon(dungeon);
 				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 		        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
+		        player.getNode().yaw(Degreef.createFrom(180f));
+				if(player instanceof OrbitalPlayer)
+					((OrbitalPlayer) player).getCameraController().rotate(180f);
 			}
 			else {
 				hud.hide();
@@ -1015,6 +1031,32 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		
 		setGameMode(GAME_MODE.SEIGE);
 		
+	}
+	
+	public void collisionDetection(SceneNode knight) {
+		ArrayList<Trap> traps=dungeon.getTraps();
+		for(Trap trap:traps) {
+			if(trap.isColliding(knight.getWorldPosition())) {
+				if(playerType==PLAYER_TYPE.DRAGON)
+					win();
+				else
+					lose();
+			}
+		}
+		if(dungeon.touchingGem(knight.getWorldPosition())) {
+			if(playerType==PLAYER_TYPE.DRAGON)
+				lose();
+			else
+				win();
+		}
+	}
+	
+	private void lose() {
+		System.out.println("You lose!"+player.getNode().getWorldPosition());
+	}
+	
+	private void win() {
+		System.out.println("You win!"+player.getNode().getWorldPosition());
 	}
 	
 	

@@ -1,6 +1,7 @@
 package hoardPVPGame;
 
 import ray.rage.scene.SceneNode;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public abstract class Trap {
@@ -27,7 +28,7 @@ public abstract class Trap {
 		
 	}
 	
-	public abstract boolean isColliding(Vector3f pos);
+	public abstract boolean isColliding(Vector3 vector3);
 
 	public int getCost() {
 		return cost;

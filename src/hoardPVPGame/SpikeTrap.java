@@ -11,6 +11,7 @@ import ray.rage.rendersystem.states.TextureState;
 import ray.rage.scene.Entity;
 import ray.rage.scene.SceneManager;
 import ray.rage.scene.SceneNode;
+import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
 public class SpikeTrap extends Trap {
@@ -48,9 +49,9 @@ public class SpikeTrap extends Trap {
 	}
 
 	@Override
-	public boolean isColliding(Vector3f pos) {
+	public boolean isColliding(Vector3 pos) {
 		if(Math.abs(pos.x()-getTrapNode().getWorldPosition().x())<0.1f){//same x, check for collisions
-			return true;
+			//return true;
 		}
 		return false;
 	}

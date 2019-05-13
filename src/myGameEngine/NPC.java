@@ -69,6 +69,8 @@ public class NPC {
 
 		skeleton.loadAnimation("walkAnimation", "knight_walk.rka");
 		previousPosition=node.getWorldPosition();
+		playWalkAnimation();
+		isWalking=true;
 	}
 	
 	public SceneNode getNode() {
@@ -108,7 +110,7 @@ public class NPC {
 
 
 
-	public void playWalkAnimation() {
+	private void playWalkAnimation() {
 		System.out.println("Playing walk");
 		skeleton.playAnimation("walkAnimation", 0.5f, EndType.LOOP, 0);
 	}

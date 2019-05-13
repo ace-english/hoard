@@ -318,6 +318,14 @@ public class Dungeon {
         sm.addController(rc);
 	}
 	
+	public boolean isCollidingWithGem() {
+		return false;
+	}
+	
+	public boolean isCollidingWithTrap() {
+		return false;
+	}
+	
 	public String stringify() {
 		System.out.println("Hello sending dungeon stuff");
 		String ret="";

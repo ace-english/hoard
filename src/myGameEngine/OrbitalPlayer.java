@@ -33,7 +33,8 @@ public class OrbitalPlayer extends Player {
 	SceneNode riderNode, cameraNode;
 	//PhysicsObject physObj;
 	private ProtocolClient pc;
-	private float acceleration = 0.025f;
+	//private float acceleration = 0.025f;
+	private float acceleration = 0.01f;
 	private float velocity = 0.0f;
 	private boolean jumped = false;
 	private float jumpPosition = 0;

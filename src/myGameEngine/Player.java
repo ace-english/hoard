@@ -38,7 +38,8 @@ public abstract class Player{
 	
 	
 	public Player(SceneManager sm, ProtocolClient pc, GameUtil.SKIN skin) {
-		speed=0.08f;
+		//speed=0.08f;
+		speed=0.12f;
 		score=0;
 		this.protClient=pc;
 		this.setCamera(sm.getCamera("MainCamera"));

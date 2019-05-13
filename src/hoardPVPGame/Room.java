@@ -292,7 +292,7 @@ public class Room{
 
 	public void clear() {
 		if(hasTrap) {
-			sm.destroySceneNode(trap.getTrapNode());
+			//sm.destroySceneNode(trap.getTrapNode());
 			hasTrap=false;
 		}
 		
@@ -300,12 +300,14 @@ public class Room{
 
 	public void delete() {
 		//roomNum--;
+		/*
 		sm.destroySceneNode(floor);
 		sm.destroySceneNode(ceiling);
 		sm.destroySceneNode(leftWall);
 		sm.destroySceneNode(rightWall);
 		getRoomNode().detachAllChildren();
 		sm.destroySceneNode(getRoomNode());
+		*/
 		
 	}
 	

@@ -43,16 +43,21 @@ public class ProtocolClient extends GameConnectionClient {
 		//System.out.println("Client processing: "+msg);
 		String strMessage = (String) msg;
 		String[] msgTokens = strMessage.split(",");
+		System.out.println("recieved a message from server");
 		if(msgTokens.length > 0)
 		{
 			if(msgTokens[0].compareTo("join") == 0) { // receive “join" 
+				System.out.println("recieved join message from server");
 			// format: join, success or join, failure
 				if(msgTokens[1].compareTo("success") == 0)	{ 
+					System.out.println("Success connecting from server");
+					
 					game.setIsConnected(true);
 					sendCreateMessage(game.getPlayerPosition(), game.getRotation());
 					sendWantsMessage();
 				}
 				if(msgTokens[1].compareTo("failure") == 0) { 
+					System.out.println("failed connecting to server");
 					game.setIsConnected(false);
 				} 
 			}
@@ -60,6 +65,23 @@ public class ProtocolClient extends GameConnectionClient {
 				// format: bye, remoteId
 				UUID ghostID = UUID.fromString(msgTokens[1]);
 				removeGhostAvatar(ghostID);
+			}
+			
+			if(msgTokens[0].compareTo("createDungeon") == 0){ // receive “bye”
+				// format: bye, remoteId
+				
+				
+				//game.setDungeon(dungeon);
+				System.out.println("recieving create dungeon message");
+				
+				for(String msg2 : msgTokens)
+				{
+					System.out.println(msg2);
+				}
+				//System.out.println("recieving create dungeon message");
+				//System.out.println(msgTokens[0]);
+				game.buildDungeonFromString(msgTokens);
+				
 			}
 			/*if (/*(msgTokens[0].compareTo("dsfr") == 0 ) // receive “dsfr”
 			|| (msgTokens[0].compareTo("create")==0)){ 
@@ -117,6 +139,7 @@ public class ProtocolClient extends GameConnectionClient {
 					}
 			}
 			if(msgTokens[0].compareTo("create") == 0){ // rec. “create…”
+				System.out.println("message from client: " + UUID.fromString(msgTokens[1]));
 				UUID ghostID = UUID.fromString(msgTokens[1]);
 				Vector3 ghostPosition = Vector3f.createFrom(
 						Float.parseFloat(msgTokens[2]),
@@ -238,6 +261,8 @@ public class ProtocolClient extends GameConnectionClient {
 	}
 	
 	public void sendJoinMessage() { // format: join, localId
+		System.out.println("Sending join message to server");
+		System.out.println("From: " + id.toString());
 		try	{ 
 			sendPacket(new String("join," + id.toString()));
 		} catch (IOException e) {
@@ -258,7 +283,7 @@ public class ProtocolClient extends GameConnectionClient {
 		float flo[] = {0,1,ft,3,4,5,6,7,8};
 		String charaType = "";
 		String objType = "";
-		
+		System.out.println("sendingCreateMessage");
 		//if(game.getPlayerObjType() == PLAYER_TYPE2.KNIGHT)
 		if(game.getPlayerType() == GameUtil.SKIN.KNIGHT)
 		{
@@ -394,6 +419,21 @@ public class ProtocolClient extends GameConnectionClient {
 		}
 	}
 	
+	
+	
+	
+	public void sendDungeonMessage(String dungeon) {//UUID, char,1,2,3,4//0,1,2,3,4,5,
+		try	{ System.out.println("Sending a rotate message");
+			//String message = new String("rotate,"+id);
+		String message = new String("createDungeon," + id.toString());
+		message += "," + dungeon;
+		sendPacket(message);
+		}
+		catch (IOException e) { 
+			e.printStackTrace();
+		} 
+		
+	}
 	
 	public void sendRotateMessage(UUID id2, char axis, String matStr) {//UUID, char,1,2,3,4//0,1,2,3,4,5,
 		try	{ System.out.println("Sending a rotate message");

@@ -308,12 +308,7 @@ public class Dungeon {
 	     ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
 	     zstate.setTestEnabled(true);
 	     gem.setRenderState(zstate);
-	  
-		
-		
-
-
-        
+	          
         /*
          * controllers
          */
@@ -321,20 +316,22 @@ public class Dungeon {
         RotationController rc = new RotationController(Vector3f.createUnitVectorY(), .05f);
         rc.addNode(gemNode); 
         sm.addController(rc);
-        
 	}
 	
 	public String stringify() {
+		System.out.println("Hello sending dungeon stuff");
 		String ret="";
-		ret+=rooms.size()+"\n";
+		ret+=rooms.size()+",";
 		for(Room room:rooms) {
-			if(room.HasTrap()) {
+			if(room.HasTrap()) 
+			{
 				ret+=room.getTrap().getType();
 			}
-			else {
+			else 
+			{
 				ret+="none";
 			}
-			ret+="\n";
+			ret+=",";
 		}
 		return ret;
 	}

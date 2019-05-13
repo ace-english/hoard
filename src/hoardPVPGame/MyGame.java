@@ -130,7 +130,19 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	}
 
     public static void main(String[] args) {
-        MyGame game = new MyGame(args[0], Integer.parseInt(args[1]), Boolean.parseBoolean(args[2]));
+    	
+    	MyGame game;
+    	if(args.length > 0)
+    	{
+    		//game = new MyGame(args[0], Integer.parseInt(args[1]));
+    	     game = new MyGame(args[0], Integer.parseInt(args[1]), Boolean.parseBoolean(args[2]));
+    	}
+    	else
+    	{
+    		//game = new MyGame("", 0,false);
+    		game = new MyGame("", 0,false);
+    	}
+        //MyGame game = new MyGame(args[0], Integer.parseInt(args[1]), Boolean.parseBoolean(args[2]));
         try {
             game.startup();
             game.run();
@@ -259,6 +271,11 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		
 	}
 	*/
+	
+	private void hideBalls(){
+		sm.getEntity("Ball2").setVisible(false);
+		sm.getEntity("ball1").setVisible(false);
+	}
 
 	
 	private void createRagePhysicsWorld()
@@ -266,11 +283,11 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	float mass = 1.0f;
     	float up[] = {0,1,0};
     	double[] temptf;
-    	temptf = toDoubleArray(ball1Node.getLocalTransform().toFloatArray());
-    	PhysicsObject ball1PhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
-    	mass, temptf, 2.0f);
-    	ball1PhysObj.setBounciness(1.0f);
-    	ball1Node.setPhysicsObject(ball1PhysObj);
+    	//temptf = toDoubleArray(ball1Node.getLocalTransform().toFloatArray());
+    	//PhysicsObject ball1PhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
+    	//mass, temptf, 2.0f);
+    	//ball1PhysObj.setBounciness(1.0f);
+    	//ball1Node.setPhysicsObject(ball1PhysObj);
     	temptf = toDoubleArray(ball2Node.getLocalTransform().toFloatArray());
     	PhysicsObject ball2PhysObj = physicsEng.addSphereObject(physicsEng.nextUID(),
     			mass, temptf, 2.0f);
@@ -426,6 +443,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	    resource1 = audioMgr.createAudioResource("dragon-roar.wav",AudioResourceType.AUDIO_SAMPLE);
 	    roarSound = new Sound(resource1,SoundType.SOUND_EFFECT, 100, false);
 	    roarSound.initialize(audioMgr);
+	    
+	    
 	    //roarSound.setMaxDistance(100.0f);
 	    //roarSound.setRollOff(5.0f);
 	    
@@ -491,14 +510,20 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		
 		im.update(elapsTime);
 		
-		if(isConnected)//or change to: if connected to network
+		//if(isConnected)//or change to: if connected to network
+			//processNetworking(elapsTime);
+		
+		if(running)//or change to: if connected to network
+		{
+			//System.out.println("process Networking!!!!!!!!!!!!!!!!!!!!!!!!!");
 			processNetworking(elapsTime);
+		}
 		
 		
 		if(avatarExists) {
 			gAvatar.getSkeletalEntity().update();
-			System.out.println("Last and cur position: " + gAvatar.getPos() 
-			+ ", " + gAvatar.getLastPos());
+			//System.out.println("Last and cur position: " + gAvatar.getPos() 
+			//+ ", " + gAvatar.getLastPos());
 			if (gAvatar.getPos() == gAvatar.getLastPos()){
 				avatarWalking = false;
 				gAvatar.getSkeletalEntity().stopAnimation();
@@ -538,6 +563,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	
 	//gAvatar.getPos() == gAvatar.getLastPos()
 	private void processNetworking(float elapsTime) {
+		//System.out.println("process networking");
 		if(protClient != null) {
 			protClient.processPackets();
 		}
@@ -670,8 +696,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 						//(UUID) avatar.getID(), avatar.getPos(), avatar.getRot());
 				//gAvatar.setSkeletalEntity(skeleton);
 				//gAvatar.setLastPos(avatar.getPos());
-				System.out.println("Last and cur position: " + gAvatar.getPos() 
-				+ ", " + gAvatar.getLastPos() );
+				//System.out.println("Last and cur position: " + gAvatar.getPos() 
+				//+ ", " + gAvatar.getLastPos() );
 				}
 				else
 				{
@@ -783,9 +809,16 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			}
 		}
 		else if(gameMode==GAME_MODE.BUILD) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			if(playerType==PLAYER_TYPE.DRAGON) {
 					if(x>0&&x<200) {
 						y=y/80;
+						try {
 						switch(y) {
 						case 0:
 							dungeon.addRoom();
@@ -809,14 +842,16 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 							dungeon.removeLastRoom();
 							break;
 						case 7:
-							try {
-								dungeon.finish();
-								this.setGameMode(GAME_MODE.SEIGE);
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+							dungeon.finish();
+							//SEND THE STRING 
+							protClient.sendDungeonMessage(dungeon.stringify());
+							System.out.println("Sending Dungeon stuff");
+							this.setGameMode(GAME_MODE.SEIGE);
 							break;
+						}
+						}
+						catch(Exception ex) {
+							System.out.println("Dungeon operation error.");
 						}
 					}
 				
@@ -825,6 +860,12 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			
 		}
 		else if(gameMode==GAME_MODE.SEIGE) {
+			// IF IMA DRAGON THEN DO DRAGON STUFF
+			
+			
+			//IF IMA KNIGHT THEN DO KNIGHT STUFF
+			
+			//no on click operations in seige mode
 			
 		}
 	}
@@ -838,6 +879,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	private void setGameMode(GAME_MODE gm) {
 		System.out.println("setting game mode to: "+gm);
 		this.gameMode=gm;
+		
 		switch(gm) {
 		case SPLASH:
 			try {
@@ -865,16 +907,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	        	hud.hide();
 	        	if(onlineType==ONLINE_TYPE.ONLINE) {
 	        		setupTerrain();
-	        		running = true;//!!!!!!!!!!!!!!!!!!!!!!!!
-	            	try {
-						setupBalls();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            	
+	        		running = true;
 	        	}
 	        	else {
+					hideBalls();
 	        		System.out.println("initializing dungeon");
 	            	ScriptEngineManager factory = new ScriptEngineManager();
 	            	ScriptEngine jsEngine = factory.getEngineByName("js");
@@ -888,17 +924,20 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	        		setGameMode(GAME_MODE.SEIGE);
 	        	}
 	        }
-	        else {
+	        else {//then player is a dragon
+				hideBalls();
 	        	dungeon.addRoom();
 	        	hud.setToButtons();
+	        	running = true;
 	        }
 	        
 			break;
 		case SEIGE:
+			hideBalls();
 			buildMusic.stop();
 			seigeMusic.play();
 			//teleport knight to dungeon
-			if(playerType==PLAYER_TYPE.KNIGHT) {
+			if(playerType==PLAYER_TYPE.KNIGHT/*AND LEVEL BEGINNING*/) {
 				player.setDungeon(dungeon);
 				player.teleport(dungeon.getLastRoom().getRoomNode().getWorldPosition());
 		        sm.getAmbientLight().setIntensity(new Color(.5f, .5f, .5f));
@@ -945,37 +984,37 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		//this.addGhostNPCToGameWorld(npcController.getNPC());
 	}
 	
-	private void setupBalls() throws IOException {
-		SceneNode rootNode=sm.getRootSceneNode();
-    	// Ball 1
-    	Entity ball1Entity = sm.createEntity("ball1", "sphere.obj");
-    	ball1Node = rootNode.createChildSceneNode("Ball1Node");
-    	ball1Node.attachObject(ball1Entity);
-    	ball1Node.setLocalPosition(0, 2, 10);
-    	// Ball 2
-    	Entity ball2Entity = sm.createEntity("Ball2", "sphere.obj");
-    	ball2Node = rootNode.createChildSceneNode("Ball2Node");
-    	ball2Node.attachObject(ball2Entity);
-    	ball2Node.setLocalPosition(-1,10, 10);
-	}
 	
-	public void buildDungeonFromString(String dngStr) {
-		String[] lines=dngStr.split("\n");
-		int roomNum=Integer.parseInt(lines[0]);
-		for(int i=1; i<=roomNum; i++) {
+	public void buildDungeonFromString(String dngStr[]) {
+		//set to siege?
+		
+		System.out.println("recieving create dungeon message");
+		
+		for(String msg2 : dngStr)
+		{
+			System.out.println(msg2);
+		}
+		//String[] lines=dngStr.split(",");
+		int roomNum=Integer.parseInt(dngStr[2]);
+		System.out.println("room num: " + roomNum);
+		for(int i=3; i<=roomNum+2; i++) {
+			System.out.println("adding room " + (i) + " with  " + dngStr[i]);
 			dungeon.addRoom();
-			switch(lines[i]) {
+			switch(dngStr[i]) {
 			case "pit":
-				dungeon.addTrap(i-1, TRAP_TYPE.Pit, physicsEng);
+				dungeon.addTrap(i-3, TRAP_TYPE.Pit, physicsEng);
 				break;
 			case "swinging":
-				dungeon.addTrap(i-1, TRAP_TYPE.Swinging, physicsEng);
+				dungeon.addTrap(i-3, TRAP_TYPE.Swinging, physicsEng);
 				break;
 			case "spike":
-				dungeon.addTrap(i-1, TRAP_TYPE.Spike, physicsEng);
+				dungeon.addTrap(i-3, TRAP_TYPE.Spike, physicsEng);
 				break;
 			}
 		}
+		
+		setGameMode(GAME_MODE.SEIGE);
+		
 	}
 	
 	

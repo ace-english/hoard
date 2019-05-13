@@ -66,7 +66,7 @@ public class SpikeTrap extends Trap {
 		}
 		if(getTrapNode().getWorldPosition().y()<-1) 
 			getTrapNode().getPhysicsObject().setLinearVelocity(new float[]{0f,0.8f,0f});
-		System.out.println("moving"+getTrapNode().getPhysicsObject().getLinearVelocity());
+		//System.out.println("moving"+getTrapNode().getPhysicsObject().getLinearVelocity());
 		
 	}
 

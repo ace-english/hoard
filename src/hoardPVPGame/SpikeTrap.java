@@ -16,6 +16,9 @@ import ray.rml.Vector3f;
 
 public class SpikeTrap extends Trap {
 
+	float velocity;
+	
+	
 	public SpikeTrap(Room room, SceneManager sm, PhysicsEngine pe) {
 		super();
 		TextureManager tm=sm.getTextureManager();
@@ -32,17 +35,10 @@ public class SpikeTrap extends Trap {
 	        SceneNode node = room.getRoomNode().createChildSceneNode("TrapNode"+Trap.getNumTraps());
 	        node.attachObject(entity);
 	        
-	        float mass = 1.0f;
-	    	float dim[] = {6f, 2f, 9f};
-	    	float[] temptf = node.getLocalTransform().toFloatArray();
-	    	double[] tf= new double[16];
-	    	for(int i=0; i<16; i++) {
-	    		tf[i]=temptf[i];
-	    	}
-	        PhysicsObject physObj=pe.addBoxObject(pe.nextUID(), mass, tf, dim);
 	        
 			setTrapNode(node);
-			node.setPhysicsObject(physObj);
+			node.moveDown(3f);
+			velocity=0.05f;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,8 +46,10 @@ public class SpikeTrap extends Trap {
 
 	@Override
 	public boolean isColliding(Vector3 pos) {
-		if(Math.abs(pos.x()-getTrapNode().getWorldPosition().x())<0.1f){//same x, check for collisions
-			//return true;
+		if(Math.abs(pos.z()-getTrapNode().getWorldPosition().z())<2f){//same z, check for collisions
+			if(Math.abs(pos.y()-getTrapNode().getWorldPosition().y())<3f){//same y
+				return true;
+			}
 		}
 		return false;
 	}
@@ -62,13 +60,13 @@ public class SpikeTrap extends Trap {
 
 	@Override
 	public void update(float elapsTime) {
-		if(getTrapNode().getWorldPosition().y()>=0) {
-			getTrapNode().getPhysicsObject().setLinearVelocity(new float[]{0f,-0.8f,0f});
+		getTrapNode().moveUp(velocity);
+		if(getTrapNode().getWorldPosition().y()>=-0.1) {
+			velocity=-velocity;
 		}
-		if(getTrapNode().getWorldPosition().y()<-1) 
-			getTrapNode().getPhysicsObject().setLinearVelocity(new float[]{0f,0.8f,0f});
-		//System.out.println("moving"+getTrapNode().getPhysicsObject().getLinearVelocity());
-		
+		if(getTrapNode().getWorldPosition().y()<=-3f) {
+			velocity=-velocity;
+		}
 	}
 
 }

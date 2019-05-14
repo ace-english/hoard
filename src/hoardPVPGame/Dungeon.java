@@ -63,7 +63,9 @@ public class Dungeon {
 		}
 		Room room=rooms.get(roomNum);
 		if(room.HasTrap()) {
-			removeTrap(roomNum);
+			System.out.println("Already has trap");
+			return false;
+			//removeTrap(roomNum);
 		}
 		if(cost+100>1000) {
 			System.out.println("Over Budget");

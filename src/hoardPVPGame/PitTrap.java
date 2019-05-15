@@ -55,8 +55,8 @@ public class PitTrap extends Trap {
 		return getTrapNode().getWorldPosition().z()-knight.z()<2.1f;
 	}
 	
-	public String getType() {
-		return "pit";
+	public GameUtil.TRAP_TYPE getType() {
+		return GameUtil.TRAP_TYPE.Pit;
 	}
 
 	@Override

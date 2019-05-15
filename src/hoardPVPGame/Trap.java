@@ -43,7 +43,7 @@ public abstract class Trap {
 		return numTraps;
 	}
 
-	public abstract String getType();
+	public abstract GameUtil.TRAP_TYPE getType();
 
 	public abstract void update(float elapsTime);
 	

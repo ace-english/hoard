@@ -2,6 +2,7 @@ package myGameEngine;
 
 import java.io.IOException;
 
+import hoardPVPGame.GameUtil;
 import hoardPVPGame.MyGame;
 import ray.ai.behaviortrees.*;
 
@@ -114,7 +115,8 @@ public class NPCController {
 		@Override
 		protected boolean check() {
 			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
-			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("pit");
+			boolean ret=game.getDungeon().getRoom(currentRoom).getTrap().getType()==GameUtil.TRAP_TYPE.Pit;
+			return ret;
 		}
 		
 	}
@@ -129,7 +131,8 @@ public class NPCController {
 		@Override
 		protected boolean check() {
 			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
-			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("swinging");
+			boolean ret=game.getDungeon().getRoom(currentRoom).getTrap().getType()==GameUtil.TRAP_TYPE.Swinging;
+			return ret;
 		}
 		
 	}
@@ -144,7 +147,8 @@ public class NPCController {
 		@Override
 		protected boolean check() {
 			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
-			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("swinging");
+			boolean ret=game.getDungeon().getRoom(currentRoom).getTrap().getType()==GameUtil.TRAP_TYPE.Spike;
+			return ret;
 		}
 		
 	}
@@ -175,6 +179,7 @@ public class NPCController {
 
 		@Override
 		protected BTStatus update(float arg0) {
+			System.out.println("Waiting");
 			; //not a damn thing
 			return BTStatus.BH_SUCCESS;
 		}

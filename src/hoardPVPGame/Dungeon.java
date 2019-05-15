@@ -36,10 +36,6 @@ public class Dungeon {
 	private int cost;
 	PhysicsObject physObj;
 	
-	enum TRAP_TYPE{
-		Spike, Pit, Swinging;
-	}
-	
 	public Dungeon(SceneManager sm, Engine eng) {
 		this.sm = sm;
 		this.eng = eng;
@@ -52,7 +48,7 @@ public class Dungeon {
 		return cost;
 	}
 	
-	public boolean addTrap(int roomNum, TRAP_TYPE type, PhysicsEngine pe) {
+	public boolean addTrap(int roomNum, GameUtil.TRAP_TYPE type, PhysicsEngine pe) {
 		if(roomNum==0) {
 			System.out.println("Can't trap the first room");
 			return false;
@@ -125,7 +121,6 @@ public class Dungeon {
 	}
 	
 	public Room getLastRoom() {
-		System.out.println(getRoomCount());
 		return rooms.get(getRoomCount()-1);
 	}
 	
@@ -142,7 +137,6 @@ public class Dungeon {
 
 	public int getCurrentRoom(Vector3 localPosition){
 		float z = localPosition.z();
-		System.out.println(z);
 		float center=roomGroup.getWorldPosition().z();
 		if(z<center)
 			return 0;
@@ -152,7 +146,6 @@ public class Dungeon {
 			center=rooms.get(i).getRoomNode().getWorldPosition().z();
 			min=center-(GameUtil.getRoomSize());
 			max=center+(GameUtil.getRoomSize());
-			System.out.println("Room "+i+": "+ min+" to "+ max);
 			
 			if (z>(min)&&z<(max)) {
 				return i;

@@ -20,7 +20,7 @@ STRETCH GOALS:
 [x] upgrade dragon's starting position
 [x] fix currentRoom detection
 [x] get rid of orbs
-[ ] npc can jump
+[x] npc can jump
 [ ] remove traps OR fix hud
 	[ ] easy - make invisible and set hastrap to false?
 [ ] turn knight textures around

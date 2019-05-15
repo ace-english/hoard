@@ -5,8 +5,6 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.net.InetAddress;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.rmi.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,14 +12,10 @@ import java.util.UUID;
 import java.util.Vector;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import hoardPVPGame.Dungeon.TRAP_TYPE;
 import hoardPVPGame.GameUtil.SKIN;
-
-import javax.script.Invocable;
 
 import myGameEngine.*;
 import net.java.games.input.Controller;
@@ -36,16 +30,12 @@ import ray.rage.*;
 import ray.rage.asset.texture.*;
 import ray.rage.game.*;
 import ray.rage.rendersystem.*;
-import ray.rage.rendersystem.Renderable.*;
 import ray.rage.scene.*;
 import ray.rage.scene.Camera.Frustum.*;
 import ray.rage.scene.SkeletalEntity.EndType;
-import ray.rage.scene.controllers.*;
-import ray.rage.util.BufferUtil;
 import ray.rage.util.Configuration;
 import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
-import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.*;
 
 enum GAME_MODE 
@@ -99,7 +89,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	
 	private SceneNode ball1Node, ball2Node, gndNode;
 	//private SceneNode cameraPositionNode;
-	private final static String GROUND_E = "Ground";
 	private final static String GROUND_N = "GroundNode";
 	private PhysicsEngine physicsEng;
 	private PhysicsObject gndPlaneP, knightPhysObj;
@@ -372,11 +361,16 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     	ball1Node = rootNode.createChildSceneNode("Ball1Node");
     	ball1Node.attachObject(ball1Entity);
     	ball1Node.setLocalPosition(0, 2, 10);
+    	RenderSystem rs = sm.getRenderSystem();
+    	TextureState state=(TextureState) rs.createRenderState(RenderState.Type.TEXTURE);
+    	state.setTexture(b1);
+    	ball1Entity.setRenderState(state);
     	// Ball 2
     	Entity ball2Entity = sm.createEntity("Ball2", "sphere.obj");
     	ball2Node = rootNode.createChildSceneNode("Ball2Node");
     	ball2Node.attachObject(ball2Entity);
     	ball2Node.setLocalPosition(-1,10, 10);
+    	ball2Entity.setRenderState(state);
     	
         
         /*
@@ -387,11 +381,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
         /*
          * skybox
          */
-        
-        
-        
-        
-        
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
         Texture front = tm.getAssetByPath("countryside1.png");
@@ -773,7 +762,6 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	
 
 	public void playRoar() {
-		System.out.println("Roar!");
 		roarSound.play();
 	}
 	
@@ -840,13 +828,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 							dungeon.addRoom();
 							break;
 						case 1: 
-							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Swinging, physicsEng);
+							dungeon.addTrap(getCurrentRoom(), GameUtil.TRAP_TYPE.Swinging, physicsEng);
 							break;
 						case 2:
-							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Spike, physicsEng);
+							dungeon.addTrap(getCurrentRoom(), GameUtil.TRAP_TYPE.Spike, physicsEng);
 							break;
 						case 3:
-							dungeon.addTrap(getCurrentRoom(), TRAP_TYPE.Pit, physicsEng);
+							dungeon.addTrap(getCurrentRoom(), GameUtil.TRAP_TYPE.Pit, physicsEng);
 							break;
 						case 4:
 							dungeon.getRoom(getCurrentRoom()).toggleLights();
@@ -933,9 +921,9 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	            	
 	            	jsEngine.put("dungeon", dungeon);
 	            	jsEngine.put("pe", physicsEng);
-	            	jsEngine.put("Swinging", TRAP_TYPE.Swinging);
-	            	jsEngine.put("Pit", TRAP_TYPE.Pit);
-	            	jsEngine.put("Spike", TRAP_TYPE.Spike);
+	            	jsEngine.put("Swinging", GameUtil.TRAP_TYPE.Swinging);
+	            	jsEngine.put("Pit", GameUtil.TRAP_TYPE.Pit);
+	            	jsEngine.put("Spike", GameUtil.TRAP_TYPE.Spike);
 	            	this.executeScript(jsEngine, "src/randomDungeon.js");
 	        		setGameMode(GAME_MODE.SEIGE);
 	        	}
@@ -985,22 +973,20 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		this.dungeon=dungeon;
 	}
 	
-	public SKIN getPlayerType()
-	{
+	public SKIN getPlayerType(){
 		return hud.getKnightSkin();
 	}
 	
-	public SKIN getPlayerDragonType()
-	{
+	public SKIN getPlayerDragonType(){
 		return hud.getDragonSkin();
 	}
+	
 	public PLAYER_TYPE getPlayerObjType(){
-		
 		return playerType;
 	}
+	
 	private void setupNPC() {
 		npcController=new NPCController(this);
-		//this.addGhostNPCToGameWorld(npcController.getNPC());
 	}
 	
 	
@@ -1021,13 +1007,13 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			dungeon.addRoom();
 			switch(dngStr[i]) {
 			case "pit":
-				dungeon.addTrap(i-3, TRAP_TYPE.Pit, physicsEng);
+				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Pit, physicsEng);
 				break;
 			case "swinging":
-				dungeon.addTrap(i-3, TRAP_TYPE.Swinging, physicsEng);
+				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Swinging, physicsEng);
 				break;
 			case "spike":
-				dungeon.addTrap(i-3, TRAP_TYPE.Spike, physicsEng);
+				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Spike, physicsEng);
 				break;
 			}
 		}

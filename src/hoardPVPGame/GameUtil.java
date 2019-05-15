@@ -17,5 +17,8 @@ public class GameUtil {
 		KNIGHT, BLACK_KNIGHT, WHITE_KNIGHT, GOLD_KNIGHT
 	}
 	
+	public enum TRAP_TYPE{
+		Spike, Pit, Swinging;
+	}
 	
 }

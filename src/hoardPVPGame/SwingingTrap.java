@@ -55,16 +55,6 @@ public class SwingingTrap extends Trap {
 
 	@Override
 	public boolean isColliding(Vector3 knightCenter) {
-		if(willCollide(knightCenter)) {
-			if(((knightCenter.z()-.5)<(pendulum.z()+.25)&&(knightCenter.z()+.5)>(pendulum.z()-.25))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean willCollide(Vector3 knightCenter) {
 		if(((knightCenter.x()-.75)<(pendulum.x()+1.1)&&(knightCenter.x()+.75)>(pendulum.x()-1.1))) {
 			if(((knightCenter.y())<(pendulum.y()+.6)&&(knightCenter.y()+3)>(pendulum.y()-.6))) {
 				if(((knightCenter.z()-.5)<(pendulum.z()+.25)&&(knightCenter.z()+.5)>(pendulum.z()-.25))) {
@@ -77,8 +67,20 @@ public class SwingingTrap extends Trap {
 	}
 
 	@Override
-	public String getType() {
-		return "swinging";
+	public boolean willCollide(Vector3 knightCenter) {
+		if(((knightCenter.x()-.75)<(pendulum.x()+1.5)&&(knightCenter.x()+.75)>(pendulum.x()-1.5))) {
+			if(((knightCenter.y())<(pendulum.y()+.8)&&(knightCenter.y()+3)>(pendulum.y()-.8))) {
+				if(knightCenter.z()-pendulum.z()<1&&knightCenter.z()-pendulum.z()>0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public GameUtil.TRAP_TYPE getType() {
+		return GameUtil.TRAP_TYPE.Swinging;
 	}
 
 	@Override

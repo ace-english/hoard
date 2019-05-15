@@ -72,8 +72,8 @@ public class NPC {
 
 		skeleton.loadAnimation("walkAnimation", "knight_walk.rka");
 		previousPosition=node.getWorldPosition();
-		playWalkAnimation();
-		isWalking=true;
+		//playWalkAnimation();
+		//isWalking=true;
 	}
 	
 	public SceneNode getNode() {
@@ -93,6 +93,7 @@ public class NPC {
 	public GameUtil.SKIN getSkin(){
 		return skin;
 	}
+	
 	public void update() {
 		//System.out.println("isWalking: "+isWalking);
 		Vector3 currentPosition=getNode().getLocalPosition();
@@ -108,14 +109,14 @@ public class NPC {
 				isWalking=false;
 			}
 		}
+		
 		previousPosition=currentPosition;
 	
 
 		if(jumped){
-			//System.out.println("Velocity: " + velocity);
 			node.moveUp(velocity);
 			velocity -= acceleration;
-			move();
+			node.moveForward(0.12f);
 			if(node.getWorldPosition().y()<0) {
 				jumped=false;
 				velocity=0;
@@ -149,12 +150,13 @@ public class NPC {
 	}
 	
 	public void move() {
-		node.moveForward(0.12f);
+		if(!jumped)
+			node.moveForward(0.12f);
 	}
 
 	public void jump() {
 		if(!jumped) {
-			velocity=0.2f;
+			velocity=0.18f;
 			jumped=true;
 		}
 		

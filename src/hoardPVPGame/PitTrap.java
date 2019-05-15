@@ -42,8 +42,8 @@ public class PitTrap extends Trap {
 
 	@Override
 	public boolean isColliding(Vector3 pos) {
-		if(Math.abs(pos.y()-getTrapNode().getWorldPosition().y())<0.001f){//same y, check for collisions
-			if(Math.abs(pos.z()-getTrapNode().getWorldPosition().z())<2f){//same x, check for collisions
+		if(Math.abs(pos.y()-getTrapNode().getWorldPosition().y())<0.001f){
+			if(Math.abs(pos.z()-getTrapNode().getWorldPosition().z())<2f){
 				return true;
 			}
 		}
@@ -51,9 +51,8 @@ public class PitTrap extends Trap {
 	}
 
 	@Override
-	public boolean willCollide(Vector3 vector3) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean willCollide(Vector3 knight) {
+		return getTrapNode().getWorldPosition().z()-knight.z()<3f;
 	}
 	
 	public String getType() {

@@ -25,6 +25,9 @@ public class NPC {
 	private Vector3 previousPosition;
 	private boolean isWalking=false;
 	private SkeletalEntity skeleton;
+	private float acceleration = 0.01f;
+	private float velocity = 0.0f;
+	private boolean jumped = false;
 	
 	public NPC(SceneManager sm) throws IOException{
 		System.out.println("Drawing NPC");
@@ -133,6 +136,11 @@ public class NPC {
 	
 	public void move() {
 		node.moveForward(0.08f);
+	}
+
+	public void jump() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

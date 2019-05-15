@@ -45,12 +45,15 @@ public class NPCController {
 	}
 
 	private void setupBehaviorTree() {
+		/*
 		bt.insertAtRoot(new BTSequence(10));
 		bt.insertAtRoot(new BTSequence(20));
 		bt.insert(10, new NearTrap(false));
 		bt.insert(10, new Jump());
 		bt.insert(20, new IsInBounds(false));
 		bt.insert(20, new Move());
+		*/
+		bt.insertAtRoot(new BTSequence(10));
 		
 	}
 	public void update(float elapsedTime) {
@@ -108,6 +111,7 @@ public class NPCController {
 
 		@Override
 		protected BTStatus update(float arg0) {
+			npc.jump();
 			return BTStatus.BH_FAILURE;
 		}
 		

@@ -109,6 +109,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 	private boolean avatarExists = false;
 	float dir = 0.10f;
 	int dIter = 0;
+	private boolean gameOver=false;
 	
 	
 	public Player getPlayer() {
@@ -475,6 +476,8 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
     
 	@Override
     protected void update(Engine engine) {
+		if(gameOver)
+			return;
 		if(player!=null) {
 	        float time = engine.getElapsedTimeMillis();
 			float playerFloat[] = player.getNode().getLocalTransform().toFloatArray();
@@ -1037,26 +1040,40 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		ArrayList<Trap> traps=dungeon.getTraps();
 		for(Trap trap:traps) {
 			if(trap.isColliding(knight.getWorldPosition())) {
-				if(playerType==PLAYER_TYPE.DRAGON)
+				if(playerType==PLAYER_TYPE.DRAGON) {
+					player.setScore(1000-dungeon.getCost());
 					win();
-				else
+				}
+				else {
 					lose();
+				}
 			}
 		}
 		if(dungeon.touchingGem(knight.getWorldPosition())) {
-			if(playerType==PLAYER_TYPE.DRAGON)
+			if(playerType==PLAYER_TYPE.DRAGON) {
 				lose();
-			else
+			}
+			else {
+				player.setScore(dungeon.getCost()+250);
 				win();
+			}
 		}
 	}
 	
 	private void lose() {
-		System.out.println("You lose!"+player.getNode().getWorldPosition());
+		rs = (GL4RenderSystem) getEngine().getRenderSystem();
+		rs.setHUD("You lose!");
+		gameOver();
 	}
 	
+	private void gameOver() {
+		gameOver=true;
+	}
+
 	private void win() {
-		System.out.println("You win!"+player.getNode().getWorldPosition());
+		rs = (GL4RenderSystem) getEngine().getRenderSystem();
+		rs.setHUD("You win! Score: "+player.getScore());
+		gameOver();
 	}
 	
 	

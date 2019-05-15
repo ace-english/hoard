@@ -53,6 +53,11 @@ public class SpikeTrap extends Trap {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean willCollide(Vector3 pos) {
+		return false;
+	}
 	
 	public String getType() {
 		return "spike";

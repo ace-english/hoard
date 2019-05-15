@@ -82,10 +82,6 @@ public abstract class Player{
 	ProtocolClient getProtocolClient() {
 		return protClient;
 	}
-
-	public void scoreUp() {
-		score++;
-	}
 	
 	public int getScore() {
 		return score;
@@ -165,6 +161,12 @@ public abstract class Player{
 			
 			return true;
 			
+	}
+
+
+	public void setScore(int score) {
+		this.score=score;
+		
 	}
 
 	

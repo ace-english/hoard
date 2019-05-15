@@ -55,6 +55,16 @@ public class SwingingTrap extends Trap {
 
 	@Override
 	public boolean isColliding(Vector3 knightCenter) {
+		if(willCollide(knightCenter)) {
+			if(((knightCenter.z()-.5)<(pendulum.z()+.25)&&(knightCenter.z()+.5)>(pendulum.z()-.25))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean willCollide(Vector3 knightCenter) {
 		if(((knightCenter.x()-.75)<(pendulum.x()+1.1)&&(knightCenter.x()+.75)>(pendulum.x()-1.1))) {
 			if(((knightCenter.y())<(pendulum.y()+.6)&&(knightCenter.y()+3)>(pendulum.y()-.6))) {
 				if(((knightCenter.z()-.5)<(pendulum.z()+.25)&&(knightCenter.z()+.5)>(pendulum.z()-.25))) {
@@ -95,5 +105,6 @@ public class SwingingTrap extends Trap {
 			
 		
 	}
+
 
 }

@@ -48,12 +48,8 @@ public class Dungeon {
 		cost=0;
 	}
 	
-	public static Dungeon load(String filename) {
-		return null;
-	}
-	
-	public void save(String filename) {
-		
+	public int getCost() {
+		return cost;
 	}
 	
 	public boolean addTrap(int roomNum, TRAP_TYPE type, PhysicsEngine pe) {
@@ -357,8 +353,11 @@ public class Dungeon {
 		return ret;
 	}
 
-	public boolean touchingGem(Vector3 worldPosition) {
-		// TODO Auto-generated method stub
+	public boolean touchingGem(Vector3 knight) {
+		Vector3 gem=roomGroup.getWorldPosition().add(0, 3f, 0);
+		if(((Math.abs(knight.x()-gem.x()))<.5)
+			&&(Math.abs(knight.z()-gem.z())<.5))
+				return true;
 		return false;
 	}
 	

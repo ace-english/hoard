@@ -29,6 +29,7 @@ public abstract class Trap {
 	}
 	
 	public abstract boolean isColliding(Vector3 vector3);
+	public abstract boolean willCollide(Vector3 vector3);
 
 	public int getCost() {
 		return cost;

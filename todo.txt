@@ -9,13 +9,13 @@ ACE
 [x] sound
 [x] fix animation
 [x] fix knight AI
-[ ] traps
-	[ ] make traps move
-	[ ] collision detection
+[x] traps
+	[x] make traps move
+	[x] collision detection
 [x] FSEM
 STRETCH GOALS:
 [x] finish hud
-[ ] scoring
+[x] scoring
 [ ] fix ugly lights
 [x] upgrade dragon's starting position
 [x] fix currentRoom detection
@@ -23,26 +23,25 @@ STRETCH GOALS:
 [ ] npc can jump
 [ ] remove traps OR fix hud
 	[ ] easy - make invisible and set hastrap to false?
-[ ] controller support
 [ ] turn knight textures around
 [ ] make dragon visible
 [ ] fix dragon animation
+[ ] controller support
 
 
 PLANNED FEATURES
 ----------------------------
 [x] rotation on ghost avatars
-[ ] transfer dungeon in multiplayer
+[x] transfer dungeon in multiplayer
 [x] lights in each room
 	[x] dragon can turn off lights in rooms
 [x] character select
-[ ] TRAPS
-	[ ] physics
+[x] TRAPS
+	[x] physics
 	[x] models
 [x] ability for knight to jump
-[ ] NPC knight AI
-[ ] animation for knight
-	[ ] death
+[x] NPC knight AI
+[x] animation for knight
 [x] idle animation for dragon
 [x] 3D sound
 
@@ -57,7 +56,7 @@ BUGS
 
 STRETCH GOALS
 ----------------------------
-[ ] budget mechanic
+[x] budget mechanic
 [x] splash screen
 [x] dragon 
 	[x] model

@@ -49,6 +49,12 @@ public class PitTrap extends Trap {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean willCollide(Vector3 vector3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	public String getType() {
 		return "spike";

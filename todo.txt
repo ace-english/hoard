@@ -16,7 +16,7 @@ ACE
 STRETCH GOALS:
 [x] finish hud
 [x] scoring
-[ ] fix ugly lights
+[x] fix ugly lights
 [x] upgrade dragon's starting position
 [x] fix currentRoom detection
 [x] get rid of orbs

@@ -56,11 +56,8 @@ public class SpikeTrap extends Trap {
 
 	@Override
 	public boolean willCollide(Vector3 pos) {
-		System.out.println("knight: "+pos+ " spike: "+getTrapNode().getWorldPosition());
 		if(getTrapNode().getWorldPosition().y()>-2f) {
-			System.out.print("checked Y");
 			if(pos.z()-getTrapNode().getWorldPosition().z()<3&&pos.z()-getTrapNode().getWorldPosition().z()>0) {
-				System.out.print("checked Z");
 				return true;
 			}
 		}

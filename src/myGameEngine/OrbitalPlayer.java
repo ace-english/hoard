@@ -290,6 +290,11 @@ public class OrbitalPlayer extends Player {
 	    			net.java.games.input.Component.Identifier.Axis.RX,
 	    			yawAction, 
 	    			InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+    		
+    		im.associateAction(controller, 
+        			net.java.games.input.Component.Identifier.Key.A, 
+        			jumpAction,
+    	    		InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 	    			
     	}
     	else if (controller.getType()==Controller.Type.KEYBOARD) {

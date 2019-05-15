@@ -28,7 +28,7 @@ public class Room{
 	private boolean hasTrap;
 	private SceneManager sm;
 	private Engine eng;
-	private static int roomNum=0;
+	//private static int roomNum=0;
 	private int planeNum;
 	private Light light;
 	
@@ -195,17 +195,17 @@ public class Room{
     
     private Light createLight(String name) {
     	Light light=sm.createLight(name, Light.Type.POINT);
-    	
+    	/*
     	light.setAmbient(new Color(.11f, .11f, .10f));
     	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.5f, 0.4f, 0.3f));
     	light.setRange(1f);
-    	/*
-    	light.setAmbient(new Color(.1f, .1f, .03f));
+    	*/
+    	light.setAmbient(new Color(.01f, .01f, .003f));
     	light.setDiffuse(new Color(.85f, .65f, .5f));
     	light.setSpecular(new Color(0.8f, 0.7f, 0.6f));
-    	light.setRange(1f);
-    	*/
+    	light.setRange(5f);
+    	
     	
 	    
 	    return light;
@@ -233,10 +233,11 @@ public class Room{
     	
     
         
-        if((roomNum%8)==0) {
+        if((roomNum%2)==0) {
         	createLightNode(rightWall);
         }
-        else if((roomNum%4)==0) {
+        else //if((roomNum%4)==0) {
+        {
         	createLightNode(leftWall);
         }
         

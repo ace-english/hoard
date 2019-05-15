@@ -25,7 +25,7 @@ public class NPC {
 	private Vector3 previousPosition;
 	private boolean isWalking=false;
 	private SkeletalEntity skeleton;
-	private float acceleration = 0.01f;
+	private float acceleration = 0.005f;
 	private float velocity = 0.0f;
 	private boolean jumped = false;
 	
@@ -109,6 +109,20 @@ public class NPC {
 			}
 		}
 		previousPosition=currentPosition;
+	
+
+		if(jumped){
+			//System.out.println("Velocity: " + velocity);
+			node.moveUp(velocity);
+			velocity -= acceleration;
+			move();
+			if(node.getWorldPosition().y()<0) {
+				jumped=false;
+				velocity=0;
+			}
+			
+		}
+		
 	}
 
 
@@ -135,12 +149,14 @@ public class NPC {
 	}
 	
 	public void move() {
-		node.moveForward(0.08f);
+		node.moveForward(0.12f);
 	}
 
 	public void jump() {
-		// TODO Auto-generated method stub
+		if(!jumped) {
+			velocity=0.2f;
+			jumped=true;
+		}
 		
 	}
-	
 }

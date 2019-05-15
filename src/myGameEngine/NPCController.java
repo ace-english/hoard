@@ -4,14 +4,6 @@ import java.io.IOException;
 
 import hoardPVPGame.MyGame;
 import ray.ai.behaviortrees.*;
-import ray.rage.asset.texture.Texture;
-import ray.rage.asset.texture.TextureManager;
-import ray.rage.rendersystem.RenderSystem;
-import ray.rage.rendersystem.states.RenderState;
-import ray.rage.rendersystem.states.TextureState;
-import ray.rage.scene.SceneManager;
-import ray.rage.scene.SceneNode;
-import ray.rage.scene.SkeletalEntity;
 
 public class NPCController {
 
@@ -54,6 +46,20 @@ public class NPCController {
 		bt.insert(20, new Move());
 		*/
 		bt.insertAtRoot(new BTSequence(10));
+		bt.insertAtRoot(new BTSequence(15));
+		bt.insert(15, new IsInBounds(false));
+		bt.insert(15, new Move());
+		bt.insert(10, new NearTrap(false));
+		bt.insert(10, new BTSelector(20));
+		bt.insert(20, new BTSequence(30));
+		bt.insert(30, new IsSpike(false));
+		bt.insert(30, new Jump());
+		bt.insert(20, new BTSequence(40));
+		bt.insert(40, new IsPit(false));
+		bt.insert(40, new Jump());
+		bt.insert(20, new BTSequence(50));
+		bt.insert(50, new IsSwinging(false));
+		bt.insert(50, new Wait());
 		
 	}
 	public void update(float elapsedTime) {
@@ -76,7 +82,9 @@ public class NPCController {
 
 		@Override
 		protected boolean check() {
-			// TODO Auto-generated method stub
+			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
+			if(game.getDungeon().getRoom(currentRoom).HasTrap())
+				return game.getDungeon().getRoom(currentRoom).getTrap().willCollide(npc.getPos());
 			return false;
 		}
 		
@@ -92,6 +100,51 @@ public class NPCController {
 		@Override
 		protected boolean check() {
 			return game.getDungeon().isInBounds(npc.getPos());
+		}
+		
+	}
+	
+	private class IsPit extends BTCondition{
+
+		public IsPit(boolean toNegate) {
+			super(toNegate);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected boolean check() {
+			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
+			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("pit");
+		}
+		
+	}
+	
+	private class IsSwinging extends BTCondition{
+
+		public IsSwinging(boolean toNegate) {
+			super(toNegate);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected boolean check() {
+			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
+			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("swinging");
+		}
+		
+	}
+	
+	private class IsSpike extends BTCondition{
+
+		public IsSpike(boolean toNegate) {
+			super(toNegate);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected boolean check() {
+			int currentRoom=game.getDungeon().getCurrentRoom(npc.getPos());
+			return game.getDungeon().getRoom(currentRoom).getTrap().getType().equals("swinging");
 		}
 		
 	}
@@ -112,7 +165,18 @@ public class NPCController {
 		@Override
 		protected BTStatus update(float arg0) {
 			npc.jump();
-			return BTStatus.BH_FAILURE;
+			return BTStatus.BH_SUCCESS;
+		}
+		
+		
+	}
+	
+	private class Wait extends BTAction{
+
+		@Override
+		protected BTStatus update(float arg0) {
+			; //not a damn thing
+			return BTStatus.BH_SUCCESS;
 		}
 		
 		

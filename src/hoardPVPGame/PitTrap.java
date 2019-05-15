@@ -52,11 +52,11 @@ public class PitTrap extends Trap {
 
 	@Override
 	public boolean willCollide(Vector3 knight) {
-		return getTrapNode().getWorldPosition().z()-knight.z()<3f;
+		return getTrapNode().getWorldPosition().z()-knight.z()<2.1f;
 	}
 	
 	public String getType() {
-		return "spike";
+		return "pit";
 	}
 
 	@Override

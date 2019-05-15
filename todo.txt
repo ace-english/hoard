@@ -1,3 +1,10 @@
+PRESENTATION
+----------------------------------------
+show Dragon in windowed, knight fullscreen?
+show networking
+show AI
+show all the buttons work
+
 CHECKPOINT
 ----------------------------
 JOSH
@@ -21,9 +28,8 @@ STRETCH GOALS:
 [x] fix currentRoom detection
 [x] get rid of orbs
 [x] npc can jump
-[ ] remove traps OR fix hud
-	[ ] easy - make invisible and set hastrap to false?
-[ ] turn knight textures around
+[x] remove traps OR fix hud
+[x] turn knight textures around
 [ ] make dragon visible
 [ ] fix dragon animation
 [ ] controller support

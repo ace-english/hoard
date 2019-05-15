@@ -39,14 +39,14 @@ public class FreeMovePlayer extends Player {
 		cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(getCamera());
         //cameraNode.moveUp(2f);
-        //cameraNode.translate(7f, 10f, -30f);
+       // cameraNode.translate(0f, 3f, -20f);
 		getCamera().setMode('n');
 		this.dungeon=game.getDungeon();
 		this.game=game;
 	}
 
 	@Override
-	protected void setupNodes(SceneManager sm) throws IOException {
+	protected void setupNodes(SceneManager sm) throws IOException {	
         //Entity entity = sm.createEntity("player", "dragon.obj");
         //entity.setPrimitive(Primitive.TRIANGLES);
         

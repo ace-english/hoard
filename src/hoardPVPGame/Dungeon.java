@@ -159,7 +159,6 @@ public class Dungeon {
 		Room lastRoom=getLastRoom();
 		sm.getRootSceneNode().detachChild(lastRoom.getRoomNode());
 		roomGroup.detachChild(lastRoom.getRoomNode());
-		lastRoom.delete();
 		rooms.remove(rooms.size()-1);
 		
 	}

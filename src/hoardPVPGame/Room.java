@@ -28,7 +28,8 @@ public class Room{
 	private boolean hasTrap;
 	private SceneManager sm;
 	private Engine eng;
-	//private static int roomNum=0;
+	private static int totalRooms=0;
+	private int roomNum;
 	private int planeNum;
 	private Light light;
 	
@@ -40,6 +41,7 @@ public class Room{
 		this.eng = eng;
 		hasTrap=false;
 		roomNode=dungeon.getNode();
+		roomNum=dungeon.getRoomCount();
 		planeNum=0;
 		try {
 			setupRoom();
@@ -47,14 +49,9 @@ public class Room{
 			e.printStackTrace();
 		}
 	}
-	/*
-	public static int getRoomCount() {
-		return roomNum;
-	}
-	*/
 	
 	private SceneNode returnPlane() throws IOException {
-    	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
+    	ManualObject plane=sm.createManualObject("planeobj"+totalRooms+'-'+planeNum);
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -102,7 +99,7 @@ public class Room{
 	    zstate.setTestEnabled(true);
 	    plane.setRenderState(zstate);
 		
-        SceneNode planeNode = roomNode.createChildSceneNode("plane" + roomNum + "-" + planeNum);
+        SceneNode planeNode = roomNode.createChildSceneNode("plane" + totalRooms + "-" + planeNum);
         planeNum++;
         planeNode.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
         planeNode.attachObject(plane);
@@ -111,7 +108,7 @@ public class Room{
     }
     
     private SceneNode returnWall() throws IOException {
-    	ManualObject plane=sm.createManualObject("planeobj"+roomNum+'-'+planeNum);
+    	ManualObject plane=sm.createManualObject("planeobj"+totalRooms+'-'+planeNum);
         ManualObjectSection psec=plane.createManualSection("psec");
         plane.setGpuShaderProgram(sm.getRenderSystem().getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
         
@@ -159,7 +156,7 @@ public class Room{
 	    zstate.setTestEnabled(true);
 	    plane.setRenderState(zstate);
 		
-        SceneNode planeNode = roomNode.createChildSceneNode("plane"+roomNum+'-' + planeNum);
+        SceneNode planeNode = roomNode.createChildSceneNode("plane"+totalRooms+'-' + planeNum);
         
         planeNum++;
         planeNode.scale(GameUtil.getRoomSize(), GameUtil.getRoomSize(), GameUtil.getRoomSize());
@@ -213,7 +210,7 @@ public class Room{
     
     private void setupRoom() throws IOException {
     	planeNum=0;
-    	roomNode = sm.getRootSceneNode().createChildSceneNode("room"+roomNum);
+    	roomNode = sm.getRootSceneNode().createChildSceneNode("room"+totalRooms);
     	
     	floor=returnPlane();
     	rightWall=returnWall();
@@ -236,22 +233,21 @@ public class Room{
         if((roomNum%2)==0) {
         	createLightNode(rightWall);
         }
-        else //if((roomNum%4)==0) {
-        {
+        else {
         	createLightNode(leftWall);
         }
         
        
     	
     	//if first room, give back wall for hoard
-    	if(roomNum==0) {
+    	if(totalRooms==0) {
     		SceneNode back=returnWall();
         	back.translate(Vector3f.createFrom(0f, GameUtil.getRoomSize(), -GameUtil.getRoomSize()));
         	back.rotate(Degreef.createFrom(90f), Vector3f.createFrom(1f, 0f, 0f));
     	}
     	
     	roomNode.translate(Vector3f.createFrom(0f,0f,GameUtil.getRoomSize()*roomNum*2));
-    	roomNum++;
+    	totalRooms++;
     		
     	
     }
@@ -293,22 +289,11 @@ public class Room{
 
 	public void clear() {
 		if(hasTrap) {
-			sm.destroySceneNode(trap.getTrapNode());
+			Trap trap=getTrap();
+			sm.getRootSceneNode().detachChild(trap.getTrapNode());
+			roomNode.detachChild(getTrap().getTrapNode());
 			hasTrap=false;
 		}
-		
-	}
-
-	public void delete() {
-		//roomNum--;
-		/*
-		sm.destroySceneNode(floor);
-		sm.destroySceneNode(ceiling);
-		sm.destroySceneNode(leftWall);
-		sm.destroySceneNode(rightWall);
-		getRoomNode().detachAllChildren();
-		sm.destroySceneNode(getRoomNode());
-		*/
 		
 	}
 	

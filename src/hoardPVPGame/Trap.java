@@ -22,11 +22,6 @@ public abstract class Trap {
 	public void setTrapNode(SceneNode trapNode) {
 		this.trapNode = trapNode;
 	}
-
-	public void delete() {
-		room.getRoomNode().detachChild(trapNode);
-		
-	}
 	
 	public abstract boolean isColliding(Vector3 vector3);
 	public abstract boolean willCollide(Vector3 vector3);

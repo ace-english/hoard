@@ -517,6 +517,10 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 			}
 			collisionDetection(knight);
 		}
+		else if (gameMode==GAME_MODE.BUILD) {
+			rs = (GL4RenderSystem) getEngine().getRenderSystem();
+			rs.setHUD("Budget: "+(1000-dungeon.getCost()), width/2, height-75);
+		}
 		
 		if(running)//or change to: if connected to network
 		{
@@ -856,6 +860,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 						}
 						catch(Exception ex) {
 							System.out.println("Dungeon operation error.");
+							ex.printStackTrace();
 						}
 					}
 				
@@ -1027,7 +1032,7 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		for(Trap trap:traps) {
 			if(trap.isColliding(knight.getWorldPosition())) {
 				if(playerType==PLAYER_TYPE.DRAGON) {
-					player.setScore(1000-dungeon.getCost());
+					player.setScore(1250-dungeon.getCost());
 					win();
 				}
 				else {

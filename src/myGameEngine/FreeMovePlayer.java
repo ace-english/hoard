@@ -39,7 +39,7 @@ public class FreeMovePlayer extends Player {
 		cameraNode=getNode().createChildSceneNode("riderNode");
         cameraNode.attachObject(getCamera());
         //cameraNode.moveUp(2f);
-       // cameraNode.translate(0f, 3f, -20f);
+        cameraNode.translate(0f, 5f, -8f);
 		getCamera().setMode('n');
 		this.dungeon=game.getDungeon();
 		this.game=game;

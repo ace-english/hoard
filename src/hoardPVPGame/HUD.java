@@ -216,9 +216,10 @@ public class HUD {
 		
         SceneNode buttonNode = core.createChildSceneNode("ButtonNode");
         buttonNode.moveBackward(1.18f);
-        buttonNode.scale(Vector3f.createFrom(.2f, .2f, .2f));
         buttonNode.moveRight(1f);
+        buttonNode.scale(Vector3f.createFrom(.2f, .2f, .2f));
         buttonNode.rotate(Degreef.createFrom(90f), Vector3f.createFrom(0f, 1f, 0f));
+        //buttonNode.translate(0f, 5f, -5f);
         buttonNode.attachObject(buttons);
         buttons.setVisible(false);
         
@@ -261,7 +262,7 @@ public class HUD {
 			System.out.println(it.next());
 		}
 		buttons.setVisible(true);
-		SceneNode cameraNode=sm.getSceneNode("playerNode");
+		SceneNode cameraNode=sm.getSceneNode("riderNode");
 		SceneNode buttonNode=sm.getSceneNode("ButtonNode");
 		System.out.println(cameraNode.getWorldPosition());
 		System.out.println(buttonNode.getWorldPosition());

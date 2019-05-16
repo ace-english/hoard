@@ -292,7 +292,7 @@ public class OrbitalPlayer extends Player {
 	    			InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
     		
     		im.associateAction(controller, 
-        			net.java.games.input.Component.Identifier.Key.A, 
+        			net.java.games.input.Component.Identifier.Button._0, 
         			jumpAction,
     	    		InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 	    			

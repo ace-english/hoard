@@ -30,9 +30,9 @@ STRETCH GOALS:
 [x] npc can jump
 [x] remove traps OR fix hud
 [x] turn knight textures around
-[ ] make dragon visible
-[ ] fix dragon animation
-[ ] controller support
+[x] make dragon visible
+[x] fix dragon animation
+[x] controller support
 
 
 PLANNED FEATURES

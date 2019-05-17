@@ -503,23 +503,18 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		im.update(elapsTime);
 
 		if(gameMode==GAME_MODE.SEIGE) {
-			SceneNode knight;
-			if(playerType==PLAYER_TYPE.DRAGON) {
-				if(onlineType==ONLINE_TYPE.ONLINE) {
-					knight=sm.getSceneNode("playerNode"+ghostID);
-				}
-				else{
-					knight=this.npcController.getNPC().getNode();
-				}
-			}
-			else{
-				knight=player.getNode();
-			}
-			collisionDetection(knight);
+			if(avatarExists)
+				collisionDetection();
 		}
 		else if (gameMode==GAME_MODE.BUILD) {
-			rs = (GL4RenderSystem) getEngine().getRenderSystem();
-			rs.setHUD("Budget: "+(1000-dungeon.getCost()), width/2, height-75);
+			if(playerType==PLAYER_TYPE.DRAGON){
+				rs = (GL4RenderSystem) getEngine().getRenderSystem();
+				rs.setHUD("Budget: "+(1000-dungeon.getCost()), width/2, height-75);
+			}
+			else{
+				rs = (GL4RenderSystem) getEngine().getRenderSystem();
+				rs.setHUD("The dragon is preparing, please wait: "+(1000-dungeon.getCost()), width/2, height-75);
+			}
 		}
 		
 		if(running)//or change to: if connected to network
@@ -986,8 +981,22 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		return hud.getDragonSkin();
 	}
 	
-	public PLAYER_TYPE getPlayerObjType(){
-		return playerType;
+	//public PLAYER_TYPE getPlayerObjType(){
+		//return playerType;
+	//}
+	
+	public String getPlayerObjType(){
+		
+		String st = new String("");
+		if(playerType == PLAYER_TYPE.KNIGHT)
+		{
+			st.equals("knight");
+		}
+		else if (playerType == PLAYER_TYPE.DRAGON)
+		{
+			st.equals("dragon");
+		}
+		return st;
 	}
 	
 	private void setupNPC() {
@@ -999,35 +1008,62 @@ public class MyGame extends VariableFrameRateGame implements MouseListener{
 		//set to siege?
 		
 		System.out.println("recieving create dungeon message");
+		sm.destroySceneNode("tessN");
 		
 		for(String msg2 : dngStr)
 		{
 			System.out.println(msg2);
 		}
-		//String[] lines=dngStr.split(",");
 		int roomNum=Integer.parseInt(dngStr[2]);
+		//String[] lines=dngStr.split(",");
 		System.out.println("room num: " + roomNum);
-		for(int i=3; i<=roomNum+2; i++) {
-			System.out.println("adding room " + (i) + " with  " + dngStr[i]);
+		for(int i=3; i <= roomNum + 2; i++) {
 			dungeon.addRoom();
+			System.out.println("adding room " + (i) + " with  " + dngStr[i]);
 			switch(dngStr[i]) {
-			case "pit":
+			case "Pit":
+			//System.out.println("adding room " + (i-3) + " with  " + dngStr[i]);
 				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Pit, physicsEng);
 				break;
-			case "swinging":
+			case "Swinging":
+			//System.out.println("adding room " + (i-3) + " with  " + dngStr[i]);
 				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Swinging, physicsEng);
 				break;
-			case "spike":
+			case "Spike":
+			//System.out.println("adding room " + (i-3) + " with  " + dngStr[i]);
 				dungeon.addTrap(i-3, GameUtil.TRAP_TYPE.Spike, physicsEng);
 				break;
 			}
 		}
-		
+		try
+		{
+		dungeon.finish();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		setGameMode(GAME_MODE.SEIGE);
 		
 	}
 	
-	public void collisionDetection(SceneNode knight) {
+	public void collisionDetection() {
+		SceneNode knight;
+		if(playerType==PLAYER_TYPE.DRAGON) {
+			if(onlineType==ONLINE_TYPE.ONLINE) {
+				if(avatarExists)
+					knight=sm.getSceneNode("playerNode"+ghostID);
+				else
+					return;
+			}
+			else{
+				knight=this.npcController.getNPC().getNode();
+			}
+		}
+		else{
+			knight=player.getNode();
+		}
+		
 		ArrayList<Trap> traps=dungeon.getTraps();
 		for(Trap trap:traps) {
 			if(trap.isColliding(knight.getWorldPosition())) {
